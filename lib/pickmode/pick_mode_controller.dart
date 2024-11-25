@@ -9,8 +9,10 @@ import 'package:vibration/vibration.dart';
 
 import '../constant/constants.dart';
 import '../customAppBar.dart';
+import '../models/pickup_ball_model.dart';
 import '../route/routes.dart';
 import '../startPage/action_data_list_view.dart';
+import '../utils/blue_tooth_manager.dart';
 import '../utils/data_base.dart';
 import '../utils/dialog.dart';
 import '../utils/navigator_util.dart';
@@ -81,15 +83,28 @@ class _PickModeControllerState extends State<PickModeController> {
   void initState() {
     // 界面一进来默认是捡球训练模式
     BleSendUtil.setRobotMode(RobotMode.training);
+    BleSendUtil.setRobotSpeed(2);
 
     getTodayBallNumsByDB();
     getTodayRobotUserTime();
+    //机器人工作时间回调
+    BluetoothManager().workTimeChange = (time) {
+      print('机器人工作时间回调${time}');
+      setState(() {
+        todayRobotWorkTime = (int.parse(time)) ~/ 60;
+      });
+    };
+
     // 监听捡球数变化
     RobotManager().dataChange = (TCPDataType type) {
       if(type == TCPDataType.finishOneFlag) { // 機器人撿球成功上報
         print('robot finishOneFlag');
-        todayPickUpBalls += 1;
-        // getBallData();// 数据库处理
+        setState(() {
+          todayPickUpBalls += 1;
+          // 卡路里刷新
+          calculateTodayKal(todayPickUpBalls);
+        });
+        getBallData();// 数据库处理
       } else if(type == TCPDataType.errorInfo) { // 异常信息
         var desc = '';
         var status = RobotManager().dataModel.errorStatu;
@@ -107,6 +122,23 @@ class _PickModeControllerState extends State<PickModeController> {
         print('robot warnInfo');
       }
     };
+  }
+
+  void getBallData() async {
+    final _list  = await DataBaseHelper().getData(kDataBaseTableName);
+    List<String> timeArray = [];
+    _list.forEach((element){
+      timeArray.add(element.time);
+    });
+    var todayTime = StringUtil.currentTimeString();
+    var model = PickupBallModel(pickupBallNumber: todayPickUpBalls.toString(), time: todayTime);
+
+    if (timeArray.contains(todayTime)) {
+      print('数据库有当天的捡球数');
+      DataBaseHelper().updateData(kDataBaseTableName, model.toJson(), model.time);
+    } else {
+      DataBaseHelper().insertData(kDataBaseTableName, model);
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -176,13 +208,18 @@ class _PickModeControllerState extends State<PickModeController> {
               },
                 child: Column(
                   children: [
-                    Padding(padding: EdgeInsets.only(left: 100,top: 10)),
+                    Padding(padding: EdgeInsets.only(left: 200,top: 10)),
                     Image(image: AssetImage('images/home/${imageName}.apng'),
                       width:204,
                       height: 204,
                     ),
                     RobotSpeedAdjustView(leftTitle: 'Hard\nBall', rightTitle: 'Soft\nBall',selectItem: (index){
                       print('收球轮速度${index}');
+                      if (index == 0) {
+                        BleSendUtil.setRobotSpeed(2);
+                      } else {
+                        BleSendUtil.setRobotSpeed(1);
+                      }
                     },),
                   ],
                 ),
