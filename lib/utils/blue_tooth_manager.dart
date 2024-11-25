@@ -39,6 +39,8 @@ class BluetoothManager {
   Function(TCPDataType type)? dataChange;
   Function(TCPDataType type)? deviceinfoChange; // 设备基本信息改变
   Function(String time)? workTimeChange; // 机器人工作时间改变
+  Function(String blueName)? blueNameChange; // 机器人名字
+
 
   final ValueNotifier<int> deviceListLength = ValueNotifier(-1);
 
@@ -79,6 +81,8 @@ class BluetoothManager {
              if (conectedDeviceCount.value == 0 && model.device.name == kBLEDevice_NewName) {
                // 已经连接的设备少于两个 则自动连接
                conectToDevice(this.deviceList.last);
+               BluetoothManager().blueNameChange?.call(model.device.name);
+
              }
            }
         });

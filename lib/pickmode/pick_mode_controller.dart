@@ -160,6 +160,7 @@ class _PickModeControllerState extends State<PickModeController> {
                 TTDialog.robotEndTask(context, () async{
                   NavigatorUtil.pop();
                   NavigatorUtil.pop();
+                  BleSendUtil.setRobotMode(RobotMode.rest);
                 });
               },
                 child: Row(

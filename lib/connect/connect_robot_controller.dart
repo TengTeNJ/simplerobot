@@ -18,7 +18,7 @@ class ConnectRobotController extends StatefulWidget {
 
 class _ConnectRobotControllerState extends State<ConnectRobotController> {
   bool isConnected = true; // 是否连接上WiFi
-  var currentWifiName = 'Potent Robot';
+  var currentWifiName = 'SeekerBot';
   @override
   void initState() {
     // TODO: implement initState
@@ -26,26 +26,30 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
     getWifiName();
     // 扫描蓝牙设备
     BluetoothManager().startScan();
-    setAngleData(35.toInt());
+    // setAngleData(35.toInt());
 
-    Future.delayed(Duration(milliseconds: 3000), () {
-      var list = BluetoothManager().deviceList;
-      print('扫描到的蓝牙列表${list}');
-      if (list.length >0) {
-      //  BluetoothManager().conectToDevice(list.last);
-        // var model = list.last;
-         setState(() {
-           for (var model in list) {
-             if (model.device.name == kBLEDevice_NewName) {
-               currentWifiName = model.device.name;
-             }
-           }
+    // Future.delayed(Duration(milliseconds: 3000), () {
+    //   var list = BluetoothManager().deviceList;
+    //   print('扫描到的蓝牙列表${list}');
+    //   if (list.length >0) {
+    //   //  BluetoothManager().conectToDevice(list.last);
+    //     // var model = list.last;
+    //      setState(() {
+    //        for (var model in list) {
+    //          if (model.device.name == kBLEDevice_NewName) {
+    //            currentWifiName = model.device.name;
+    //          }
+    //        }
+    //
+    //      });
+    //   }
+    // });
 
-         });
-      }
-    });
-
-
+    BluetoothManager().blueNameChange = (blueName){
+      setState(() {
+        currentWifiName = blueName;
+      });
+    };
   }
 
   void getWifiName() async {

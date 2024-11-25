@@ -97,7 +97,7 @@ class _RobotStatsControllerState extends State<RobotStatsController> {
        Gamemodel l = Gamemodel(score: '${trainTime}', indexString: '${i}');
        _yourTrainlist.add(l);
 
-       Gamemodel avg = Gamemodel(score: '300', indexString: '${i}');
+       Gamemodel avg = Gamemodel(score: '90', indexString: '${i}');
        _avgTrainlist.add(avg);
     }
     maxTrainTime = listTime.reduce(max);
