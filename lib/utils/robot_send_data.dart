@@ -24,7 +24,7 @@ List<int> changeRobotMode(RobotMode mode) {
   int cs = start + length + cmd + data;
   int end = kDataFrameFoot;
   print('切换机器人模式:${[start, length, cmd, data, cs, end]}');
-  EasyLoading.showToast('${[start, length, cmd, data, cs, end]}');
+  // EasyLoading.showToast('${[start, length, cmd, data, cs, end]}');
 
   return [start, length, cmd, data, cs, end];
 }
@@ -52,7 +52,7 @@ List<int> clearCountData() {
 List<int> setSpeedData(int speed) {
   int start = kDataFrameHeader;
   int length = 6;
-  int cmd = 0x41;
+  int cmd = 0x47;
   int data = speed;
   int cs = start + length + cmd + data;
   int end = kDataFrameFoot;

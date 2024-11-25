@@ -21,6 +21,14 @@ class BleSendUtil {
     BluetoothManager().writerDataToDevice(getWriterDevice(), changeRobotMode(mode));
   }
 
+  // 设置收球轮速度
+  static setRobotSpeed(int mode) {
+    if (BluetoothManager().hasConnectedDeviceList.isEmpty) {
+      return;
+    }
+    BluetoothManager().writerDataToDevice(getWriterDevice(), setSpeedData(mode));
+  }
+
   // 设置机器人收球轮速度
   static setRobotCollectingWheelSpees() {
     if (BluetoothManager().hasConnectedDeviceList.isEmpty) {
