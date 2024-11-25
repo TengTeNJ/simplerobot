@@ -4,6 +4,7 @@ import 'package:tennis_robot/models/robot_data_model.dart';
 import 'package:tennis_robot/pickmode/robot_speed_adjust_view.dart';
 import 'package:tennis_robot/trainmode/mode_switch_view.dart';
 import 'package:tennis_robot/utils/ble_send_util.dart';
+import 'package:tennis_robot/utils/event_bus.dart';
 import 'package:tennis_robot/views/remote_control_view.dart';
 import 'package:vibration/vibration.dart';
 
@@ -90,6 +91,7 @@ class _PickModeControllerState extends State<PickModeController> {
     //机器人工作时间回调
     BluetoothManager().workTimeChange = (time) {
       print('机器人工作时间回调${time}');
+      EventBus().sendEvent(kRobotPickballTimeChange);
       setState(() {
         todayRobotWorkTime = (int.parse(time)) ~/ 60;
       });
@@ -105,6 +107,8 @@ class _PickModeControllerState extends State<PickModeController> {
           calculateTodayKal(todayPickUpBalls);
         });
         getBallData();// 数据库处理
+        EventBus().sendEvent(kRobotPickballCountChange);
+
       } else if(type == TCPDataType.errorInfo) { // 异常信息
         var desc = '';
         var status = RobotManager().dataModel.errorStatu;

@@ -6,6 +6,7 @@ import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/customAppBar.dart';
 import 'package:tennis_robot/models/pickupBall_time.dart';
 import 'package:tennis_robot/startPage/action_data_list_view.dart';
+import 'package:tennis_robot/utils/event_bus.dart';
 import 'package:tennis_robot/utils/robot_send_data.dart';
 
 import '../models/pickup_ball_model.dart';
@@ -33,6 +34,8 @@ class _ActionControllerState extends State<ActionController> {
   int todayPickUpBalls =0; // 今日捡球的数量
   int todayRobotWorkTime = 0; // 机器人今日工作的时间
   int todayCal = 0; // 今日消耗的卡路里
+
+  late StreamSubscription subscription;
 
   @override
   void initState() {
@@ -75,7 +78,9 @@ class _ActionControllerState extends State<ActionController> {
         print('robot speed ${RobotManager().dataModel.speed}');
       }  else if(type == TCPDataType.finishOneFlag) { // 機器人撿球成功上報
         print('robot finishOneFlag');
-        todayPickUpBalls += 1;
+        setState(() {
+          todayPickUpBalls += 1;
+        });
         getBallData();// 数据库处理
       } else if(type == TCPDataType.errorInfo) { // 异常信息
         var desc = '';
@@ -94,6 +99,17 @@ class _ActionControllerState extends State<ActionController> {
         print('robot warnInfo');
       }
     };
+
+    // 监听捡球界面的数据回调
+    subscription = EventBus().stream.listen((event){
+        if (event == kRobotPickballTimeChange) {
+            print('机器人捡球时间更新了');
+            getTodayRobotUserTime();
+        } else if (event == kRobotPickballCountChange) {
+          print('机器人捡球数量更新了');
+          getTodayBallNumsByDB();
+        }
+    });
   }
 
   // 获取今日的捡球数
@@ -132,19 +148,6 @@ class _ActionControllerState extends State<ActionController> {
         });
       }
     });
-  }
-
-  // 更新机器人工作时间
-  void updateTodayRobotUserTime(int workTime) async{
-    // 手动插入数据
-    // var model = PickupballTime(pickupBallTime: "120", time: '2024-11-1');
-    // DataBaseHelper().insertRobotWorkTimeData(kDataBasePickupBallTimeTableName, model);
-
-    // var model = PickupBallModel(pickupBallNumber: '360', time: '2024-11-19');
-    // DataBaseHelper().insertData(kDataBaseTableName, model);
-    // final _list = await DataBaseHelper().getRobotWorkTimeData(kDataBasePickupBallTimeTableName);
-   // print('0909${_list}');
-   // DataBaseHelper().deleteData(kDataBasePickupBallTimeTableName, 1);
   }
 
   void getBallData() async {

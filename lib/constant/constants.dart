@@ -184,3 +184,12 @@ const kBLEDevice_NewName = 'seekbot1.0';
 const kBLE_270_SERVICE_UUID = "181A";
 const kBLE_270_CHARACTERISTIC_NOTIFY_UUID = "2A6E";
 const kBLE_270_CHARACTERISTIC_WRITER_UUID = "2A6F";
+
+/// 数据回调
+//机器人捡球时间更新
+const kRobotPickballTimeChange =
+    'robot_pickball_time_change';
+//机器人捡球数量更新
+const kRobotPickballCountChange =
+    'robot_pickball_count_change';
+

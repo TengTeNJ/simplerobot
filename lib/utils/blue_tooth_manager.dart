@@ -49,14 +49,6 @@ class BluetoothManager {
 
   /* 开始扫描 */
   Future<void> startScan() async {
-
-    // repeatTimer = Timer.periodic(Duration(seconds: 5), (timer) {
-    //   print('这将每隔5秒执行一次');
-    //   //EasyLoading.showToast('心跳');
-    //   updateRobotTodayUseTime();
-    //   // 如果需要停止定时器，可以调用 timer.cancel()
-    // });
-
     // 不能重复扫描
     if (_scanStream != null) {
       return;
