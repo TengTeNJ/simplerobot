@@ -169,6 +169,10 @@ class BluetoothManager {
       } else if (connectionStateUpdate.connectionState ==
           DeviceConnectionState.disconnected) {
             EasyLoading.showError('disconected');
+            // 取消定时器。停止计算工作时间
+            if (repeatTimer != null) {
+              repeatTimer?.cancel();
+            }
         if(conectedDeviceCount.value > 0){
           conectedDeviceCount.value--;
         }
