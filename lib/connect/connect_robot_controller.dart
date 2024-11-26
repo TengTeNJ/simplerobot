@@ -23,7 +23,6 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getWifiName();
     // 扫描蓝牙设备
     BluetoothManager().startScan();
     // setAngleData(35.toInt());
@@ -52,19 +51,6 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
     };
   }
 
-  void getWifiName() async {
-    final info = NetworkInfo();
-    final wifiName = await info.getWifiName();
-    print('66666${wifiName}');
-    setState(() {
-      if(wifiName != null){
-        currentWifiName = wifiName!;
-        if (currentWifiName.contains('potent') ){ // 机器人WiFi的名字包含seek
-            isConnected = true;
-        }
-      }
-    });
-  }
   @override
   Widget build(BuildContext context) {
     NavigatorUtil.init(context);
