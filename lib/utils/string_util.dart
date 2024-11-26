@@ -9,6 +9,28 @@ class StringUtil {
     return formattedDate;
   }
 
+  static String dateToString(DateTime date) {
+    String formattedDate = DateFormat('yyyy/MM/dd').format(date);
+    return formattedDate;
+  }
+
+  /*时间字符串转换为日期*/
+  static DateTime stringToDate(String timeString) {
+    print('timeString=${timeString}');
+    if (timeString.contains('/')) {
+      timeString = timeString.replaceAll('/', '-');
+    }
+    DateTime dateTime = DateTime.parse(timeString);
+    return dateTime;
+  }
+
+  static String stringToEnglishDate(String timeString) {
+    var formatter = DateFormat('MMMd,y');
+    String formadDate = formatter.format(stringToDate(timeString));
+    return formadDate;
+  }
+
+
 }
 
 /*十进制转换为二进制字符串*/
