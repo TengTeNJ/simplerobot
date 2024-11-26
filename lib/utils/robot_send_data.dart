@@ -48,7 +48,7 @@ List<int> clearCountData() {
   return [start, length, cmd, cs, end];
 }
 
-/*设置速度*/
+/*设置收球轮速度*/
 List<int> setSpeedData(int speed) {
   int start = kDataFrameHeader;
   int length = 6;
@@ -56,7 +56,31 @@ List<int> setSpeedData(int speed) {
   int data = speed;
   int cs = start + length + cmd + data;
   int end = kDataFrameFoot;
-  print('设置速度:${[start, length, cmd, data, cs, end]}');
+  print('设置收球轮速度:${[start, length, cmd, data, cs, end]}');
+  return [start, length, cmd, data, cs, end];
+}
+
+/*设置机器人速度*/
+List<int> setRobotSpeedData(RobotSpeed speed) {
+  int start = kDataFrameHeader;
+  int length = 6;
+  int cmd = 0x41;
+  int data = speed.index + 1;
+  int cs = start + length + cmd + data;
+  int end = kDataFrameFoot;
+  print('设置机器人速度:${[start, length, cmd, data, cs, end]}');
+  return [start, length, cmd, data, cs, end];
+}
+
+/*设置机器人避障距离*/
+List<int> setAvoidanceDistanceData(RobotAvoidanceDistance distance) {
+  int start = kDataFrameHeader;
+  int length = 6;
+  int cmd = 0x48;
+  int data = distance.index + 1;
+  int cs = start + length + cmd + data;
+  int end = kDataFrameFoot;
+  print('设置机器人避障距离:${[start, length, cmd, data, cs, end]}');
   return [start, length, cmd, data, cs, end];
 }
 

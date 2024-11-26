@@ -15,6 +15,18 @@ enum RobotMode {
   remote // 遥控模式
 }
 
+/*机器人避障距离 */
+enum RobotAvoidanceDistance {
+  near, // 近距离
+  far // 远距离
+}
+
+/*机器人速度 */
+enum RobotSpeed {
+  slow, // 低速
+  fast // 高速
+}
+
 class RobotDataModel {
   bool powerOn = false; // 开关机状态
   int powerValue = 100; // 电量值

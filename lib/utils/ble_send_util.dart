@@ -22,19 +22,27 @@ class BleSendUtil {
   }
 
   // 设置收球轮速度
-  static setRobotSpeed(int mode) {
+  static setRobotCollectingWheelSpeed(int mode) {
     if (BluetoothManager().hasConnectedDeviceList.isEmpty) {
       return;
     }
     BluetoothManager().writerDataToDevice(getWriterDevice(), setSpeedData(mode));
   }
 
-  // 设置机器人收球轮速度
-  static setRobotCollectingWheelSpees() {
+  // 设置机器人速度
+  static setSpeed(RobotSpeed speed) {
     if (BluetoothManager().hasConnectedDeviceList.isEmpty) {
       return;
     }
+   BluetoothManager().writerDataToDevice(getWriterDevice(), setRobotSpeedData(speed));
+  }
 
+  // 设置机器人避障距离
+  static setAvoidDistance(RobotAvoidanceDistance distance) {
+    if (BluetoothManager().hasConnectedDeviceList.isEmpty) {
+      return;
+    }
+    BluetoothManager().writerDataToDevice(getWriterDevice(), setAvoidanceDistanceData(distance));
   }
 
   static BLEModel getWriterDevice() {
