@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:tennis_robot/constant/constants.dart';
+import 'package:tennis_robot/utils/dialog.dart';
 import '../models/my_status_model.dart';
 import '../utils/color.dart';
+import 'my_stats_tip_view.dart';
 
 class MyStatsBarChatView extends StatefulWidget {
   List<MyStatsModel> datas = [];
   double maxLeft;
   int maxCount = 3;
 
-
   MyStatsBarChatView({required this.datas, this.maxLeft = 0 ,this.maxCount = 0});
-
   @override
   State<MyStatsBarChatView> createState() => _MyStatsBarChatViewState();
 }
@@ -20,6 +20,16 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
   late TooltipBehavior _tooltipBehavior;
   bool _disposed = false;
   double _width = 0.3; // 柱状图宽度
+
+  List<String> _titles = [
+    'Last 7 days',
+    'Last 30 days',
+    'Last 90 days',
+    'Custom'
+  ];
+  int _timeIndex = 0;
+
+
   void _callback(Duration duration) {
     if (!_disposed) {
       setState(() {});
@@ -38,8 +48,7 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
       builder: (dynamic data, dynamic point, dynamic series, int pointIndex,
           int seriesIndex) {
         MyStatsModel model = data as MyStatsModel;
-        // return MyStatsTipView(dataModel: model);
-        return Container();
+        return MyStatsTipView(dataModel: model);
       },
     );
   }
@@ -79,7 +88,50 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
         Padding(
             padding:
             EdgeInsets.only(left: widget.maxLeft + 6, right: widget.maxLeft ),
-            child: Constants.mediumBaseTextWidget('Highest ${widget.maxCount}', 16)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Constants.mediumBaseTextWidget('Highest ${widget.maxCount}', 16),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () async {
+                    // 时间选择弹窗
+                    TTDialog.timeSelect(context, (startTime, endTime ,index){
+                      print('${startTime}--${endTime}--${index}');
+                      _timeIndex = index;
+                      setState(() {});
+                    });
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: Constants.darkThemeColor,
+                      border: Border.all(
+                          color: hexStringToColor('#707070'), width: 1),
+                    ),
+                    padding: EdgeInsets.only(
+                        top: 4, bottom: 4, left: 16, right: 16),
+                    child: Row(
+                      children: [
+                        Constants.regularWhiteTextWidget(
+                            '${_titles[_timeIndex]}', 14,Colors.white),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Image(
+                          image: AssetImage('images/profile/stats_down.png'),
+                          width: 8,
+                          height: 5,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // child: Constants.mediumBaseTextWidget('Highest ${widget.maxCount}', 16),
+        ),
         Container(
           height: 120,
           margin: EdgeInsets.only(right: widget.maxLeft + 6,top: 24),
@@ -135,14 +187,15 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
                 // minimum: 0, // 设置Y轴的最小值
                 // maximum: 10, // 设置Y轴的最大值
               ),
-              // tooltipBehavior: _tooltipBehavior,
+              tooltipBehavior: _tooltipBehavior,
               series: <CartesianSeries<MyStatsModel, num>>[
                 // Renders column chart
                 ColumnSeries<MyStatsModel, num>(
                     selectionBehavior: SelectionBehavior(
                       enable: true, // 这个设置为true,会在选中时，其他的置灰
+
                       // toggleSelection: false,
-                      //  overlayMode: ChartSelectionOverlayMode.top, // 设置选中视图显示在柱状图上面
+                      // overlayMode: ChartSelectionOverlayMode.top, // 设置选中视图显示在柱状图上面
                     ),
                     borderRadius: BorderRadius.circular(5),
                     // 设置柱状图的圆角
@@ -159,7 +212,6 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
                         hexStringToColor('#F8850B'))
               ]),
         ),
-
       ],
     );
   }

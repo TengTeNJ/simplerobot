@@ -55,6 +55,7 @@ class _RobotStatsControllerState extends State<RobotStatsController> {
 
       MyStatsModel model = MyStatsModel();
       model.speed = int.parse(_list[i].pickupBallNumber);
+      model.gameTimer = _list[i].time;
       model.indexString = i.toString();
       datas.add(model);
       maxLeft = max(maxLeft, model.textWidth);
