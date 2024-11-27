@@ -4,6 +4,7 @@ import 'package:tennis_robot/choosearea/choose_area_controller.dart';
 import 'package:tennis_robot/connect/connect_robot_controller.dart';
 import 'package:tennis_robot/home/home_page_controller.dart';
 import 'package:tennis_robot/pickmode/pick_mode_controller.dart';
+import 'package:tennis_robot/profile/profile_controller.dart';
 import 'package:tennis_robot/robotstats/robot_stats_controller.dart';
 import 'package:tennis_robot/root_page.dart';
 import 'package:tennis_robot/selectmode/select_mode_controller.dart';
@@ -21,7 +22,7 @@ class Routes {
   static const String action = 'action'; // 启动页
   static const String pickMode = 'pickMode'; // 捡球模式
   static const String stats = 'stats';// 统计数据
-
+  static const String setting = 'setting';// 设置界面
 
   static RouteFactory onGenerateRoute = (settings) {
     switch (settings.name) {
@@ -33,6 +34,9 @@ class Routes {
         return MaterialPageRoute(builder: (_) => PickModeController());
       case stats:
         return MaterialPageRoute(builder: (_) => RobotStatsController());
+      case setting:
+      return MaterialPageRoute(builder: (_) => ProfileController());
+
       case selectMode:
         return MaterialPageRoute(builder: (_) => SelectModeController());
       case connect:

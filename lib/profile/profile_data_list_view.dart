@@ -18,9 +18,9 @@ class _ProfileDataListViewState extends State<ProfileDataListView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
             SizedBox(width: 16,),
-            ProfileListView(assetPath: 'images/profile/profile_wifi.png', title: 'Wi-Fi',),
+            ProfileListView(assetPath: 'images/profile/setting_profile.png', title: 'Profile',),
             // SizedBox(width: 7,),
-              ProfileListView(assetPath: 'images/profile/profile_roller_speed.png',title: 'Roller Speed'),
+              ProfileListView(assetPath: 'images/profile/setting_ball_type.png',title: 'Ball Type'),
             SizedBox(width: 16,)
             ]
         ),
@@ -29,9 +29,9 @@ class _ProfileDataListViewState extends State<ProfileDataListView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(width: 16,),
-              ProfileListView(assetPath: 'images/profile/profile_bracelet.png', title: 'Bracelet',),
+              ProfileListView(assetPath: 'images/profile/setting_fault.png', title: 'Fault',),
               // SizedBox(width: 10,),
-              ProfileListView(assetPath: 'images/profile/profile_botfollow.png',title: 'Bot Follow'),
+              ProfileListView(assetPath: 'images/profile/setting_roller_speed.png',title: 'Roller Speed'),
               SizedBox(width: 16,)
             ]
         ),
@@ -41,7 +41,7 @@ class _ProfileDataListViewState extends State<ProfileDataListView> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(width: 25,),
-              ProfileListView(assetPath: 'images/profile/profile_fault.png', title: 'Fault',),
+              ProfileListView(assetPath: 'images/profile/setting_distance.png', title: 'Safe Distance',),
             ]
         ),
       ],
