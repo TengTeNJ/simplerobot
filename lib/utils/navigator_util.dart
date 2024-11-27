@@ -22,4 +22,20 @@ class NavigatorUtil {
   static popToRoot() {
     return Navigator.of(NavigatorUtil.utilContext).popUntil((route) => route.isFirst);
   }
+
+  //  模态效果
+  static present(Widget widget,{String routesName = '',Object arguments = const Object()}) async{
+      showModalBottomSheet(
+        isScrollControlled: true, // 设置为false话 弹窗的高度就会固定
+        context: NavigatorUtil.utilContext,
+        builder: (BuildContext context) {
+          return FractionallySizedBox(
+            heightFactor: 0.95,
+            child: widget,
+          );
+        },
+      );
+
+  }
+
 }
