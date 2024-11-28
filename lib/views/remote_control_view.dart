@@ -4,6 +4,7 @@ import 'package:tennis_robot/utils/ble_send_util.dart';
 import 'package:tennis_robot/utils/color.dart';
 import 'dart:math' as math;
 import 'package:tennis_robot/utils/robot_manager.dart';
+import 'package:tennis_robot/utils/string_util.dart';
 import 'package:vibration/vibration.dart';
 
 class RemoteControlView extends StatefulWidget {
@@ -17,6 +18,12 @@ class _RemoteControlViewState extends State<RemoteControlView> {
   Offset position = Offset(0, 0); // 初始位置为试图A的中心
   bool isMove = false; // 滑动标识
   int index = 0;// 索引，记录第一次拖动的方向
+
+  // 上一次给机器人发送角度的时间
+  DateTime lastTime = DateTime.now();
+  DateTime _lastUpdateTime = DateTime.now(); // 记录上次更新的时间
+
+
   Offset firstPosition = Offset(0, 0);
 
   int _topImageIndex = 0;
@@ -192,8 +199,14 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                       degrees = degrees + 360;
                     }
                     print('${getCurrentTime()}---角度${degrees.toInt()}');
-                    BleSendUtil.setRobotAngle(degrees.toInt());
-
+                    //记录下本次的时间
+                    // lastTime = DateTime.now();
+                    // var timeInterval = StringUtil.differenceInSeconds(lastTime, DateTime.now());
+                    // print('间隔${timeInterval}');
+                    if (_updateTime(position, 0) > 20) { // 发送角度间隔需大于20毫秒
+                      print('${getCurrentTime()}发送角度${degrees.toInt()}');
+                      BleSendUtil.setRobotAngle(degrees.toInt());
+                    }
                   });
                 },
                 onPanEnd: (details) {
@@ -221,6 +234,21 @@ class _RemoteControlViewState extends State<RemoteControlView> {
         ],
       ),
     );
+  }
+
+  int _updateTime(Offset position, double timeStamp) {
+    // 如果这是第一次调用，记录当前时间
+    if (_lastUpdateTime == null) {
+      _lastUpdateTime = DateTime.now();
+      return 0;
+    }
+
+    // 计算时间差
+    final timeDifference = DateTime.now().difference(_lastUpdateTime).inMilliseconds;
+   // print('时间差: $timeDifference');
+    // 更新最后一次时间
+    _lastUpdateTime = DateTime.now();
+    return timeDifference;
   }
 
   String getCurrentTime() {

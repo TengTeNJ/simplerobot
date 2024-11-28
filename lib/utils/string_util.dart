@@ -39,6 +39,14 @@ class StringUtil {
     return formadDate;
   }
 
+  /*记录两个时间点的时间差*/
+  static int differenceInSeconds(DateTime? startTime, DateTime? endTime) {
+    if (startTime == null || endTime == null) {
+      return 0;
+    }
+    final Duration duration = endTime.difference(startTime);
+    return duration.inMilliseconds.ceil(); // 计算秒数并向上取整
+  }
 
 }
 
