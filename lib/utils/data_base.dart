@@ -95,6 +95,16 @@ class DataBaseHelper {
      prefs.setInt('useTime', useTime);
    }
 
+   Future<void> saveUserInfoData(String useInfo) async {
+     final prefs = await SharedPreferences.getInstance();
+     prefs.setString('useInfo', useInfo);
+   }
+
+   Future<String> fetchUserInfoData() async {
+     final prefs = await SharedPreferences.getInstance();
+     return prefs.getString('useInfo') ?? '';
+   }
+
    Future<int> fetchData() async {
      final prefs = await SharedPreferences.getInstance();
      return prefs.getInt('useTime') ?? 0;

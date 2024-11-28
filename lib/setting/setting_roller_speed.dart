@@ -4,6 +4,7 @@ import 'package:tennis_robot/setting/setting_option_adjust_view.dart';
 import 'package:tennis_robot/utils/ble_send_util.dart';
 
 import '../constant/constants.dart';
+import '../utils/navigator_util.dart';
 
 // 机器人速度设置
 class SettingRollerSpeed extends StatefulWidget {
@@ -34,11 +35,15 @@ class _SettingRollerSpeedState extends State<SettingRollerSpeed> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('   Save',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color.fromRGBO(248, 98, 21, 1),
-                        fontSize: 16,
+                    GestureDetector(onTap: () {
+                      NavigatorUtil.pop();
+                    },
+                      child: Text('   Save',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color.fromRGBO(248, 98, 21, 1),
+                          fontSize: 16,
+                        ),
                       ),
                     ),
 

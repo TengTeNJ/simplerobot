@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:tennis_robot/utils/data_base.dart';
 import 'package:tennis_robot/utils/string_util.dart';
 
 import '../constant/constants.dart';
@@ -140,6 +142,8 @@ class _UserInfoInputControllerState extends State<UserInfoInputController> {
                               EasyLoading.showError('Please enter nickname');
                               return;
                             }
+                            // 保存用户信息
+                            DataBaseHelper().saveUserInfoData('${nick}---${email}');
                             NavigatorUtil.push(Routes.action);
                           },
                           child: Container(

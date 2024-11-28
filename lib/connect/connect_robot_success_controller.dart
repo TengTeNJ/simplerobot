@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tennis_robot/utils/data_base.dart';
 
 import '../constant/constants.dart';
 import '../route/routes.dart';
@@ -15,6 +16,27 @@ class ConnectRobotSuccessController extends StatefulWidget {
 class _ConnectRobotSuccessControllerState extends State<ConnectRobotSuccessController> {
   bool isConnected = true; // 是否连接上WiFi
   var currentWifiName = 'SeekerBot';
+  var currentBottomBtnName = 'Start';
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkUserInfo();
+  }
+
+  void checkUserInfo() async{
+    var userInfo = await DataBaseHelper().fetchUserInfoData();
+    if (userInfo == '') {
+      currentBottomBtnName = 'Creat Account';
+      print('没有用户信息');
+    } else {
+      currentBottomBtnName = 'Start';
+      print('有用户信息${userInfo}');
+    }
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,13 +82,16 @@ class _ConnectRobotSuccessControllerState extends State<ConnectRobotSuccessContr
                   ),
                   GestureDetector(
                     onTap: () {
-                      // NavigatorUtil.push(Routes.action);
-                      NavigatorUtil.push(Routes.inputUserInfo);
+                      if (currentBottomBtnName == 'Start'){
+                        NavigatorUtil.push(Routes.action);
+                      } else {
+                        NavigatorUtil.push(Routes.inputUserInfo);
+                      }
                     },
                     child: Container(
                       child: Center(
                         child: Constants.mediumWhiteTextWidget(
-                            'Start', 20,isConnected ? Colors.white : Constants.grayTextColor),
+                            '${currentBottomBtnName}', 20,isConnected ? Colors.white : Constants.grayTextColor),
                       ),
                       height: 72,
                       margin: EdgeInsets.only(left: 44, right: 44, top: 60),
