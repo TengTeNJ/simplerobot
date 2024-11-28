@@ -1,15 +1,11 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:tennis_robot/constant/constants.dart';
-
 import '../utils/navigator_util.dart';
 
 class SettingButton extends StatefulWidget {
   Function? close;
   String title;
   bool isSelected = false;
-
 
   SettingButton({this.close,required this.title,required this.isSelected});
 

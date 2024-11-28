@@ -3,6 +3,7 @@ import 'package:tennis_robot/setting/setting_balltype_list_view.dart';
 import 'package:tennis_robot/setting/setting_button.dart';
 
 import '../constant/constants.dart';
+import '../utils/ble_send_util.dart';
 
 class SettingBalltypeDataListView extends StatefulWidget {
   const SettingBalltypeDataListView({super.key});
@@ -31,7 +32,8 @@ class _SettingBalltypeDataListViewState extends State<SettingBalltypeDataListVie
 
         Padding(padding: EdgeInsets.only(top: 46,right: 24),
           child: SettingButton(title: 'Soft Ball',isSelected: currentIndex == 0? true : false,close: (){
-            currentIndex == 0;
+            currentIndex = 0;
+            BleSendUtil.setRobotCollectingWheelSpeed(1);
             setState(() {});
 
           },),
@@ -56,9 +58,9 @@ class _SettingBalltypeDataListViewState extends State<SettingBalltypeDataListVie
             ),
             Padding(padding: EdgeInsets.only(top: 46,right: 24),
               child: SettingButton(title: 'Hard Ball',isSelected: currentIndex == 1? true : false,close: (){
-                       currentIndex == 1;
+                       this.currentIndex = 1;
+                       BleSendUtil.setRobotCollectingWheelSpeed(2);
                        setState(() {});
-                       print('123');
                 },),
             )
           ],
