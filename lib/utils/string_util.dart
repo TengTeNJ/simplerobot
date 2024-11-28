@@ -2,6 +2,15 @@
 import 'package:intl/intl.dart'; // 导入intl包
 
 class StringUtil {
+  /*邮箱校验*/
+  static bool isValidEmail(String email) {
+    // 正则表达式模式，用于匹配电子邮件地址
+    // 该模式可以匹配大多数常见的电子邮件地址格式，但并非所有
+    String pattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
+    RegExp regExp = RegExp(pattern);
+    return regExp.hasMatch(email);
+  }
+
   /*当前时间字符串*/
   static String currentTimeString() {
     DateTime now = DateTime.now();

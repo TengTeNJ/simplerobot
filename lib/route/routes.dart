@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:tennis_robot/UserInfo/user_info_input_controller.dart';
 import 'package:tennis_robot/choosearea/choose_area_controller.dart';
 import 'package:tennis_robot/connect/connect_robot_controller.dart';
+import 'package:tennis_robot/connect/connect_robot_success_controller.dart';
 import 'package:tennis_robot/home/home_page_controller.dart';
 import 'package:tennis_robot/pickmode/pick_mode_controller.dart';
 import 'package:tennis_robot/profile/profile_controller.dart';
@@ -23,6 +25,8 @@ class Routes {
   static const String pickMode = 'pickMode'; // 捡球模式
   static const String stats = 'stats';// 统计数据
   static const String setting = 'setting';// 设置界面
+  static const String connectSuccess = 'connectSuccess'; // 连接成功界面
+  static const String inputUserInfo = 'inputUserInfo';// 用户信息输入界面
 
   static RouteFactory onGenerateRoute = (settings) {
     switch (settings.name) {
@@ -36,6 +40,12 @@ class Routes {
         return MaterialPageRoute(builder: (_) => RobotStatsController());
       case setting:
       return MaterialPageRoute(builder: (_) => ProfileController());
+
+      case inputUserInfo:
+        return MaterialPageRoute(builder: (_) => UserInfoInputController());
+      case connectSuccess:
+        return MaterialPageRoute(builder: (_) => ConnectRobotSuccessController());
+
 
       case selectMode:
         return MaterialPageRoute(builder: (_) => SelectModeController());

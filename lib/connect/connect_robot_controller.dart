@@ -31,8 +31,6 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
     //   var list = BluetoothManager().deviceList;
     //   print('扫描到的蓝牙列表${list}');
     //   if (list.length >0) {
-    //   //  BluetoothManager().conectToDevice(list.last);
-    //     // var model = list.last;
     //      setState(() {
     //        for (var model in list) {
     //          if (model.device.name == kBLEDevice_NewName) {
@@ -64,11 +62,11 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
               child: Column(
                 children: [
                   Container(
-                    height: 215,
-                    width: 278,
-                    margin: EdgeInsets.only(top: 167),
+                    height: 210,
+                    width: 210,
+                    margin: EdgeInsets.only(top: 107),
                     child: Image(
-                      image: AssetImage('images/connect/robot.png'),
+                      image: AssetImage('images/connect/robot_bluetooth.apng'),
                       fit: BoxFit.fill,
                     ),
                   ),
@@ -124,7 +122,7 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
                           currentWifiName,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Constants.connectTextColor,
+                            color: Constants.grayTextColor,
                             fontSize: 18,
                             height: 1.8,
                             fontFamily: 'SanFranciscoDisplay',
@@ -142,21 +140,14 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
                           BluetoothManager().conectToDevice(model);
                         }
                       }
-                      RobotManager().startTCPConnect();
-                      // 在需要用到的页面进行数据监听 格式如下，根据不同的TCPDataType类型和自己的需求进行页面刷新
-                      RobotManager().dataChange = (TCPDataType type) {
-                        if (type == TCPDataType.speed) {
-                          print('speed123 ${RobotManager().dataModel.speed}');
-                        } else if(type == TCPDataType.deviceInfo) {
-                          print('deviceInfo123 ${RobotManager().dataModel.speed}');
-                        }
-                      };
-                      NavigatorUtil.push(Routes.action);
+                      // NavigatorUtil.push(Routes.action);
+                     // NavigatorUtil.push(Routes.inputUserInfo);
+                      NavigatorUtil.push(Routes.connectSuccess);
                     },
                     child: Container(
                       child: Center(
                         child: Constants.mediumWhiteTextWidget(
-                            'Add Robot', 20,isConnected ? Colors.white : Constants.grayTextColor),
+                            'Connect', 20,isConnected ? Colors.white : Constants.grayTextColor),
                       ),
                       height: 72,
                       margin: EdgeInsets.only(left: 44, right: 44, top: 60),
