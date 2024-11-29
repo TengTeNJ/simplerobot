@@ -84,8 +84,8 @@ class _UserProfileControllerState extends State<UserProfileController> {
 
               Container(
                 margin: EdgeInsets.only(top: 60),
-                height: 183,
-                width: 123,
+                width: 183 ,
+                height: 123 ,
                 child: Image(
                   image: AssetImage('images/profile/user_profile_robot_icon.png'),
                   // fit: BoxFit.fill,

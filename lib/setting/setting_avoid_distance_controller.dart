@@ -4,6 +4,7 @@ import 'package:tennis_robot/setting/setting_option_adjust_view.dart';
 import '../constant/constants.dart';
 import '../models/robot_data_model.dart';
 import '../utils/ble_send_util.dart';
+import '../utils/navigator_util.dart';
 
 // 避障距离
 class SettingAvoidDistanceController extends StatefulWidget {
@@ -34,11 +35,15 @@ class _SettingAvoidDistanceControllerState extends State<SettingAvoidDistanceCon
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('   Save',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color.fromRGBO(248, 98, 21, 1),
-                        fontSize: 16,
+                    GestureDetector(onTap: () {
+                      NavigatorUtil.pop();
+                    },
+                      child: Text('   Save',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color.fromRGBO(248, 98, 21, 1),
+                          fontSize: 16,
+                        ),
                       ),
                     ),
 

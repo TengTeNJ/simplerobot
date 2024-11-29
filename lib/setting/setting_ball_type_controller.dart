@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tennis_robot/setting/setting_balltype_data_list_view.dart';
 
 import '../constant/constants.dart';
+import '../utils/navigator_util.dart';
 
 // 设置球的类型
 class SettingBallTypeController extends StatefulWidget {
@@ -32,11 +33,15 @@ class _SettingBallTypeControllerState extends State<SettingBallTypeController> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('   Save',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color.fromRGBO(248, 98, 21, 1),
-                        fontSize: 16,
+                    GestureDetector(onTap: () {
+                      NavigatorUtil.pop();
+                    },
+                      child: Text('   Save',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color.fromRGBO(248, 98, 21, 1),
+                          fontSize: 16,
+                        ),
                       ),
                     ),
 
