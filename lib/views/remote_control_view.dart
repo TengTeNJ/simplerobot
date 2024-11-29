@@ -73,7 +73,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                   left: (Constants.screenWidth(context) - 40*3)/2 - 20,
                   child: GestureDetector(
                     onLongPress: () {
-                      BleSendUtil.setRobotAngle(0);
+                      BleSendUtil.setRobotAngle(2);
                       setState(() {
                         _topImageIndex = 1;
                         Vibration.vibrate();
@@ -169,7 +169,13 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                     position += details.delta;
                     // 限制圆点在试图A内部移动
                     position = _clampOffsetToCircle(position, ((Constants.screenWidth(context) - 40*3) / 2.0));
-                   // print('位置信息为${position}');
+                   print('位置信息为${position}');
+
+                   // 防止刚开始出现 350---> 5 角度摆动情况，导致机器人出现转向的bug
+                   if (position.dx.abs() < 2  || position.dy.abs() < 2) {
+                     return;
+                   }
+
                     // var angle = math.atan2(position.dy, position.dx);
                     // var degrees = angle * (180 / math.pi) + 90;
                     // print('拖动时轮盘的角度${degrees}');
