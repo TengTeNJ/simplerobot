@@ -134,6 +134,27 @@ class TTDialog {
     );
   }
 
+  // 连接失败
+  static robotRobotConnectFailDialog(BuildContext context,Function exchange) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            child: Container(
+              padding: EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+                // color: hexStringToColor('#3E3E55'),
+                color: Constants.dialogBgColor,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child:RobotConnectFailedDialog(exchange: exchange, title: 'Connection Failed',descTitle: 'Failed to connect to device \n"Seekerbot".\n Check for issues and try again.',imgName: 'images/base/connect_fail.png',),
+            ),
+          );
+        }
+    );
+  }
+
   // 结束任务提醒
   static robotEndTask(BuildContext context,Function exchange) {
     showDialog(
@@ -760,7 +781,7 @@ class RobotLowBatteryDialog extends StatelessWidget {
             height: 20,
           ),
 
-          Constants.regularWhiteTextWidget('${this.descTitle}', 16,Constants.connectTextColor),
+          Constants.regularWhiteTextWidget('${this.descTitle}', 16,Constants.connectTextColor,height: 1.3),
 
           SizedBox(
             height: 84,
@@ -780,6 +801,67 @@ class RobotLowBatteryDialog extends StatelessWidget {
     );
   }
 }
+
+// 扫描连接失败弹窗
+class RobotConnectFailedDialog extends StatelessWidget {
+  Function exchange;
+  String descTitle;
+  String title;
+  String imgName;
+
+
+  RobotConnectFailedDialog({required this.exchange,required this.title,required this.descTitle,required this.imgName});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [CancelButton()],
+          ),
+
+          SizedBox(
+            height: 33,
+          ),
+
+          Image(image: AssetImage('${this.imgName}'),
+            width: 37,
+            height: 32,
+          ),
+
+          SizedBox(
+            height: 13,
+          ),
+          Constants.boldWhiteTextWidget('${this.title}', 19),
+          SizedBox(
+            height: 20,
+          ),
+
+          Constants.regularWhiteTextWidget('${this.descTitle}', 16,Constants.connectTextColor,height: 1.3),
+
+          SizedBox(
+            height: 40,
+          ),
+          Padding(padding: EdgeInsets.only(left: 24,right: 24),child: BaseButton(
+              borderRadius: BorderRadius.circular(20),
+              title: 'OK',
+              height: 40,
+              onTap: () {
+                this.exchange();
+              }),),
+          SizedBox(
+            height: 32,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 
 /*机器人异常弹窗*/
 class RobotExceptionDialog extends StatelessWidget {
