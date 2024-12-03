@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:intl/intl.dart';
 import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/customAppBar.dart';
 import 'package:tennis_robot/models/pickupBall_time.dart';
@@ -43,7 +44,9 @@ class _ActionControllerState extends State<ActionController> {
     print('界面初始化');
     getTodayBallNumsByDB();
     getTodayRobotUserTime();
-
+   //
+   // // var model = PickupBallModel(pickupBallNumber: '360', time: '2024-11-19');
+   //  DataBaseHelper().insertData(kDataBaseTableName, model);
 
     //机器人工作时间回调
     BluetoothManager().workTimeChange = (time) {
@@ -53,7 +56,24 @@ class _ActionControllerState extends State<ActionController> {
       });
     };
 
-    // 监听捡球上报
+    print('启动界面');
+
+    listenBattery();
+    // 监听捡球界面的数据回调
+    subscription = EventBus().stream.listen((event){
+        if (event == kRobotPickballTimeChange) {
+            print('机器人捡球时间更新了');
+            getTodayRobotUserTime();
+        } else if (event == kRobotPickballCountChange) {
+          print('机器人捡球数量更新了');
+          getTodayBallNumsByDB();
+        }
+    });
+  }
+
+  // 监听电量上报
+  void listenBattery() {
+    // 监听捡球上报 电量上报
     RobotManager().dataChange = (TCPDataType type) {
       setState(() {
         int power = RobotManager().dataModel.powerValue;
@@ -70,6 +90,8 @@ class _ActionControllerState extends State<ActionController> {
         } else {
           powerLevels = 5;
         }
+        setState(() {}
+        );
       });
       if (type == TCPDataType.deviceInfo) {
         print('robot battery ${RobotManager().dataModel.powerValue}');
@@ -99,17 +121,6 @@ class _ActionControllerState extends State<ActionController> {
         print('robot warnInfo');
       }
     };
-
-    // 监听捡球界面的数据回调
-    subscription = EventBus().stream.listen((event){
-        if (event == kRobotPickballTimeChange) {
-            print('机器人捡球时间更新了');
-            getTodayRobotUserTime();
-        } else if (event == kRobotPickballCountChange) {
-          print('机器人捡球数量更新了');
-          getTodayBallNumsByDB();
-        }
-    });
   }
 
   // 获取今日的捡球数
@@ -165,6 +176,8 @@ class _ActionControllerState extends State<ActionController> {
     } else {
       DataBaseHelper().insertData(kDataBaseTableName, model);
     }
+
+
   }
   @override
   Widget build(BuildContext context) {
@@ -179,29 +192,35 @@ class _ActionControllerState extends State<ActionController> {
             Container(
               margin: EdgeInsets.only(top: 6, left: 16),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                // crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Seekerbot',
-                    style: TextStyle(
-                      fontFamily: 'tengxun',
-                      color: Colors.white,
-                      fontSize: 22,
-                    ),
+                  Row(
+                    children: [
+                      Text('Seekerbot',
+                        style: TextStyle(
+                          fontFamily: 'tengxun',
+                          color: Colors.white,
+                          fontSize: 22,
+                        ),
+                      ),
+                      SizedBox(width: 8,),
+                      Image(image: AssetImage('images/connect/ble_connect.png',),width: 10,height: 13,),
+                    ],
                   ),
-              // Padding(padding: EdgeInsets.all(5),
 
-             Container(
-               // padding: EdgeInsets.only(top: 10),
-               margin: EdgeInsets.only(right: 16),
-               width: 34,
-               height: 34,
-               decoration: BoxDecoration(
-                 color: Color.fromRGBO(73, 75, 87, 1),
-                 borderRadius: BorderRadius.circular(17),
-               ),
-                 child: Center(child: Image(image: AssetImage('images/connect/ble_connect.png'),width: 13,),),
-             ),
+
+                  GestureDetector(onTap: (){
+                      NavigatorUtil.push(Routes.setting);
+                  },
+                  child:  Container(
+                    // padding: EdgeInsets.only(top: 10),
+                    margin: EdgeInsets.only(right: 16),
+                    width: 26,
+                    height: 26,
+                    child: Center(child: Image(image: AssetImage('images/profile/profile_setting1.png'),width: 26,),),
+                  ) ,
+                  ),
                 ],
               ),
             ),
@@ -280,26 +299,31 @@ class _ActionControllerState extends State<ActionController> {
             Container(
               margin: EdgeInsets.only(left: 0,top: 10) ,
               child: GestureDetector(onTap: (){
-                NavigatorUtil.push(Routes.pickMode);
+                NavigatorUtil.push(Routes.pickMode).then((value){
+                   print('pop回来刷新电量了${value}');
+                   listenBattery(); // pop回来监听电量上报
+                });
               },
                 child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Image(
+                  Expanded(child:  Image(
                     width:118,
                     height: 282,
                     image: AssetImage('images/connect/left_mask.png'),
-                  ),
+                  ),),
+                 
                   Image(
                     width:126,
                     height: 126,
                     image: AssetImage('images/connect/robot_shutdown1.apng'),
                   ),
-                  Image(
+                  Expanded(child:  Image(
                     width:118,
                     height: 282,
                     image: AssetImage('images/connect/right_mask.png'),
-                  ),
+                  ),),
+
                 ],
               ),
               ),

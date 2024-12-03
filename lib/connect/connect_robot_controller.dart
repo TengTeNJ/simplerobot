@@ -8,6 +8,7 @@ import 'package:tennis_robot/utils/robot_manager.dart';
 import 'package:tennis_robot/utils/robot_send_data.dart';
 
 import '../utils/ble_send_util.dart';
+import '../utils/dialog.dart';
 // import 'dart:html';
 class ConnectRobotController extends StatefulWidget {
   const ConnectRobotController({super.key});
@@ -21,6 +22,7 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
   var currentWifiName = 'SeekerBot';
   @override
   void initState() {
+
     // TODO: implement initState
     super.initState();
     // 扫描蓝牙设备
@@ -47,6 +49,17 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
         currentWifiName = blueName;
       });
     };
+
+
+    // var isConnected = true;
+    // Future.delayed(Duration(milliseconds: 300),() {
+    //   if (isConnected) {
+    //     NavigatorUtil.push(Routes.action);
+    //     NavigatorUtil.push(Routes.pickMode);
+    //   }
+    // });
+
+
   }
 
   @override
@@ -96,7 +109,7 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
                                 ),
                                 children: <TextSpan>[
                                   TextSpan(
-                                    text: '   "Seekerbot"',
+                                    text: '\n"Seekerbot"',
                                     style: TextStyle(
                                       fontFamily: 'SanFranciscoDisplay',
                                       fontSize: 18,
@@ -108,7 +121,7 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
                                 ])),
                         SizedBox(height: 50),
                         Text(
-                          "Current Bluetooth Network",
+                          "Current Bluetooth",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Constants.connectTextColor,
@@ -134,15 +147,27 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      var list = BluetoothManager().deviceList;
-                      for (var model in list) {
-                        if (model.device.name == kBLEDevice_NewName) {
-                          BluetoothManager().conectToDevice(model);
+
+                      if (currentWifiName != kBLEDevice_NewName) {
+                        // 扫描连接失败弹窗
+                        TTDialog.robotRobotConnectFailDialog(context,() async {
+                          NavigatorUtil.pop();
+                        });
+                        // 扫描蓝牙设备
+                        BluetoothManager().startScan();
+                      } else {
+                        var list = BluetoothManager().deviceList;
+                        for (var model in list) {
+                          if (model.device.name == kBLEDevice_NewName) {
+                            BluetoothManager().conectToDevice(model);
+                          }
                         }
+                        NavigatorUtil.push(Routes.connectSuccess);
                       }
+                     // NavigatorUtil.push(Routes.connectSuccess);
+
                       // NavigatorUtil.push(Routes.action);
                      // NavigatorUtil.push(Routes.inputUserInfo);
-                      NavigatorUtil.push(Routes.connectSuccess);
                     },
                     child: Container(
                       child: Center(

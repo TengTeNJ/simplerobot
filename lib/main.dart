@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:tennis_robot/connect/connect_robot_controller.dart';
+import 'package:tennis_robot/connect/connect_robot_success_controller.dart';
+import 'package:tennis_robot/pickmode/pick_mode_controller.dart';
 import 'package:tennis_robot/root_page.dart';
 import 'package:tennis_robot/route/routes.dart';
 import 'package:tennis_robot/selectmode/select_mode_controller.dart';
@@ -17,13 +19,23 @@ void main() {
     cachePolicy: CachePolicy.noCache,
     language: 'en',
   );
-
   runApp(const MyApp());
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
+  // 这个方法会根据条件返回不同的首页Widget
+  Widget getHomeWidget() {
+    bool isLoggedIn = true; // 根据实际情况设置
+    if (isLoggedIn) {
+      return ConnectRobotController();
+    } else {
+      return PickModeController();
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +45,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       onGenerateRoute: Routes.onGenerateRoute,
       home: ConnectRobotController(),
-      // home: RobotMoveView(),
+    //   home: getHomeWidget(),
       builder: EasyLoading.init(),
     );
   }

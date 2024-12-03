@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/utils/ble_send_util.dart';
@@ -50,6 +52,9 @@ class _RemoteControlViewState extends State<RemoteControlView> {
     'images/control/control_right_high.png'
   ];
 
+  int interval = 500; //长按发送时间间隔
+  Timer? rightMoveTimer;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -72,19 +77,27 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                   top: 20,
                   left: (Constants.screenWidth(context) - 40*3)/2 - 20,
                   child: GestureDetector(
-                    onLongPress: () {
-                      BleSendUtil.setRobotAngle(2);
-                      setState(() {
-                        _topImageIndex = 1;
-                        Vibration.vibrate();
+                    onLongPressStart: ( details) {
+                      rightMoveTimer = Timer.periodic(Duration(milliseconds: interval), (timer){
+                        setState(() {
+                          BleSendUtil.setRobotAngle(2);
+                          _topImageIndex = 1;
+                          Vibration.vibrate();
+                        });
                       });
                     },
-                    onLongPressUp: (){
-                      setState(() {
+
+                    onLongPressEnd: (detail) {
+                      // if(rightMoveTimer != null) {
+                        rightMoveTimer?.cancel();
+                      // }
+                        BleSendUtil.setRobotAngle(0);
+
+                        setState(() {
                         _topImageIndex = 0;
-                        Vibration.cancel();
                       });
-                      },
+                    },
+
                     child: Image.asset('${_topImages[_topImageIndex]}',width: 40,height: 30), // 替换为你的图片路径
                   ),
                 ),
@@ -92,19 +105,27 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                   top: (Constants.screenWidth(context) - 40*3) - 30 - 20,
                   right: (Constants.screenWidth(context) - 40*3)/2 - 20,
                   child: GestureDetector(
-                    onLongPress: () {
-                      BleSendUtil.setRobotAngle(180);
-                      setState(() {
-                        _bottomImageIndex = 1;
-                        Vibration.vibrate();
+                    onLongPressStart: ( details) {
+                      rightMoveTimer = Timer.periodic(Duration(milliseconds: interval), (timer){
+                        setState(() {
+                          BleSendUtil.setRobotAngle(180);
+                          _bottomImageIndex = 1;
+                          Vibration.vibrate();
+                        });
                       });
                     },
-                    onLongPressUp: (){
-                      setState(() {
+
+                    onLongPressEnd: (detail) {
+                      // if(rightMoveTimer != null) {
+                        rightMoveTimer?.cancel();
+                      // }
+                        BleSendUtil.setRobotAngle(0);
+
+                        setState(() {
                         _bottomImageIndex = 0;
-                        Vibration.cancel();
                       });
                     },
+
                     child: Image.asset('${_bottomImages[_bottomImageIndex]}',width: 40,height: 30), // 替换为你的图片路径
                   ),
                 ),
@@ -112,19 +133,27 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                   bottom: (Constants.screenWidth(context) - 40*3)/2 - 20,
                   left: 20,
                   child: GestureDetector(
-                    onLongPress: () {
-                      setState(() {
-                        BleSendUtil.setRobotAngle(270);
-                        _leftImageIndex = 1;
-                        Vibration.vibrate();
+                    onLongPressStart: ( details) {
+                      rightMoveTimer = Timer.periodic(Duration(milliseconds: interval), (timer){
+                        setState(() {
+                              BleSendUtil.setRobotAngle(270);
+                              _leftImageIndex = 1;
+                              Vibration.vibrate();
+                        });
                       });
                     },
-                    onLongPressUp: (){
-                      setState(() {
-                        Vibration.cancel();
+
+                    onLongPressEnd: (detail) {
+                      // if(rightMoveTimer != null) {
+                        rightMoveTimer?.cancel();
+                      // }
+                        BleSendUtil.setRobotAngle(0);
+
+                        setState(() {
                         _leftImageIndex = 0;
                       });
                     },
+
                     child: Image.asset('${_leftImages[_leftImageIndex]}',width: 30,height: 40), // 替换为你的图片路径
                   ),
                 ),
@@ -132,16 +161,24 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                   bottom: (Constants.screenWidth(context) - 40*3)/2 - 20,
                   right:20,
                   child: GestureDetector(
-                    onLongPress: () {
-                      setState(() {
-                        BleSendUtil.setRobotAngle(90);
-                        _rightImageIndex = 1;
-                        Vibration.vibrate();
+                    onLongPressStart: ( details) {
+                      rightMoveTimer = Timer.periodic(Duration(milliseconds: interval), (timer){
+                        setState(() {
+                          print('长按向右移动');
+                          BleSendUtil.setRobotAngle(90);
+                          _rightImageIndex = 1;
+                          Vibration.vibrate();
+                        });
                       });
-                    },
-                    onLongPressUp: (){
-                      setState(() {
-                        Vibration.cancel();
+                      },
+
+                    onLongPressEnd: (detail) {
+                      // if(rightMoveTimer != null) {
+                        rightMoveTimer?.cancel();
+                      // }
+                        BleSendUtil.setRobotAngle(0);
+
+                        setState(() {
                         _rightImageIndex = 0;
                       });
                     },
@@ -172,7 +209,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                    print('位置信息为${position}');
 
                    // 防止刚开始出现 350---> 5 角度摆动情况，导致机器人出现转向的bug
-                   if (position.dx.abs() < 2  || position.dy.abs() < 2) {
+                   if (position.dx.abs() < 2  && position.dy.abs() < 2) {
                      return;
                    }
 

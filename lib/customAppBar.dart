@@ -16,12 +16,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget{
       elevation: 0,
       leading:  showBack == true ? GestureDetector(
         onTap: () {
-          NavigatorUtil.pop();
+         // NavigatorUtil.pop();
         },
         child: IconButton(
            icon: Icon(Icons.arrow_back),
            onPressed: () {
-             Navigator.of(context).pop();
+            // Navigator.of(context).pop();
            },
            color: Colors.white,
            iconSize: 30,

@@ -821,7 +821,7 @@ class RobotConnectFailedDialog extends StatelessWidget {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
-            children: [CancelButton()],
+            children: [Container()],
           ),
 
           SizedBox(

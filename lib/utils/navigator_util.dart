@@ -13,6 +13,11 @@ class NavigatorUtil {
     return Navigator.pushNamed(NavigatorUtil.utilContext, routeName,arguments: arguments);
   }
 
+  static pushAndThen(String routeName,{Object arguments = const Object()}) {
+    //return Navigator.pushNamed(NavigatorUtil.utilContext, routeName,arguments: arguments);
+    return Navigator.of(NavigatorUtil.utilContext).popAndPushNamed(routeName,arguments: arguments);
+  }
+
   //  出栈（pop）
   static pop() {
     return Navigator.of(NavigatorUtil.utilContext).pop();

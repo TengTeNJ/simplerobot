@@ -239,11 +239,12 @@ class _RobotStatsControllerState extends State<RobotStatsController> {
                     margin: EdgeInsets.only(top: 46,left: 10),
                     child: StatsDataListView(totalPickUpBallsCount: '${totalPickupBallCount}',totalPickupBallTime: '${totalPickupBallTimes}',),
                   ),
-                  Container(
-                    // color: Colors.red,
+
+                  Expanded(child: Container(
                     margin: EdgeInsets.only(top: 40,left: 20),
-                    child: Image(image: AssetImage('images/home/stats_robot.png'),width: 224,),
-                  )
+                    child: Image(image: AssetImage('images/connect/home_robot.png'),width: 224,),
+                  ),
+                  ),
                 ],
               ),
             ),
@@ -309,6 +310,7 @@ class _RobotStatsControllerState extends State<RobotStatsController> {
               height: 140,
               child: MyStatsLineAreaView(datas: _datas,aveDatas: _aveDatas,maxCount: maxTrainTime,),
             ),
+            SizedBox(height: 64,),
           ],
         ),
       ),

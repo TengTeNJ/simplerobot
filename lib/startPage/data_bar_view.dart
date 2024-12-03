@@ -148,9 +148,9 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
                   fontFamily: 'SanFranciscoDisplay',
                   fontWeight: FontWeight.w500,
                 ),
-                maximum: widget.maxCount.toDouble(),
+                maximum: 600,
                 labelAlignment: LabelAlignment.center,
-                interval: widget.maxCount.toDouble() / 3.0,
+                interval: 200,
                 // X 轴的宽度与颜色  这里设置为透明色，以虚线显示
                 axisLine: AxisLine(width: 1, color: Colors.transparent),
                 // 设置 X 轴轴线颜色和宽度

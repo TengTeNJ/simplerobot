@@ -82,9 +82,33 @@ class _PickModeControllerState extends State<PickModeController> {
   }
 
   void initState() {
+
+    // 断链退到连接界面
+  BluetoothManager().disConnect = () {
+    TTDialog.robotBleDisconnectDialog(context, () async {
+         NavigatorUtil.popToRoot();
+    });
+  };
+
+    // 先发一个心跳包，Fly那边是根据心跳包判断连接状态（不然设置机器人模式会设置不成功）
+    var list = BluetoothManager().deviceList;
+    if (list.length >0) {
+      setState(() {
+        for (var model in list) {
+          if (model.device.name == kBLEDevice_NewName) {
+             BluetoothManager().writerDataToDevice(model, heartBeatData());
+          }
+        }
+      });
+    }
+
     // 界面一进来默认是捡球训练模式
-    BleSendUtil.setRobotMode(RobotMode.training);
-    BleSendUtil.setRobotSpeed(2);
+    Future.delayed(Duration(milliseconds: 500), () {
+      BleSendUtil.setRobotMode(RobotMode.training);
+       Future.delayed(Duration(milliseconds: 100),() {
+         BleSendUtil.setRobotCollectingWheelSpeed(2);
+       });
+    });
 
     getTodayBallNumsByDB();
     getTodayRobotUserTime();
@@ -151,7 +175,7 @@ class _PickModeControllerState extends State<PickModeController> {
       appBar: CustomAppBar(),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           // Container(
           children: [
             Container(
@@ -160,13 +184,12 @@ class _PickModeControllerState extends State<PickModeController> {
                 TTDialog.robotEndTask(context, () async{
                   NavigatorUtil.pop();
                   NavigatorUtil.pop();
-                  BleSendUtil.setRobotMode(RobotMode.rest);
+                 // BleSendUtil.setRobotMode(RobotMode.rest);
                 });
               },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
-
                   children: [
                     Image(
                       width:24,
@@ -196,7 +219,6 @@ class _PickModeControllerState extends State<PickModeController> {
             Container(
               // margin: EdgeInsets.only(left: Constants.screenWidth(context)/2 - 102,top: 102),
               margin: EdgeInsets.only(left:0,top: 64),
-
               child: GestureDetector(onTap: (){
                 if (imageName == 'mode_start') {
                   BleSendUtil.setRobotMode(RobotMode.rest);
@@ -213,34 +235,19 @@ class _PickModeControllerState extends State<PickModeController> {
               },
                 child: Column(
                   children: [
-                    Padding(padding: EdgeInsets.only(left: 200,top: 10)),
+                    Padding(padding: EdgeInsets.only(left: 0,top: 10)),
                     Image(image: AssetImage('images/home/${imageName}.apng'),
                       width:204,
                       height: 204,
                     ),
-                    RobotSpeedAdjustView(leftTitle: 'Hard\nBall', rightTitle: 'Soft\nBall',selectItem: (index){
-                      print('收球轮速度${index}');
-                      if (index == 0) {
-                        BleSendUtil.setRobotSpeed(2);
-                      } else {
-                        BleSendUtil.setRobotSpeed(1);
-                      }
-                    },),
                   ],
                 ),
-                // child: Image(
-                //   width: 204,
-                //   height: 204,
-                //   image: AssetImage('images/home/${imageName}.apng'),
-                // ),
 
               ),
             ) : Container(
               alignment: Alignment.center,
               margin: EdgeInsets.only(top: 68),
               child: RemoteControlView(),
-              // child: RobotSpeedAdjustView(leftTitle: 'Hard',rightTitle: 'Soft',),
-
             ),
 
             Container(
@@ -256,10 +263,7 @@ class _PickModeControllerState extends State<PickModeController> {
                     //   NavigatorUtil.pop();
                     // });
 
-                    // 蓝牙断链
-                    // TTDialog.robotBleDisconnectDialog(context, () async{
-                    //   NavigatorUtil.popToRoot();
-                    // });
+
                     if (imageName == 'mode_start'){
                       BleSendUtil.setRobotMode(RobotMode.training);
                       print('捡球模式');

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tennis_robot/utils/data_base.dart';
 import 'package:tennis_robot/utils/string_util.dart';
@@ -13,6 +14,9 @@ import '../models/ble_model.dart';
 import '../models/pickupBall_time.dart';
 import 'ble_data_service.dart';
 import 'package:tennis_robot/utils/robot_send_data.dart';
+
+import 'dialog.dart';
+import 'navigator_util.dart';
 
 
 Timer? repeatTimer;
@@ -40,6 +44,7 @@ class BluetoothManager {
   Function(TCPDataType type)? deviceinfoChange; // 设备基本信息改变
   Function(String time)? workTimeChange; // 机器人工作时间改变
   Function(String blueName)? blueNameChange; // 机器人名字
+  Function()? disConnect; // 机器人断链
 
 
   final ValueNotifier<int> deviceListLength = ValueNotifier(-1);
@@ -169,6 +174,8 @@ class BluetoothManager {
             if (repeatTimer != null) {
               repeatTimer?.cancel();
             }
+            BluetoothManager().disConnect?.call();
+
         if(conectedDeviceCount.value > 0){
           conectedDeviceCount.value--;
         }
