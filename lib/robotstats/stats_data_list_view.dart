@@ -24,16 +24,18 @@ class _StatsDataListViewState extends State<StatsDataListView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             StatsListView(
-                assetPath: 'images/connect/today_number_icon.png',
-                title: 'Total',
-                desc: "${widget.totalPickUpBallsCount}"),
-            SizedBox(height: 32,),
-            StatsListView(
               assetPath: 'images/connect/today_use_time.png',
-              title: 'Total Use',
+              title: 'Total In-Use',
               desc: '${widget.totalPickupBallTime}',
-              unit: 'mins',
+              unit: 'hour',
             ),
+            SizedBox(height: 20,),
+            StatsListView(
+                assetPath: 'images/connect/today_number_icon.png',
+                title: 'Total Collections',
+                desc: "${widget.totalPickUpBallsCount}"),
+
+
           ],
         ),
       ],

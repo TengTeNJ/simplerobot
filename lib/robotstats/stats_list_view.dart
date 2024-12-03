@@ -78,19 +78,21 @@ class _StatsListViewState extends State<StatsListView> {
                   child: Image(
                     image: AssetImage(widget.assetPath ??
                         'images/connect/today_number_icon.png'),
-                    width: 20,
-                    height: 20,
+                    width: 13,
+                    height: 13,
                   ),
                 ),
                 SizedBox(width: 5,),
-                Text(
+
+                Expanded(child:    Text(
                   widget.title ?? '--',
                   style: TextStyle(
                       fontFamily: 'SanFranciscoDisplay',
                       fontWeight: FontWeight.w600,
-                      fontSize: 16,
+                      fontSize: 16 * MediaQuery.of(context).textScaleFactor,
                       color: Constants.grayTextColor),
-                ),],
+                ),),
+              ],
             ),
           ),
         ],

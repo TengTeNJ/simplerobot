@@ -29,7 +29,6 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
   ];
   int _timeIndex = 0;
 
-
   void _callback(Duration duration) {
     if (!_disposed) {
       setState(() {});
@@ -87,10 +86,11 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
       children: [
         Padding(
             padding:
-            EdgeInsets.only(left: widget.maxLeft + 6, right: widget.maxLeft ),
+            EdgeInsets.only(left: 16, right: 0 ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+
                 Constants.mediumBaseTextWidget('Highest ${widget.maxCount}', 16),
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
@@ -103,6 +103,7 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
                     });
                   },
                   child: Container(
+                    margin: EdgeInsets.only(right: 16),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
                       color: Constants.darkThemeColor,

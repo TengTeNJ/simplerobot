@@ -61,7 +61,7 @@ class BluetoothManager {
       return;
     }
 
-    if (Platform.isAndroid) {
+   if (Platform.isAndroid) {
       PermissionStatus locationPermission =
       await Permission.location.request();
       PermissionStatus bleScan =
@@ -92,10 +92,29 @@ class BluetoothManager {
            }
         });
       }
-    } else {
+   }
+    else {
+     _scanStream = _ble.scanForDevices(withServices: [],
+         scanMode: ScanMode.lowLatency );
+     _scanStream!.listen((DiscoveredDevice event) {
+       // 处理扫描到的蓝牙设备
+       //print('扫描到的蓝牙设备event.name = ${event.name}');
+       //&& event.name == kBLEDevice_NewName
+       if (!hasDevice(event.id) ) {
+         print('蓝牙名字${event.name}');
+         this.deviceList.add(BLEModel(device: event));
+         deviceListLength.value = this.deviceList.length;
+         var model = this.deviceList.last;
+         if (conectedDeviceCount.value == 0 && model.device.name == kBLEDevice_NewName) {
+           // 已经连接的设备少于两个 则自动连接
+           conectToDevice(this.deviceList.last);
+           BluetoothManager().blueNameChange?.call(model.device.name);
 
+         }
+       }
+     });
 
-    }
+   }
   }
 
   /*连接设备*/

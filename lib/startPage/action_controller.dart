@@ -44,9 +44,6 @@ class _ActionControllerState extends State<ActionController> {
     print('界面初始化');
     getTodayBallNumsByDB();
     getTodayRobotUserTime();
-   //
-   // // var model = PickupBallModel(pickupBallNumber: '360', time: '2024-11-19');
-   //  DataBaseHelper().insertData(kDataBaseTableName, model);
 
     //机器人工作时间回调
     BluetoothManager().workTimeChange = (time) {

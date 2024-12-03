@@ -59,6 +59,7 @@ class _RobotStatsControllerState extends State<RobotStatsController> {
       model.indexString = i.toString();
       datas.add(model);
       maxLeft = max(maxLeft, model.textWidth);
+      print('bianju${maxLeft}');
     }
     maxCount = getMaxValue(datas);
     setState(() {
@@ -255,10 +256,11 @@ class _RobotStatsControllerState extends State<RobotStatsController> {
             ),
 
             Container(
-              margin: EdgeInsets.only(top: 20),
+              margin: EdgeInsets.only(top: 20,left: 16),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('      Time on Trainings',
+                  Text(' Time on Trainings',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'San Francisco Display',
@@ -266,39 +268,49 @@ class _RobotStatsControllerState extends State<RobotStatsController> {
                       fontSize: 16,
                     ),
                   ),
-                  SizedBox(width: 145,),
 
                   Container(
-                    width: 9,
-                    height: 9,
-                    color: Constants.selectedModelOrangeBgColor,
-                  ),
-                  SizedBox(width: 4,),
-                  Text('your',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'San Francisco Display',
-                      color: Constants.grayTextColor,
-                      fontSize: 12,
+                    margin: EdgeInsets.only(right: 16),
+                    decoration: BoxDecoration(
+                      //color: Constants.darkThemeColor,
+
                     ),
-                  ),
+                    child: Row(
+                      children: [
+                        //SizedBox(width: 145,),
 
-                  SizedBox(width: 20,),
+                        Container(
+                          width: 9,
+                          height: 9,
+                          color: Constants.selectedModelOrangeBgColor,
+                        ),
+                        SizedBox(width: 4,),
+                        Text('your',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'San Francisco Display',
+                            color: Constants.grayTextColor,
+                            fontSize: 12,
+                          ),
+                        ),
 
-                  Container(
-                    width: 9,
-                    height: 9,
-                    color: Color.fromRGBO(26, 205, 123, 1.0),
-                  ),
-                  SizedBox(width: 4,),
+                        SizedBox(width: 20,),
 
-
-                  Text('Avg',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'San Francisco Display',
-                      color: Constants.grayTextColor,
-                      fontSize: 12,
+                        Container(
+                          width: 9,
+                          height: 9,
+                          color: Color.fromRGBO(26, 205, 123, 1.0),
+                        ),
+                        SizedBox(width: 4,),
+                        Text('Avg',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'San Francisco Display',
+                            color: Constants.grayTextColor,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
