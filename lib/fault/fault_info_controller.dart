@@ -59,10 +59,7 @@ class _FaultInfoControllerState extends State<FaultInfoController> {
               
               Container(
                 width: Constants.screenWidth(context) - 52*2,
-                child: Constants.mediumWhiteTextWidget('The abnormal issues '
-                    'of the robot may be'
-                    ' due to the'
-                    ' following situations.', 16, Colors.white,maxLines: 3 ,height: 1.1),
+                child: Constants.mediumWhiteTextWidget('Faults and Solutions', 18, Colors.white,maxLines: 3 ,height: 1.1),
               ),
 
 
@@ -86,18 +83,14 @@ class _FaultInfoControllerState extends State<FaultInfoController> {
 
               Container(
                 width: Constants.screenWidth(context) - 52*2,
-                child: Constants.mediumWhiteTextWidget('01.The robot '
-                    'experienced '
-                    'an abnormal entanglement with the net.', 16, Colors.white,maxLines: 3 ,
+                child: Constants.mediumWhiteTextWidget('1.Faults and Solutions', 16, Colors.white,maxLines: 3 ,
                     height: 1.1),
               ),
 
               SizedBox(height: 12,),
               Container(
                 width: Constants.screenWidth(context) - 52*2,
-                child: Constants.mediumWhiteTextWidget('Separate the'
-                    ' net from the '
-                    'seekerbot and restart it.', 16,
+                child: Constants.mediumWhiteTextWidget('Solution: \nDetach the net from the SeekerBot\n and restart the machine.', 16,
                     Color.fromRGBO(248, 98, 21, 1),maxLines: 3 ,
                     height: 1.1),
               ),
@@ -122,14 +115,14 @@ class _FaultInfoControllerState extends State<FaultInfoController> {
 
               Container(
                 width: Constants.screenWidth(context) - 52*2,
-                child: Constants.mediumWhiteTextWidget('02.Enter a smaller right-angled area.', 16, Colors.white,maxLines: 3 ,
+                child: Constants.mediumWhiteTextWidget('2.Stuck in Tight Right-Angled Space', 16, Colors.white,maxLines: 3 ,
                     height: 1.1),
               ),
 
               SizedBox(height: 12,),
               Container(
                 width: Constants.screenWidth(context) - 52*2,
-                child: Constants.mediumWhiteTextWidget('Switch to manual mode to control the cart to leave the area.', 16,
+                child: Constants.mediumWhiteTextWidget('Solution:\n Switch to manual mode and guide the SeekerBot out of the area.', 16,
                     Color.fromRGBO(248, 98, 21, 1),maxLines: 3 ,
                     height: 1.1),
               ),
@@ -154,15 +147,15 @@ class _FaultInfoControllerState extends State<FaultInfoController> {
 
               Container(
                 width: Constants.screenWidth(context) - 52*2,
-                child: Constants.mediumWhiteTextWidget('03.The walking wheel is obstructed by an abnormal object.', 16, Colors.white,maxLines: 3 ,
+                child: Constants.mediumWhiteTextWidget('03.Wheel Obstructed', 16, Colors.white,maxLines: 3 ,
                     height: 1.1),
               ),
 
               SizedBox(height: 12,),
               Container(
                 width: Constants.screenWidth(context) - 52*2,
-                child: Constants.mediumWhiteTextWidget('Inspect for foreign objects near the seekerbots walking wheels and remove them.', 16,
-                    Color.fromRGBO(248, 98, 21, 1),maxLines: 3 ,
+                child: Constants.mediumWhiteTextWidget('Solution: \nInspect the wheels for foreign objects or any object sticking out and remove the obstructions.', 16,
+                    Color.fromRGBO(248, 98, 21, 1),maxLines: 4 ,
                     height: 1.1),
               ),
               SizedBox(height: 24,),
