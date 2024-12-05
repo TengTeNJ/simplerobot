@@ -180,8 +180,9 @@ class _RobotStatsControllerState extends State<RobotStatsController> {
     _list.forEach((element){
       totalTime += int.parse(element.pickupBallTime);
     });
+    // 显示为小时（四舍五入）
     setState(() {
-      totalPickupBallTimes = (totalTime ~/ 60).toString();
+      totalPickupBallTimes = (totalTime / 3600).round().toString();
     });
   }
 

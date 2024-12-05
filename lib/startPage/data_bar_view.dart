@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shopify_flutter/shopify_flutter.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:tennis_robot/constant/constants.dart';
+import 'package:tennis_robot/robotstats/game_model.dart';
 import 'package:tennis_robot/utils/dialog.dart';
 import '../models/my_status_model.dart';
 import '../utils/color.dart';
@@ -28,6 +30,8 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
     'Custom'
   ];
   int _timeIndex = 0;
+  String _startTime = '';
+  String _endTime = '';
 
   void _callback(Duration duration) {
     if (!_disposed) {
@@ -79,6 +83,22 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
     WidgetsBinding.instance.addPersistentFrameCallback(_callback);
   }
 
+  /* 根据日期筛选数据*/
+  filterData(String startTime, String endTime) {
+    var dateStartTime = DateTime.parse(startTime);
+    var dateEndTime = DateTime.parse(endTime);
+    List<MyStatsModel> filterData = [];
+    widget.datas.forEach((element){
+      var currentTime = DateTime.parse(element.gameTimer);
+      // 符合筛选条件的数据
+      if (currentTime.isAfter(dateStartTime) && dateEndTime.isAfter(currentTime)) {
+        filterData.add(element);
+      }
+    });
+    widget.datas = [];
+    widget.datas = filterData;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -90,7 +110,6 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-
                 Constants.mediumBaseTextWidget('Highest ${widget.maxCount}', 16),
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
@@ -99,8 +118,11 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
                     TTDialog.timeSelect(context, (startTime, endTime ,index){
                       print('${startTime}--${endTime}--${index}');
                       _timeIndex = index;
+                      _startTime = startTime;
+                      _endTime = endTime;
+                      filterData(startTime, endTime);
                       setState(() {});
-                    });
+                    },index: _timeIndex,start: _startTime != '' ? _startTime :null,end: _endTime != '' ? _endTime : null);
                   },
                   child: Container(
                     margin: EdgeInsets.only(right: 16),
