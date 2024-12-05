@@ -39,6 +39,7 @@ class _UserProfileControllerState extends State<UserProfileController> {
     setState(() {});
   }
 
+  // 计算文字宽高
   static Size boundingTextSize(BuildContext context, String text, TextStyle style,  {int maxLines = 2^31, double maxWidth = double.infinity}) {
     if (text == null || text.isEmpty) {
       return Size.zero;
@@ -78,11 +79,18 @@ class _UserProfileControllerState extends State<UserProfileController> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(onTap: () {
-                        var nick = _nickController.text;
-                        var email = _emailController.text;
-                        print('bbb${nick}');
-                        print('bbb${email}');
-
+                        var modifyNick = _nickController.text;
+                        var modifyEmail = _emailController.text;
+                        print('bbb${modifyNick}');
+                        print('bbb${modifyEmail}');
+                        if (modifyNick == '') {
+                          modifyNick = nickName;
+                        }
+                        if (modifyEmail == '') {
+                          modifyEmail = email;
+                        }
+                        // 更新用户信息
+                        DataBaseHelper().saveUserInfoData('${modifyNick}---${modifyEmail}');
                         NavigatorUtil.pop();
                       },
                         child: Text('   Save',

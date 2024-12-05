@@ -48,6 +48,17 @@ class StringUtil {
     return duration.inMilliseconds.ceil(); // 计算秒数并向上取整
   }
 
+  /*数据分析页面自定义时间展示*/
+  static String serviceStringMyStatuDateString(String timeString) {
+    try {
+      DateTime dateTime = stringToDate(timeString);
+      String formattedDate = DateFormat('MMM. dd').format(dateTime);
+      return formattedDate;
+    } catch (error) {
+      return '-';
+    }
+  }
+
 }
 
 /*十进制转换为二进制字符串*/
