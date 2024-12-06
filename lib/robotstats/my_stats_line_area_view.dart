@@ -5,6 +5,7 @@ import '../constant/constants.dart';
 import '../models/my_status_model.dart';
 import 'game_model.dart';
 import 'empty_view.dart';
+import 'package:intl/intl.dart';
 
 class MyStatsLineAreaView extends StatefulWidget {
   MyStatsLineAreaView({required this.datas ,required this.aveDatas, required this.maxCount});
@@ -33,6 +34,9 @@ class _MyStatsLineAreaViewState extends State<MyStatsLineAreaView> {
       plotAreaBorderColor: Colors.transparent,
       // 控制和Y交叉方向的直线的样式
       primaryYAxis: NumericAxis(
+          labelFormat: '{value}h',
+          // https://help.syncfusion.com/flutter/cartesian-charts/axis-customization(图表官方文档)
+          // labelFormat: (value) => '${value}h',
           edgeLabelPlacement: EdgeLabelPlacement.none,
           // 移除左侧的填充
           labelStyle: TextStyle(
