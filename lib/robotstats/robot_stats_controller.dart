@@ -1,8 +1,10 @@
 import 'dart:math';
+//import 'dart:nativewrappers/_internal/vm/lib/core_patch.dart';
 
 import 'package:flutter/material.dart';
 import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/customAppBar.dart';
+import 'package:tennis_robot/models/pickupBall_time.dart';
 import 'package:tennis_robot/models/pickup_ball_model.dart';
 import 'package:tennis_robot/robotstats/my_stats_line_area_view.dart';
 import 'package:tennis_robot/robotstats/stats_data_list_view.dart';
@@ -10,7 +12,7 @@ import 'package:tennis_robot/utils/navigator_util.dart';
 
 import '../models/my_status_model.dart';
 import '../utils/data_base.dart';
-import 'package:tennis_robot/startPage/data_bar_view.dart';
+import 'package:tennis_robot/robotstats/data_bar_view.dart';
 import 'game_model.dart';
 
 // 统计数据
@@ -31,8 +33,8 @@ class _RobotStatsControllerState extends State<RobotStatsController> {
   int maxCount = 0; // 最大进球数
 
   int maxTrainTime = 0; // 最大训练时间
-  List<Gamemodel> _datas = []; // 折线图数据
-  List<Gamemodel> _aveDatas = [];
+  List<PickupballTime> _datas = []; // 折线图数据
+  List<PickupballTime> _aveDatas = [];
 
   // 组装捡球数量柱状图数据
   Future<void> barChartData() async {
@@ -44,7 +46,7 @@ class _RobotStatsControllerState extends State<RobotStatsController> {
       // model.indexString = '0';
       // datas.add(model);
       // maxLeft = max(maxLeft, model.textWidth);
-     maxCount = 180;
+      maxCount = 180;
       setState(() {
 
       });
@@ -69,21 +71,24 @@ class _RobotStatsControllerState extends State<RobotStatsController> {
 
   // 组装训练时间折线图数据
   Future<void> lineChartData() async {
-    final _list = await DataBaseHelper().getData(kDataBaseTableName);
+    final _list = await DataBaseHelper().getRobotWorkTimeData(kDataBasePickupBallTimeTableName);
 
 
 
-    List<Gamemodel> _yourTrainlist = [];
-    List<Gamemodel> _avgTrainlist = [];
-    List<int> listTime = [];
+    List<PickupballTime> _yourTrainlist = [];
+    List<PickupballTime> _avgTrainlist = [];
+    List<double> listTime = [];
     if (_list.length == 0) { //折线图默认数据
       maxTrainTime = 120;
-      var trainTime = 0;
+      var trainTime = 0.0;
       listTime.add(trainTime);
-      Gamemodel l = Gamemodel(score: '0', indexString: '0');
+      // Gamemodel l = Gamemodel(score: '0', indexString: '0');
+      PickupballTime l = PickupballTime(pickupBallTime: '0',time: '0');
+
+
       _yourTrainlist.add(l);
 
-      Gamemodel avg = Gamemodel(score: '0', indexString: '0');
+      PickupballTime avg = PickupballTime(pickupBallTime: '0',time: '0');
       _avgTrainlist.add(avg);
 
        _datas.addAll(_yourTrainlist);
@@ -92,82 +97,21 @@ class _RobotStatsControllerState extends State<RobotStatsController> {
     }
 
     for(int i =0 ;i < _list.length; i ++ ){
-      // 平均50个球3分钟 --> 平均打一个球需要3.6秒
-       var trainTime = (int.parse(_list[i].pickupBallNumber) * 3.6).toInt();
+      /* 平均50个球3分钟 --> 平均打一个球需要3.6秒*/ //废弃的计算方法
+       var trainTime = (int.parse(_list[i].pickupBallTime)/3600).toStringAsFixed(2);
        print('0000${trainTime}');
-       listTime.add(trainTime);
-       Gamemodel l = Gamemodel(score: '${trainTime}', indexString: '${i}');
+     //  listTime.add(double.parse(trainTime));
+
+       PickupballTime l = PickupballTime(pickupBallTime: trainTime, time: '${i}');
        _yourTrainlist.add(l);
 
-       Gamemodel avg = Gamemodel(score: '90', indexString: '${i}');
+       PickupballTime avg = PickupballTime(pickupBallTime: '2.0',time: '${i}');
        _avgTrainlist.add(avg);
     }
-    maxTrainTime = listTime.reduce(max);
+    //maxTrainTime = listTime.reduce(max);
     _datas.addAll(_yourTrainlist);
     _aveDatas.addAll(_avgTrainlist);
   }
-
-  // 组装模拟数据数据
-  Future<void> chartData() async {
-    // var _list = [];
-    // // final _list = await DataBaseHelper().getData(kDataBaseTableName);
-    // PickupBallModel model = PickupBallModel(pickupBallNumber: '120', time: '2024-10-26');
-    // PickupBallModel model1 = PickupBallModel(pickupBallNumber: '150', time: '2024-10-25');
-    // PickupBallModel model2 = PickupBallModel(pickupBallNumber: '170', time: '2024-10-24');
-    // PickupBallModel model3 = PickupBallModel(pickupBallNumber: '180', time: '2024-10-23');
-    // PickupBallModel model4 = PickupBallModel(pickupBallNumber: '140', time: '2024-10-22');
-    //
-    //
-    // _list.add(model);
-    // _list.add(model1);
-    // _list.add(model2);
-    // _list.add(model3);
-    // _list.add(model4);
-    // _list.add(model4);
-    // _list.add(model4);
-    // _list.add(model4);
-    // _list.add(model4);
-    //
-    // if (_list.length == 0) {
-    //   return;
-    // }
-    // for (int i = 0 ; i < _list.length ; i++) {
-    //   MyStatsModel model = MyStatsModel();
-    //   model.speed = int.parse(_list[i].pickupBallNumber);
-    //   model.indexString = i.toString();
-    //   datas.add(model);
-    //   maxLeft = max(maxLeft, model.textWidth);
-    // }
-    // maxCount = getMaxValue(datas);
-
-    // 折线图的数据
-    Gamemodel l = Gamemodel(score: '550', indexString: '1');
-    Gamemodel l1 = Gamemodel(score: '200', indexString: '2');
-    Gamemodel l2 = Gamemodel(score: '333', indexString: '3');
-    Gamemodel l3 = Gamemodel(score: '145', indexString: '4');
-
-    List<Gamemodel> _list1 = [];
-    _list1.add(l);
-   // _list1.add(l1);
-    // _list1.add(l2);
-    // _list1.add(l3);
-
-    _datas.addAll(_list1);
-
-    Gamemodel l4 = Gamemodel(score: '300', indexString: '1');
-    Gamemodel l5 = Gamemodel(score: '300', indexString: '2');
-    Gamemodel l6 = Gamemodel(score: '300', indexString: '3');
-    Gamemodel l7 = Gamemodel(score: '300', indexString: '4');
-
-    List<Gamemodel> _list2 = [];
-    _list2.add(l4);
-    //_list2.add(l5);
-    // _list2.add(l6);
-    // _list2.add(l7);
-
-    _aveDatas.addAll(_list2);
-  }
-
 
   int getMaxValue(List<MyStatsModel> items) {
     return items.reduce((max, item) => max.speed > item.speed ? max : item).speed;

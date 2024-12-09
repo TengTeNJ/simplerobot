@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-
+import 'package:tennis_robot/models/pickupBall_time.dart';
 import '../constant/constants.dart';
-import '../models/my_status_model.dart';
-import 'game_model.dart';
 import 'empty_view.dart';
-import 'package:intl/intl.dart';
 
 class MyStatsLineAreaView extends StatefulWidget {
   MyStatsLineAreaView({required this.datas ,required this.aveDatas, required this.maxCount});
-  List<Gamemodel> datas = []; // 个人训练的数据
-  List<Gamemodel> aveDatas = []; // 平均时间的数据
+  List<PickupballTime> datas = []; // 个人训练的数据
+  List<PickupballTime> aveDatas = []; // 平均时间的数据
   int maxCount = 3;
 
   @override
@@ -45,12 +42,12 @@ class _MyStatsLineAreaViewState extends State<MyStatsLineAreaView> {
             fontFamily: 'SanFranciscoDisplay',
             fontWeight: FontWeight.w500,
           ),
-          maximum: widget.maxCount.toDouble(),
+          maximum: 3.0,
           axisLine: AxisLine(width: 2, color: Colors.transparent),
           // 设置 X 轴轴线颜色和宽度
           labelPosition: ChartDataLabelPosition.outside,
           plotOffset: 0,
-          interval: widget.maxCount.toDouble() / 3.0,
+          interval: 1.0,
           majorTickLines: MajorTickLines(color: Colors.transparent, size: 0),
           // 超出坐标系部分的线条设置
           majorGridLines: MajorGridLines(
@@ -83,7 +80,7 @@ class _MyStatsLineAreaViewState extends State<MyStatsLineAreaView> {
         MajorTickLines(color: Colors.white, size: 0), // 超出坐标系部分的线条设置
       ),
       // tooltipBehavior: _tooltipBehavior,
-      series: <CartesianSeries<Gamemodel, String>>[
+      series: <CartesianSeries<PickupballTime, String>>[
         AreaSeries(
 
             gradient: LinearGradient(
@@ -115,12 +112,9 @@ class _MyStatsLineAreaViewState extends State<MyStatsLineAreaView> {
 
 
             dataSource: widget.datas,
-            pointColorMapper: (Gamemodel data, _) => Color.fromRGBO(233,100,21,1.0),
-            xValueMapper: (Gamemodel data, _) => data.indexString,
-            yValueMapper: (Gamemodel data, _) =>
-            int.parse(data.score) > 1000
-                ? 1000
-                : int.parse(data.score)),
+            pointColorMapper: (PickupballTime data, _) => Color.fromRGBO(233,100,21,1.0),
+            xValueMapper: (PickupballTime data, _) => data.time,
+            yValueMapper: (PickupballTime data, _) => double.parse(data.pickupBallTime)),
         AreaSeries(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
@@ -135,12 +129,9 @@ class _MyStatsLineAreaViewState extends State<MyStatsLineAreaView> {
             borderWidth: 1,
 
             dataSource: widget.aveDatas,
-            pointColorMapper: (Gamemodel data, _) => Color.fromRGBO(26,205,123,1.0),
-            xValueMapper: (Gamemodel data, _) => data.indexString,
-            yValueMapper: (Gamemodel data, _) =>
-            int.parse(data.score) > 500
-                ? 500
-                : int.parse(data.score)),
+            pointColorMapper: (PickupballTime data, _) => Color.fromRGBO(26,205,123,1.0),
+            xValueMapper: (PickupballTime data, _) => data.time,
+            yValueMapper: (PickupballTime data, _) => double.parse(data.pickupBallTime)),
 
       ],
     )
