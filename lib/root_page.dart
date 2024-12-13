@@ -2,15 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:tennis_robot/startPage/action_controller.dart';
-import 'package:tennis_robot/customAppBar.dart';
-import 'package:tennis_robot/home/home_page_controller.dart';
 import 'package:tennis_robot/profile/profile_controller.dart';
-import 'package:tennis_robot/route/routes.dart';
 import 'package:tennis_robot/utils/navigator_util.dart';
 import 'constant/constants.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shopify_flutter/shopify_flutter.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class RootPageController extends StatefulWidget {
   const RootPageController({super.key});
@@ -24,7 +20,7 @@ class _RootPageControllerState extends State<RootPageController> {
   late PageController _pageController;
 
   final List<StatefulWidget> _pageviews = [
-    HomePageController(),
+
     ActionController(),
     ProfileController(),
   ];
@@ -89,10 +85,7 @@ class _RootPageControllerState extends State<RootPageController> {
           setState(() {
             _currentIndex = i;
           });
-           if (i == 1) {
-             NavigatorUtil.push(Routes.selectMode);//
-             }
-           },
+          },
       ),
       body: _pageviews[_currentIndex],
     );
