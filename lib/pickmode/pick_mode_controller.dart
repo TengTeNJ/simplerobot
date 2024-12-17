@@ -109,6 +109,8 @@ class _PickModeControllerState extends State<PickModeController> {
          BleSendUtil.setRobotCollectingWheelSpeed(2);
        });
     });
+    // 默认设置机器人的速度
+   getDBSpeedData();
 
     getTodayBallNumsByDB();
     getTodayRobotUserTime();
@@ -166,6 +168,24 @@ class _PickModeControllerState extends State<PickModeController> {
       DataBaseHelper().updateData(kDataBaseTableName, model.toJson(), model.time);
     } else {
       DataBaseHelper().insertData(kDataBaseTableName, model);
+    }
+  }
+
+  /// 默认设置机器人的速度
+  Future<void> getDBSpeedData () async {
+    var currentRobotSpeed = await DataBaseHelper().fetchRobotSpeedData();
+    if (currentRobotSpeed == 0) {
+      currentRobotSpeed = 1;
+    }
+    if (currentRobotSpeed == 2) {
+      BleSendUtil.setSpeed(RobotSpeed.fast); //高速
+      print('2');
+    } else if (currentRobotSpeed == 3) {
+      BleSendUtil.setSpeed(RobotSpeed.faster); //超高速
+      print('3');
+    } else {
+      BleSendUtil.setSpeed(RobotSpeed.slow); //低速
+      print('1');
     }
   }
   @override

@@ -24,7 +24,8 @@ enum RobotAvoidanceDistance {
 /*机器人速度 */
 enum RobotSpeed {
   slow, // 低速
-  fast // 高速
+  fast, // 高速
+  faster // 超高速
 }
 
 class RobotDataModel {
