@@ -5,7 +5,8 @@ import '../constant/constants.dart';
 // 选项调节view
 class SettingOptionAdjustView extends StatefulWidget {
   Function? areaClick;
-  SettingOptionAdjustView({this.areaClick});
+  int defaultIndex = 0;
+  SettingOptionAdjustView({this.areaClick,required this.defaultIndex});
 
   @override
   State<SettingOptionAdjustView> createState() => _SettingOptionAdjustViewState();
@@ -13,6 +14,13 @@ class SettingOptionAdjustView extends StatefulWidget {
 
 class _SettingOptionAdjustViewState extends State<SettingOptionAdjustView> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _currentIndex = widget.defaultIndex;
+  }
 
   void _actionClick(int index) {
     setState(() {
