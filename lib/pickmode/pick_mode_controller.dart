@@ -38,10 +38,12 @@ class _PickModeControllerState extends State<PickModeController> {
   SelectedMode selectedMode = SelectedMode.pickMode;
   int todayPickUpBalls =0; // 今日捡球的数量
   int todayRobotWorkTime = 0; // 机器人今日工作的时间
-
-
   int todayCal = 0; // 今日消耗的卡路里
   var imageName = 'mode_start';
+
+  bool lowBatteryAlertIsShow = false; // 低电量弹窗是否弹出过
+  bool shutDownAlertIsShow = false; // 低电量关机弹窗是否弹出过
+
 
   // 获取今日的捡球数
   void getTodayBallNumsByDB() async{
@@ -125,6 +127,24 @@ class _PickModeControllerState extends State<PickModeController> {
 
     // 监听捡球数变化
     RobotManager().dataChange = (TCPDataType type) {
+      int power = RobotManager().dataModel.powerValue;
+      if (power < 20 && power > 5) {
+        if (lowBatteryAlertIsShow == false) {
+          lowBatteryAlertIsShow = true;
+          // 低电量弹窗
+          TTDialog.robotLowBatteryDialog(context,currentBattery: power,() async {
+            NavigatorUtil.pop();
+          });
+        }
+      }
+
+      if (power <=5  && shutDownAlertIsShow == false) { // 提示关机弹窗
+         shutDownAlertIsShow = true;
+         TTDialog.robotLowBatteryDialog(context,currentBattery: power, () async {
+           NavigatorUtil.pop();
+         });
+      }
+
       if(type == TCPDataType.finishOneFlag) { // 機器人撿球成功上報
         print('robot finishOneFlag');
         setState(() {
@@ -204,7 +224,7 @@ class _PickModeControllerState extends State<PickModeController> {
                 TTDialog.robotEndTask(context, () async{
                   NavigatorUtil.pop();
                   NavigatorUtil.pop();
-                 // BleSendUtil.setRobotMode(RobotMode.rest);
+                  BleSendUtil.setRobotMode(RobotMode.rest);
                 });
               },
                 child: Row(
@@ -246,7 +266,6 @@ class _PickModeControllerState extends State<PickModeController> {
                 } else {
                   BleSendUtil.setRobotMode(RobotMode.training);
                   print('start training');
-
                 }
                 Vibration.vibrate(duration: 500);
                 setState(() {
@@ -278,12 +297,6 @@ class _PickModeControllerState extends State<PickModeController> {
                   Vibration.vibrate(duration: 500); // 触发震动
                   if(index == 0) {
                     selectedMode = SelectedMode.pickMode;
-                    // 低电量
-                    // TTDialog.robotLowBatteryDialog(context,() async {
-                    //   NavigatorUtil.pop();
-                    // });
-
-
                     if (imageName == 'mode_start'){
                       BleSendUtil.setRobotMode(RobotMode.training);
                       print('捡球模式');
