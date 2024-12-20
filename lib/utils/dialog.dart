@@ -73,7 +73,8 @@ class TTDialog {
 
   }
   // 低电量提醒
-  static robotLowBatteryDialog(BuildContext context,Function exchange) {
+  static robotLowBatteryDialog(BuildContext context,Function exchange,{
+    int currentBattery = 20}) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -86,7 +87,7 @@ class TTDialog {
                 color: Constants.dialogBgColor,
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              child:RobotLowBatteryDialog(exchange: exchange, title: 'Low Battery',descTitle: '20% battery remaining Please recharge your Bot',imgName: 'images/base/low_battery.png',),
+              child:RobotLowBatteryDialog(exchange: exchange, title: 'Low Battery',descTitle: '${currentBattery}% battery remaining Please recharge your Bot',imgName: 'images/base/low_battery.png',),
             ),
           );
         }
@@ -95,6 +96,7 @@ class TTDialog {
   // 蓝牙断链提醒
   static robotBleDisconnectDialog(BuildContext context,Function exchange) {
     showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return Dialog(
@@ -158,6 +160,8 @@ class TTDialog {
   // 结束任务提醒
   static robotEndTask(BuildContext context,Function exchange) {
     showDialog(
+        barrierDismissible: false,
+
         context: context,
         builder: (BuildContext context) {
           return Dialog(
@@ -169,7 +173,7 @@ class TTDialog {
                 color: Constants.dialogBgColor,
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              child:RobotLowBatteryDialog(exchange: exchange, title: 'Exit',descTitle: 'Seekerbot will stop working',imgName: 'images/base/robot_back.png',),
+              child:RobotLowBatteryDialog(exchange: exchange, title: 'Finish',descTitle: 'Seekerbot will stop working',imgName: 'images/base/robot_end_task.png',),
             ),
           );
         }
@@ -677,7 +681,6 @@ class RobotModelAlertDialog extends StatelessWidget {
           SizedBox(
             height: 27,
           ),
-
           Constants.boldWhiteTextWidget('Training Mode', 20),
 
           SizedBox(
@@ -761,7 +764,7 @@ class RobotLowBatteryDialog extends StatelessWidget {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
-            children: [CancelButton()],
+            children: title == 'Bluetooth Disconnected' ? [Container()] : [CancelButton()],
           ),
 
           SizedBox(
@@ -784,7 +787,7 @@ class RobotLowBatteryDialog extends StatelessWidget {
           Constants.regularWhiteTextWidget('${this.descTitle}', 16,Constants.connectTextColor,height: 1.3),
 
           SizedBox(
-            height: 84,
+            height: 46,
           ),
           Padding(padding: EdgeInsets.only(left: 24,right: 24),child: BaseButton(
               borderRadius: BorderRadius.circular(20),

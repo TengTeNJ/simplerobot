@@ -110,4 +110,28 @@ class DataBaseHelper {
      return prefs.getInt('useTime') ?? 0;
    }
 
+   ///  设置的机器人速度
+   Future<void> saveRobotSpeedData(int robotSpeed) async {
+     final prefs = await SharedPreferences.getInstance();
+     prefs.setInt('robotSpeedData', robotSpeed);
+   }
+
+   Future<int> fetchRobotSpeedData() async {
+     final prefs = await SharedPreferences.getInstance();
+     return prefs.getInt('robotSpeedData') ?? 1;
+   }
+
+   /// 设置球的类型
+   Future<void> saveBallTypeData(int ballType) async {
+     final prefs = await SharedPreferences.getInstance();
+     prefs.setInt('ballTypeData', ballType);
+   }
+
+   Future<int> fetchBallTypeData() async {
+     final prefs = await SharedPreferences.getInstance();
+     return prefs.getInt('ballTypeData') ?? 0;
+   }
+
+
+
 }
