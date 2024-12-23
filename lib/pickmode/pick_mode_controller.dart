@@ -107,12 +107,9 @@ class _PickModeControllerState extends State<PickModeController> {
     // 界面一进来默认是捡球训练模式
     Future.delayed(Duration(milliseconds: 500), () {
       BleSendUtil.setRobotMode(RobotMode.training);
-       Future.delayed(Duration(milliseconds: 100),() {
-         BleSendUtil.setRobotCollectingWheelSpeed(2);
-       });
     });
     // 默认设置机器人的速度
-   getDBSpeedData();
+    getDBSpeedData();
 
     getTodayBallNumsByDB();
     getTodayRobotUserTime();
@@ -191,7 +188,7 @@ class _PickModeControllerState extends State<PickModeController> {
     }
   }
 
-  /// 默认设置机器人的速度
+  /// 默认设置机器人的速度  默认设置BallType
   Future<void> getDBSpeedData () async {
     var currentRobotSpeed = await DataBaseHelper().fetchRobotSpeedData();
     if (currentRobotSpeed == 0) {
@@ -199,13 +196,27 @@ class _PickModeControllerState extends State<PickModeController> {
     }
     if (currentRobotSpeed == 2) {
       BleSendUtil.setSpeed(RobotSpeed.fast); //高速
-      print('2');
+      print('默认机器人速度为高速');
     } else if (currentRobotSpeed == 3) {
       BleSendUtil.setSpeed(RobotSpeed.faster); //超高速
-      print('3');
+      print('默认机器人速度为超高速');
     } else {
       BleSendUtil.setSpeed(RobotSpeed.slow); //低速
-      print('1');
+      print('默认机器人速度为低速');
+    }
+
+    /// 默认设置BallType
+    var currentBallType = await DataBaseHelper().fetchBallTypeData();
+    if (currentBallType == 0) {
+      print('收球轮速度慢速${currentBallType}');
+      Future.delayed(Duration(milliseconds: 100),() {
+        BleSendUtil.setRobotCollectingWheelSpeed(1);
+      });
+    } else {
+      print('收球轮速度快速${currentBallType}');
+      Future.delayed(Duration(milliseconds: 100),() {
+        BleSendUtil.setRobotCollectingWheelSpeed(2);
+      });
     }
   }
   @override
