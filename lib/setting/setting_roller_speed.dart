@@ -6,6 +6,7 @@ import 'package:tennis_robot/setting/image_slider_thumb.dart';
 import 'package:tennis_robot/setting/setting_option_adjust_view.dart';
 import 'package:tennis_robot/utils/ble_send_util.dart';
 import 'package:tennis_robot/utils/data_base.dart';
+import 'package:vibration/vibration.dart';
 import '../constant/constants.dart';
 import '../utils/navigator_util.dart';
 
@@ -56,6 +57,8 @@ class _SettingRollerSpeedState extends State<SettingRollerSpeed> {
       divisions: 2,
       //滚动时会回调
       onChanged: (double value) {
+        Vibration.vibrate(duration: 500); // 触发震动
+
         _sliderValue = value;
         print("Value $_sliderValue");
         if (value == 2.0) {

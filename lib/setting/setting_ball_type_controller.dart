@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_robot/setting/setting_balltype_data_list_view.dart';
+import 'package:tennis_robot/utils/data_base.dart';
 
 import '../constant/constants.dart';
 import '../utils/navigator_util.dart';
@@ -13,6 +14,22 @@ class SettingBallTypeController extends StatefulWidget {
 }
 
 class _SettingBallTypeControllerState extends State<SettingBallTypeController> {
+
+  int _currentBallType = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getDBBallTYpeData();
+  }
+
+  Future<void> getDBBallTYpeData () async {
+    _currentBallType = await DataBaseHelper().fetchBallTypeData();
+    print('balltype 888 ${_currentBallType}');
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,6 +52,7 @@ class _SettingBallTypeControllerState extends State<SettingBallTypeController> {
                   children: [
                     GestureDetector(onTap: () {
                       NavigatorUtil.pop();
+                      // DataBaseHelper().saveBallTypeData(_currentBallType);
                     },
                       child: Text('   Save',
                         textAlign: TextAlign.center,
@@ -59,12 +77,10 @@ class _SettingBallTypeControllerState extends State<SettingBallTypeController> {
                 color: Color.fromRGBO(86, 89, 101, 1),
               ),
 
-              SettingBalltypeDataListView()
+              SettingBalltypeDataListView(currentIndex: _currentBallType,)
             ],
 
           ),
-
-
         ),
       ),
     );
