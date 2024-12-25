@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:tennis_robot/constant/constants.dart';
@@ -9,6 +11,7 @@ import 'package:tennis_robot/utils/robot_send_data.dart';
 
 import '../utils/ble_send_util.dart';
 import '../utils/dialog.dart';
+import '../utils/event_bus.dart';
 // import 'dart:html';
 class ConnectRobotController extends StatefulWidget {
   const ConnectRobotController({super.key});
@@ -20,6 +23,9 @@ class ConnectRobotController extends StatefulWidget {
 class _ConnectRobotControllerState extends State<ConnectRobotController> {
   bool isConnected = true; // 是否连接上WiFi
   var currentWifiName = 'SeekerBot';
+
+  late StreamSubscription subscription;
+
   @override
   void initState() {
 
@@ -27,6 +33,15 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
     super.initState();
     // 扫描蓝牙设备
     BluetoothManager().startScan();
+    subscription = EventBus().stream.listen((event){
+      if (event == kRobotConnectChange) {
+        print('机器人断连，蓝牙名字修改为默认名字');
+        currentWifiName = 'SeekerBot';
+        setState(() {});
+      }
+    });
+
+
     // setAngleData(35.toInt());
 
     // Future.delayed(Duration(milliseconds: 3000), () {
@@ -60,6 +75,12 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
     // });
 
 
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    print('page 销毁');
   }
 
   @override
@@ -162,12 +183,11 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
                             BluetoothManager().conectToDevice(model);
                           }
                         }
+
                         NavigatorUtil.push(Routes.connectSuccess);
                       }
-                     // NavigatorUtil.push(Routes.connectSuccess);
+                      // NavigatorUtil.push(Routes.connectSuccess);
 
-                      // NavigatorUtil.push(Routes.action);
-                     // NavigatorUtil.push(Routes.inputUserInfo);
                     },
                     child: Container(
                       child: Center(

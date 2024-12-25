@@ -88,7 +88,9 @@ class _PickModeControllerState extends State<PickModeController> {
     // 断链退到连接界面
   BluetoothManager().disConnect = () {
     TTDialog.robotBleDisconnectDialog(context, () async {
-         NavigatorUtil.popToRoot();
+      // 发送通知到连接界面
+      EventBus().sendEvent(kRobotConnectChange);
+      NavigatorUtil.popToRoot();
     });
   };
 
@@ -218,6 +220,19 @@ class _PickModeControllerState extends State<PickModeController> {
         BleSendUtil.setRobotCollectingWheelSpeed(2);
       });
     }
+
+    /// 设置机器人捡球时间间隔
+    var currentGap = await DataBaseHelper().fetchResetGapData();
+    if (currentGap == 3) {
+      BleSendUtil.setRobotWaitTime(RobotResetGap.six);
+      print('机器人休息间隔${currentGap}');
+    } else if (currentGap == 2) {
+      BleSendUtil.setRobotWaitTime(RobotResetGap.three);
+      print('机器人休息间隔111${currentGap}');
+    } else {
+      BleSendUtil.setRobotWaitTime(RobotResetGap.zero);
+      print('机器人休息间隔${currentGap}');
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -237,7 +252,7 @@ class _PickModeControllerState extends State<PickModeController> {
                   NavigatorUtil.pop();
                   BleSendUtil.setRobotMode(RobotMode.rest);
                 });
-              },
+                },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
