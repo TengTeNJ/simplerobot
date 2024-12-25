@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/models/setting_model.dart';
+import 'package:tennis_robot/setting/setting_avoid_distance_controller.dart';
+import 'package:tennis_robot/setting/setting_reset_gap_controller.dart';
 
 import '../UserInfo/user_profile_controller.dart';
 import '../fault/fault_info_controller.dart';
@@ -28,8 +30,11 @@ class _SettingItemViewState extends State<SettingItemView> {
            NavigatorUtil.present(SettingRollerSpeed());
          } else if (widget.model.title == 'Profile') {
            NavigatorUtil.present(UserProfileController());
-         } else {
+         } else if (widget.model.title == 'Fault') {
            NavigatorUtil.present(FaultInfoController());
+         } else {
+           NavigatorUtil.present(SettingResetGapController());
+
          }
       },
       child: Container(
@@ -41,7 +46,7 @@ class _SettingItemViewState extends State<SettingItemView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              margin: EdgeInsets.only(left: 20),
+              margin: EdgeInsets.only(left: 24),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -49,12 +54,12 @@ class _SettingItemViewState extends State<SettingItemView> {
                       //margin: EdgeInsets.only(left: 20),
                       child: Image(
                         image: AssetImage('${widget.model.imageAsset}'),
-                        width: 28,
-                        height:28,)
+                        width: 34,
+                        height:34,)
                   ),
 
-                  SizedBox(width: 20,),
-                  Constants.mediumWhiteTextWidget('${widget.model.title}', 16, Colors.white),
+                  SizedBox(width: 24,),
+                  Constants.mediumWhiteTextWidget('${widget.model.title}', 18, Colors.white),
                 ],
               ),
             ),

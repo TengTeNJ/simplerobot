@@ -19,7 +19,7 @@ class _SettingListViewState extends State<SettingListView> {
         itemBuilder: (context ,index){
        return SettingItemView(model: widget.datas[index],);
     }, separatorBuilder: (context ,index) => SizedBox(
-      height: 16,
+      height: 10,
     ), itemCount: widget.datas.length);
   }
 }
