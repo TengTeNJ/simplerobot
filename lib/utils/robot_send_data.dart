@@ -85,11 +85,11 @@ List<int> setAvoidanceDistanceData(RobotAvoidanceDistance distance) {
 }
 
 /*设置机器人收完50个球等待时间*/
-List<int> setRobotWatiTimeData(RobotAvoidanceDistance distance) {
+List<int> setRobotWatiTimeData(RobotResetGap distance) {
   int start = kDataFrameHeader;
   int length = 6;
   int cmd = 0x49;
-  int data = distance.index + 1;
+  int data = distance.index;
   int cs = start + length + cmd + data;
   int end = kDataFrameFoot;
   print('设置机器收完50个球等待时间:${[start, length, cmd, data, cs, end]}');

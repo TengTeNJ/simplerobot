@@ -161,7 +161,6 @@ class TTDialog {
   static robotEndTask(BuildContext context,Function exchange) {
     showDialog(
         barrierDismissible: false,
-
         context: context,
         builder: (BuildContext context) {
           return Dialog(
@@ -179,6 +178,51 @@ class TTDialog {
         }
     );
   }
+
+  // 死角提示
+  static robotBlindCornerPrompt(BuildContext context,Function exchange) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            child: Container(
+              padding: EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+                // color: hexStringToColor('#3E3E55'),
+                color: Constants.dialogBgColor,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child:RobotLowBatteryDialog(exchange: exchange, title: 'Stuck',descTitle: 'The Bot is Stuck Please check your Bot',imgName: 'images/base/ble_disconnect.png',),
+            ),
+          );
+        }
+    );
+  }
+
+ // 缠绕提示
+  static robotWrapPrompt(BuildContext context,Function exchange) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            child: Container(
+              padding: EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+                // color: hexStringToColor('#3E3E55'),
+                color: Constants.dialogBgColor,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child:RobotLowBatteryDialog(exchange: exchange, title: 'Stuck',descTitle: 'The Bot is Stuck Please check your Bot',imgName: 'images/base/ble_disconnect.png',),
+            ),
+          );
+        }
+    );
+  }
+
 
   // 日期选择器
   static timeSelect(BuildContext context, Function confirm,
