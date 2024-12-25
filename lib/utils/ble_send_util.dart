@@ -46,11 +46,11 @@ class BleSendUtil {
   }
 
   // 设置机器人等待时间
-  static setWaitTime(RobotAvoidanceDistance distance) {
+  static setRobotWaitTime(RobotResetGap gap) {
     if (BluetoothManager().hasConnectedDeviceList.isEmpty) {
       return;
     }
-    BluetoothManager().writerDataToDevice(getWriterDevice(), setRobotWatiTimeData(distance));
+    BluetoothManager().writerDataToDevice(getWriterDevice(), setRobotWatiTimeData(gap));
   }
 
   static BLEModel getWriterDevice() {

@@ -132,6 +132,17 @@ class DataBaseHelper {
      return prefs.getInt('ballTypeData') ?? 0;
    }
 
+   /// 设置休息间隔
+   Future<void> saveResetGapData(int ballType) async {
+     final prefs = await SharedPreferences.getInstance();
+     prefs.setInt('ResetGapData', ballType);
+   }
+
+   Future<int> fetchResetGapData() async {
+     final prefs = await SharedPreferences.getInstance();
+     return prefs.getInt('ResetGapData') ?? 2; // 默认是2 间隔为3min
+   }
+
 
 
 }

@@ -215,4 +215,7 @@ const kRobotPickballTimeChange =
 //机器人捡球数量更新
 const kRobotPickballCountChange =
     'robot_pickball_count_change';
+//机器人断链通知到连接界面
+const kRobotConnectChange =
+    'robot_connect_change';
 
