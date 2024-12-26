@@ -31,17 +31,21 @@ class _FaultInfoControllerState extends State<FaultInfoController> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    GestureDetector(onTap: () {
+                    GestureDetector(onTap: (){
                       NavigatorUtil.pop();
                     },
-                      child: Text('   Back',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color.fromRGBO(248, 98, 21, 1),
-                          fontSize: 16,
+                      child: Container(
+                        margin: EdgeInsets.only(left: 16),
+                        color:  Constants.dialogBgColor,
+                        width: 100,
+                        child: Text('Back',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            color: Color.fromRGBO(248, 98, 21, 1),
+                            fontSize: 16,
+                          ),
                         ),
-                      ),
-                    ),
+                      ),),
                     Constants.boldWhiteTextWidget('Fault', 22),
                     Text('')
                   ],

@@ -50,18 +50,21 @@ class _SettingBallTypeControllerState extends State<SettingBallTypeController> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    GestureDetector(onTap: () {
+                    GestureDetector(onTap: (){
                       NavigatorUtil.pop();
-                      // DataBaseHelper().saveBallTypeData(_currentBallType);
                     },
-                      child: Text('   Save',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color.fromRGBO(248, 98, 21, 1),
-                          fontSize: 16,
+                      child: Container(
+                        margin: EdgeInsets.only(left: 16),
+                        color:  Constants.dialogBgColor,
+                        width: 100,
+                        child: Text('Save',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            color: Color.fromRGBO(248, 98, 21, 1),
+                            fontSize: 16,
+                          ),
                         ),
-                      ),
-                    ),
+                      ),),
 
                     Constants.boldWhiteTextWidget('Ball Type', 22),
                     Text('')

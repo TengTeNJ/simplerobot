@@ -145,20 +145,27 @@ class _SettingResetGapControllerState extends State<SettingResetGapController> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    GestureDetector(onTap: () {
+                    GestureDetector(onTap: (){
                       NavigatorUtil.pop();
                       DataBaseHelper().saveResetGapData(_sliderValue.toInt());
-                    },
-                      child: Text('   Save',
-                        textAlign: TextAlign.center,
+                      },
+                    child: Container(
+                      margin: EdgeInsets.only(left: 16),
+                      color:  Constants.dialogBgColor,
+                      width: 100,
+                      child: Text('Save',
+                        textAlign: TextAlign.left,
                         style: TextStyle(
                           color: Color.fromRGBO(248, 98, 21, 1),
                           fontSize: 16,
                         ),
                       ),
+                    ),),
+
+                    Center(
+                      child:Constants.boldWhiteTextWidget('Reset Gap', 22),
                     ),
 
-                    Constants.boldWhiteTextWidget('Reset Gap', 22),
                     Text('')
                   ],
                 ),

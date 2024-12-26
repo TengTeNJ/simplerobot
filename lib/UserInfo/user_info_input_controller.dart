@@ -145,7 +145,7 @@ class _UserInfoInputControllerState extends State<UserInfoInputController> {
                             // 保存用户信息
                             DataBaseHelper().saveUserInfoData('${nick}---${email}');
 
-                            NavigatorUtil.pushAndRemoveCurrentPage(Routes.action);
+                            NavigatorUtil.push(Routes.action);
                           },
                           child: Container(
                               child: Center(
