@@ -234,6 +234,29 @@ class _PickModeControllerState extends State<PickModeController> {
       print('机器人休息间隔${currentGap}');
     }
   }
+
+  // 计算文字宽高
+  static Size boundingTextSize(BuildContext context, String text, TextStyle style,  {int maxLines = 2^31, double maxWidth = double.infinity}) {
+    if (text == null || text.isEmpty) {
+      return Size.zero;
+    }
+    final TextPainter textPainter = TextPainter(
+        textDirection: TextDirection.ltr,
+        // locale: Localizations.localeOf(context, null Ok: true),
+        locale: Localizations.localeOf(context),
+        text: TextSpan(text: text, style: style), maxLines: maxLines)
+      ..layout(maxWidth: maxWidth);
+    print('文字高度${textPainter.size.height}');
+    return textPainter.size;
+  }
+
+  double getMargin() { //
+    var fontHeight = boundingTextSize(context, 'AUTO',
+        TextStyle(color: Colors.white,fontSize: 16,
+            fontFamily: 'SanFranciscoDisplay')).height;
+    var remoteControlHeight = Constants.screenWidth(context) - 120;
+    return remoteControlHeight - fontHeight - 204.0-34.0;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -255,13 +278,28 @@ class _PickModeControllerState extends State<PickModeController> {
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                 // crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Image(
-                      width:24,
-                      height: 24,
-                      image: AssetImage('images/base/back.png'),
-                    ),
+                   GestureDetector(onTap: (){
+                     TTDialog.robotEndTask(context, () async{
+                       NavigatorUtil.pop();
+                       NavigatorUtil.pop();
+                       BleSendUtil.setRobotMode(RobotMode.rest);
+                     });
+                     },
+                     child: Container(
+                       padding: EdgeInsets.only(left: 0,top: 12,bottom: 12,right: 24),
+                       color: Constants.darkControllerColor,
+                       width: 48,
+                       height: 48,
+                       child: Image(
+                         width: 24,
+                         height: 24,
+                         image: AssetImage('images/base/back.png'),
+                       ),
+                     ),
+                   ),
+
                     Text('Seekerbot',
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -283,7 +321,6 @@ class _PickModeControllerState extends State<PickModeController> {
             ),
             selectedMode == SelectedMode.pickMode ?
             Container(
-              // margin: EdgeInsets.only(left: Constants.screenWidth(context)/2 - 102,top: 102),
               margin: EdgeInsets.only(left:0,top: 64),
               child: GestureDetector(onTap: (){
                 if (imageName == 'mode_start') {
@@ -305,11 +342,13 @@ class _PickModeControllerState extends State<PickModeController> {
                       width:204,
                       height: 204,
                     ),
+                    SizedBox(height: 34),
+                    Constants.regularWhiteTextWidget('AUTO', 16, Constants.selectedModelBgColor),
                   ],
                 ),
-
               ),
-            ) : Container(
+            ) :
+            Container(
               alignment: Alignment.center,
               margin: EdgeInsets.only(top: 68),
               child: RemoteControlView(),
@@ -317,40 +356,43 @@ class _PickModeControllerState extends State<PickModeController> {
 
             Container(
               alignment: Alignment.center,
-              margin: EdgeInsets.only(top: selectedMode == SelectedMode.pickMode ? 110 : 75),
-              child: ModeSwitchView(areaClick: (index){
-                setState(() {
-                  Vibration.vibrate(duration: 500); // 触发震动
-                  if(index == 0) {
-                    selectedMode = SelectedMode.pickMode;
-                    if (imageName == 'mode_start'){
-                      BleSendUtil.setRobotMode(RobotMode.training);
-                      print('捡球模式');
+              margin: EdgeInsets.only(top:  selectedMode == SelectedMode.pickMode ? getMargin() + 75 : 75),
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 64),
+                child: ModeSwitchView(areaClick: (index){
+                  setState(() {
+                    Vibration.vibrate(duration: 500); // 触发震动
+                    if(index == 0) {
+                      selectedMode = SelectedMode.pickMode;
+                      if (imageName == 'mode_start'){
+                        BleSendUtil.setRobotMode(RobotMode.training);
+                        print('捡球模式');
+                      } else {
+                        BleSendUtil.setRobotMode(RobotMode.rest);
+                        print('暂停模式');
+                      }
+                      print('123456${Constants.screenHeight(context)}');
+                      print('宽${Constants.screenWidth(context)}');
                     } else {
-                      BleSendUtil.setRobotMode(RobotMode.rest);
-                      print('暂停模式');
+                      print('遥控模式');
+                      selectedMode = SelectedMode.controlMode;
+                      BleSendUtil.setRobotMode(RobotMode.remote);
+
+                      // 500毫秒-> 设置控制角度为零，防止Fly那边报错
+                      Future.delayed(Duration(milliseconds: 500), () {
+                        print('设置角度为0');
+                        BleSendUtil.setRobotAngle(0);
+                      });
+
+                      // 卡停弹窗
+                      // TTDialog.robotRobotStopDialog(context, () async{
+                      //   NavigatorUtil.pop();
+                      // });
+
                     }
-                    print('123456${Constants.screenHeight(context)}');
-                    print('宽${Constants.screenWidth(context)}');
-                  } else {
-                    print('遥控模式');
-                    selectedMode = SelectedMode.controlMode;
-                    BleSendUtil.setRobotMode(RobotMode.remote);
-
-                    // 500毫秒-> 设置控制角度为零，防止Fly那边报错
-                    Future.delayed(Duration(milliseconds: 500), () {
-                      print('设置角度为0');
-                      BleSendUtil.setRobotAngle(0);
-                    });
-
-                    // 卡停弹窗
-                    // TTDialog.robotRobotStopDialog(context, () async{
-                    //   NavigatorUtil.pop();
-                    // });
-
-                  }
-                });
-              },),
+                  });
+                },),
+              ),
             ),
           ],
         ),
