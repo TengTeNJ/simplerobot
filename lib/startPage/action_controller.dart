@@ -41,6 +41,7 @@ class _ActionControllerState extends State<ActionController> {
   @override
   void initState() {
     super.initState();
+
     print('界面初始化');
     getTodayBallNumsByDB();
     getTodayRobotUserTime();
@@ -178,10 +179,11 @@ class _ActionControllerState extends State<ActionController> {
   }
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Constants.darkControllerColor,
       appBar: CustomAppBar(),
-      body: SingleChildScrollView(
+      body: WillPopScope(child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           // Container(
@@ -208,15 +210,15 @@ class _ActionControllerState extends State<ActionController> {
 
 
                   GestureDetector(onTap: (){
-                      NavigatorUtil.push(Routes.setting);
+                    NavigatorUtil.push(Routes.setting);
                   },
-                  child:  Container(
-                    // padding: EdgeInsets.only(top: 10),
-                    margin: EdgeInsets.only(right: 16),
-                    width: 26,
-                    height: 26,
-                    child: Center(child: Image(image: AssetImage('images/profile/profile_setting1.png'),width: 26,),),
-                  ) ,
+                    child:  Container(
+                      // padding: EdgeInsets.only(top: 10),
+                      margin: EdgeInsets.only(right: 16),
+                      width: 26,
+                      height: 26,
+                      child: Center(child: Image(image: AssetImage('images/profile/profile_setting1.png'),width: 26,),),
+                    ) ,
                   ),
                 ],
               ),
@@ -258,34 +260,34 @@ class _ActionControllerState extends State<ActionController> {
               ),
             ),
             Container(
-                // alignment: Alignment.topCenter,
-                // margin: EdgeInsets.only(left: 170 ,top: 10),
+              // alignment: Alignment.topCenter,
+              // margin: EdgeInsets.only(left: 170 ,top: 10),
 
-                child: GestureDetector(onTap: (){
-                  NavigatorUtil.push(Routes.stats);
-                  },
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
+              child: GestureDetector(onTap: (){
+                NavigatorUtil.push(Routes.stats);
+              },
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
 
-                    children: [
-                      Text('Stats',
-                        style: TextStyle(
-                          fontFamily: 'SanFranciscoDisplay',
-                          color: Constants.selectedModelBgColor,
-                          fontSize: 16,
-                        ),
+                  children: [
+                    Text('Stats',
+                      style: TextStyle(
+                        fontFamily: 'SanFranciscoDisplay',
+                        color: Constants.selectedModelBgColor,
+                        fontSize: 16,
                       ),
-                      SizedBox(width: 6),
-                      Image(
-                        color: Colors.red,
-                        width:6,
-                        height: 10,
-                        image: AssetImage('images/connect/more.png'),
-                      ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(width: 6),
+                    Image(
+                      color: Colors.red,
+                      width:6,
+                      height: 10,
+                      image: AssetImage('images/connect/more.png'),
+                    ),
+                  ],
                 ),
+              ),
             ),
             Container(
               margin: EdgeInsets.only(top: 18),
@@ -297,37 +299,41 @@ class _ActionControllerState extends State<ActionController> {
               margin: EdgeInsets.only(left: 0,top: 10) ,
               child: GestureDetector(onTap: (){
                 NavigatorUtil.push(Routes.pickMode).then((value){
-                   print('pop回来刷新电量了${value}');
-                   listenBattery(); // pop回来监听电量上报
+                  print('pop回来刷新电量了${value}');
+                  listenBattery(); // pop回来监听电量上报
+                  getTodayBallNumsByDB();// 刷新捡球数，防止两个界面捡球数有差异
+
                 });
               },
                 child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(child:  Image(
-                    width:118,
-                    height: 282,
-                    image: AssetImage('images/connect/left_mask.png'),
-                  ),),
-                 
-                  Image(
-                    width:126,
-                    height: 126,
-                    image: AssetImage('images/connect/robot_shutdown1.apng'),
-                  ),
-                  Expanded(child:  Image(
-                    width:118,
-                    height: 282,
-                    image: AssetImage('images/connect/right_mask.png'),
-                  ),),
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(child:  Image(
+                      width:118,
+                      height: 282,
+                      image: AssetImage('images/connect/left_mask.png'),
+                    ),),
 
-                ],
-              ),
+                    Image(
+                      width:126,
+                      height: 126,
+                      image: AssetImage('images/connect/robot_shutdown1.apng'),
+                    ),
+                    Expanded(child:  Image(
+                      width:118,
+                      height: 282,
+                      image: AssetImage('images/connect/right_mask.png'),
+                    ),),
+
+                  ],
+                ),
               ),
             ),
           ],
         ),
-      ),
+      ),onWillPop: (){
+        return Future.value(false);
+      },),
     );
   }
 }
