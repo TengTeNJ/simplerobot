@@ -14,6 +14,7 @@ import '../models/pickup_ball_model.dart';
 import '../route/routes.dart';
 import '../utils/blue_tooth_manager.dart';
 import '../utils/data_base.dart';
+import '../utils/dialog.dart';
 import '../utils/navigator_util.dart';
 import '../utils/robot_manager.dart';
 import '../utils/string_util.dart';
@@ -43,6 +44,15 @@ class _ActionControllerState extends State<ActionController> {
     super.initState();
 
     print('界面初始化');
+    // 断链退到连接界面
+   BluetoothManager().disConnect = () {
+      TTDialog.robotBleDisconnectDialog(context, () async {
+        // 发送通知到连接界面
+        EventBus().sendEvent(kRobotConnectChange);
+        NavigatorUtil.popToRoot();
+      });
+   };
+
     getTodayBallNumsByDB();
     getTodayRobotUserTime();
 

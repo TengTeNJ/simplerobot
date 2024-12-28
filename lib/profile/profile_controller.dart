@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/profile/setting_list_view.dart';
 import '../models/setting_model.dart';
+import '../utils/blue_tooth_manager.dart';
+import '../utils/dialog.dart';
+import '../utils/event_bus.dart';
 import '../utils/navigator_util.dart';
 
 class ProfileController extends StatefulWidget {
@@ -19,6 +22,20 @@ class _ProfileControllerState extends State<ProfileController> {
     SettingModel('images/profile/setting_profile.png','Profile'),
     SettingModel('images/profile/setting_fault.png','Fault'),
   ];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // 断链退到连接界面
+    BluetoothManager().disConnect = () {
+      TTDialog.robotBleDisconnectDialog(context, () async {
+        // 发送通知到连接界面
+        EventBus().sendEvent(kRobotConnectChange);
+        NavigatorUtil.popToRoot();
+      });
+    };
+  }
 
   @override
   Widget build(BuildContext context) {

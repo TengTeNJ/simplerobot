@@ -86,13 +86,13 @@ class _PickModeControllerState extends State<PickModeController> {
   void initState() {
 
     // 断链退到连接界面
-  BluetoothManager().disConnect = () {
+  // BluetoothManager().disConnect = () {
     TTDialog.robotBleDisconnectDialog(context, () async {
       // 发送通知到连接界面
       EventBus().sendEvent(kRobotConnectChange);
       NavigatorUtil.popToRoot();
     });
-  };
+  // };
 
     // 先发一个心跳包，Fly那边是根据心跳包判断连接状态（不然设置机器人模式会设置不成功）
     var list = BluetoothManager().deviceList;
@@ -262,141 +262,138 @@ class _PickModeControllerState extends State<PickModeController> {
     return Scaffold(
       backgroundColor: Constants.darkControllerColor,
       appBar: CustomAppBar(),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          // Container(
-          children: [
-            Container(
-              margin: EdgeInsets.only(left: 24) ,
-              child: GestureDetector( onTap: (){
-                TTDialog.robotEndTask(context, () async{
-                  NavigatorUtil.pop();
-                  NavigatorUtil.pop();
-                  BleSendUtil.setRobotMode(RobotMode.rest);
-                });
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                 // crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                   GestureDetector(onTap: (){
-                     TTDialog.robotEndTask(context, () async{
-                       NavigatorUtil.pop();
-                       NavigatorUtil.pop();
-                       BleSendUtil.setRobotMode(RobotMode.rest);
-                     });
-                     },
-                     child: Container(
-                       padding: EdgeInsets.only(left: 0,top: 12,bottom: 12,right: 24),
-                       color: Constants.darkControllerColor,
-                       width: 48,
-                       height: 48,
-                       child: Image(
-                         width: 24,
-                         height: 24,
-                         image: AssetImage('images/base/back.png'),
-                       ),
-                     ),
-                   ),
-
-                    Text('Seekerbot',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: 'tengxun',
-                        color: Colors.white,
-                        fontSize: 22,
+      body: WillPopScope(child:SingleChildScrollView(
+      child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+        // Container(
+        children: [
+          Container(
+            margin: EdgeInsets.only(left: 24) ,
+            child: GestureDetector( onTap: (){
+              TTDialog.robotEndTask(context, () async{
+                NavigatorUtil.pop();
+                NavigatorUtil.pop();
+                BleSendUtil.setRobotMode(RobotMode.rest);
+              });
+            },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  GestureDetector(onTap: (){
+                    TTDialog.robotEndTask(context, () async{
+                      NavigatorUtil.pop();
+                      NavigatorUtil.pop();
+                      BleSendUtil.setRobotMode(RobotMode.rest);
+                    });
+                  },
+                    child: Container(
+                      padding: EdgeInsets.only(left: 0,top: 12,bottom: 12,right: 24),
+                      color: Constants.darkControllerColor,
+                      width: 48,
+                      height: 48,
+                      child: Image(
+                        width: 24,
+                        height: 24,
+                        image: AssetImage('images/base/back.png'),
                       ),
                     ),
-                    Text('123456')
-                  ],
-                ),
-              ),
-            ),
+                  ),
 
-            Container(
-              margin: EdgeInsets.only(top: 64),
-              width: Constants.screenWidth(context),
-              child: ActionDataListView(todayCount: '${todayPickUpBalls}',useMinutes: todayRobotWorkTime,todayCal: todayCal,),
-            ),
-            selectedMode == SelectedMode.pickMode ?
-            Container(
-              margin: EdgeInsets.only(left:0,top: 64),
-              child: GestureDetector(onTap: (){
-                if (imageName == 'mode_start') {
-                  BleSendUtil.setRobotMode(RobotMode.rest);
-                  print('shutdown rest');
-                } else {
-                  BleSendUtil.setRobotMode(RobotMode.training);
-                  print('start training');
-                }
-                Vibration.vibrate(duration: 500);
-                setState(() {
-                  imageName = imageName == 'mode_start' ? 'mode_pause' :'mode_start';
-                });
-              },
-                child: Column(
-                  children: [
-                    Padding(padding: EdgeInsets.only(left: 0,top: 10)),
-                    Image(image: AssetImage('images/home/${imageName}.apng'),
-                      width:204,
-                      height: 204,
+                  Text('Seekerbot',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'tengxun',
+                      color: Colors.white,
+                      fontSize: 22,
                     ),
-                    SizedBox(height: 34),
-                    Constants.regularWhiteTextWidget('AUTO', 16, Constants.selectedModelBgColor),
-                  ],
-                ),
+                  ),
+                  Text('123456')
+                ],
               ),
-            ) :
-            Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.only(top: 68),
-              child: RemoteControlView(),
             ),
+          ),
 
-            Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.only(top:  selectedMode == SelectedMode.pickMode ? getMargin() + 75 : 75),
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 64),
-                child: ModeSwitchView(areaClick: (index){
-                  setState(() {
-                    Vibration.vibrate(duration: 500); // 触发震动
-                    if(index == 0) {
-                      selectedMode = SelectedMode.pickMode;
-                      if (imageName == 'mode_start'){
-                        BleSendUtil.setRobotMode(RobotMode.training);
-                        print('捡球模式');
-                      } else {
-                        BleSendUtil.setRobotMode(RobotMode.rest);
-                        print('暂停模式');
-                      }
-                      print('123456${Constants.screenHeight(context)}');
-                      print('宽${Constants.screenWidth(context)}');
+          Container(
+            margin: EdgeInsets.only(top: 64),
+            width: Constants.screenWidth(context),
+            child: ActionDataListView(todayCount: '${todayPickUpBalls}',useMinutes: todayRobotWorkTime,todayCal: todayCal,),
+          ),
+          selectedMode == SelectedMode.pickMode ?
+          Container(
+            margin: EdgeInsets.only(left:0,top: 64),
+            child: GestureDetector(onTap: (){
+              if (imageName == 'mode_start') {
+                BleSendUtil.setRobotMode(RobotMode.rest);
+                print('shutdown rest');
+              } else {
+                BleSendUtil.setRobotMode(RobotMode.training);
+                print('start training');
+              }
+              Vibration.vibrate(duration: 500);
+              setState(() {
+                imageName = imageName == 'mode_start' ? 'mode_pause' :'mode_start';
+              });
+            },
+              child: Column(
+                children: [
+                  Padding(padding: EdgeInsets.only(left: 0,top: 10)),
+                  Image(image: AssetImage('images/home/${imageName}.apng'),
+                    width:204,
+                    height: 204,
+                  ),
+                  SizedBox(height: 34),
+                  Constants.regularWhiteTextWidget('AUTO', 16, Constants.selectedModelBgColor),
+                ],
+              ),
+            ),
+          ) :
+          Container(
+            alignment: Alignment.center,
+            margin: EdgeInsets.only(top: 68),
+            child: RemoteControlView(),
+          ),
+
+          Container(
+            alignment: Alignment.center,
+            margin: EdgeInsets.only(top:  selectedMode == SelectedMode.pickMode ? getMargin() + 75 : 75),
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 64),
+              child: ModeSwitchView(areaClick: (index){
+                setState(() {
+                  Vibration.vibrate(duration: 500); // 触发震动
+                  if(index == 0) {
+                    selectedMode = SelectedMode.pickMode;
+                    if (imageName == 'mode_start'){
+                      BleSendUtil.setRobotMode(RobotMode.training);
+                      print('捡球模式');
                     } else {
-                      print('遥控模式');
-                      selectedMode = SelectedMode.controlMode;
-                      BleSendUtil.setRobotMode(RobotMode.remote);
-
-                      // 500毫秒-> 设置控制角度为零，防止Fly那边报错
-                      Future.delayed(Duration(milliseconds: 500), () {
-                        print('设置角度为0');
-                        BleSendUtil.setRobotAngle(0);
-                      });
-
-                      // 卡停弹窗
-                      // TTDialog.robotRobotStopDialog(context, () async{
-                      //   NavigatorUtil.pop();
-                      // });
-
+                      BleSendUtil.setRobotMode(RobotMode.rest);
+                      print('暂停模式');
                     }
-                  });
-                },),
-              ),
+                    print('123456${Constants.screenHeight(context)}');
+                    print('宽${Constants.screenWidth(context)}');
+                  } else {
+                    print('遥控模式');
+                    selectedMode = SelectedMode.controlMode;
+                    BleSendUtil.setRobotMode(RobotMode.remote);
+
+                    // 500毫秒-> 设置控制角度为零，防止Fly那边报错
+                    Future.delayed(Duration(milliseconds: 500), () {
+                      print('设置角度为0');
+                      BleSendUtil.setRobotAngle(0);
+                    });
+                  }
+                });
+              },),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
+    ),onWillPop: (){
+        return Future.value(false);
+        },
+    ),
     );
   }
 }

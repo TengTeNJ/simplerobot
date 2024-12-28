@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_robot/setting/setting_option_adjust_view.dart';
+import 'package:tennis_robot/utils/robot_manager.dart';
+import 'package:tennis_robot/utils/robot_send_data.dart';
 
 import '../constant/constants.dart';
 import '../models/robot_data_model.dart';
@@ -98,7 +100,7 @@ class _SettingAvoidDistanceControllerState extends State<SettingAvoidDistanceCon
               ),
               Container(
                 margin: EdgeInsets.only(top: 80),
-                child: SettingOptionAdjustView(areaClick: (index){
+                child: SettingOptionAdjustView(defaultIndex: 0,areaClick: (index){
                   print('${index}');
                   if (index == 0) {
                     BleSendUtil.setAvoidDistance(RobotAvoidanceDistance.near);// 近距离
