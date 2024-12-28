@@ -56,10 +56,12 @@ class BluetoothManager {
 
   /* 开始扫描 */
   Future<void> startScan() async {
+
     // 不能重复扫描
     if (_scanStream != null) {
       return;
     }
+    print('开始扫描');
 
    if (Platform.isAndroid) {
       PermissionStatus locationPermission =
@@ -76,7 +78,7 @@ class BluetoothManager {
              scanMode: ScanMode.lowLatency );
         _scanStream!.listen((DiscoveredDevice event) {
             // 处理扫描到的蓝牙设备
-           //print('扫描到的蓝牙设备event.name = ${event.name}');
+           // print('扫描到的蓝牙设备event.name = ${event.name}');
            //&& event.name == kBLEDevice_NewName
            if (!hasDevice(event.id) ) {
              print('蓝牙名字${event.name}');
@@ -109,7 +111,6 @@ class BluetoothManager {
            // 已经连接的设备少于两个 则自动连接
            conectToDevice(this.deviceList.last);
            BluetoothManager().blueNameChange?.call(model.device.name);
-
          }
        }
      });
@@ -166,17 +167,18 @@ class BluetoothManager {
         if(model.device.name == kBLEDevice_NewName){
 
           // 每五秒发送一次心跳指令
-          if(repeatTimer == null){
+
+          // if(repeatTimer == null){
             repeatTimer = Timer.periodic(Duration(seconds: 5), (timer) {
               print('这将每隔5秒执行一次');
 
               writerDataToDevice(model, heartBeatData());
-             // EasyLoading.showToast('心跳');
+              //EasyLoading.showToast('心跳');
               updateRobotTodayUseTime();
               // 定时器执行完后的任务
               // 如果需要停止定时器，可以调用 timer.cancel()
             });
-          }
+          // }
         }
         // 连接成功弹窗
         EasyLoading.showSuccess('Bluetooth connection successful');
@@ -188,7 +190,7 @@ class BluetoothManager {
         });
       } else if (connectionStateUpdate.connectionState ==
           DeviceConnectionState.disconnected) {
-            EasyLoading.showError('disconected');
+            // EasyLoading.showError('disconected');
             // 取消定时器。停止计算工作时间
             if (repeatTimer != null) {
               repeatTimer?.cancel();
@@ -204,6 +206,11 @@ class BluetoothManager {
         deviceListLength.value = this.deviceList.length;
       }
     });
+  }
+
+  /*停止扫描*/
+  stopScan() {
+    _scanStream = null;
   }
 
   /*发送数据*/
