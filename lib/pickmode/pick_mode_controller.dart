@@ -86,13 +86,13 @@ class _PickModeControllerState extends State<PickModeController> {
   void initState() {
 
     // 断链退到连接界面
-  // BluetoothManager().disConnect = () {
+  BluetoothManager().disConnect = () {
     TTDialog.robotBleDisconnectDialog(context, () async {
       // 发送通知到连接界面
       EventBus().sendEvent(kRobotConnectChange);
       NavigatorUtil.popToRoot();
     });
-  // };
+  };
 
     // 先发一个心跳包，Fly那边是根据心跳包判断连接状态（不然设置机器人模式会设置不成功）
     var list = BluetoothManager().deviceList;
