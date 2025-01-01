@@ -181,7 +181,7 @@ class BluetoothManager {
           // }
         }
         // 连接成功弹窗
-        EasyLoading.showSuccess('Bluetooth connection successful');
+      //  EasyLoading.showSuccess('Bluetooth connection successful');
         // 监听数据
         _ble.subscribeToCharacteristic(notifyCharacteristic).listen((data) {
           print("deviceId =${model.device.id}---上报来的数据data = $data");
