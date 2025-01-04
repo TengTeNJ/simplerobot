@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get_it/get_it.dart';
 import 'package:tennis_robot/connect/connect_robot_controller.dart';
-import 'package:tennis_robot/connect/connect_robot_success_controller.dart';
 import 'package:tennis_robot/pickmode/pick_mode_controller.dart';
-import 'package:tennis_robot/root_page.dart';
 import 'package:tennis_robot/route/routes.dart';
-import 'package:tennis_robot/selectmode/select_mode_controller.dart';
-import 'package:tennis_robot/trainmode/robot_move_view.dart';
+import 'package:tennis_robot/utils/global.dart';
 import 'package:tennis_robot/utils/navigator_util.dart';
 import 'package:shopify_flutter/shopify_flutter.dart';
 
@@ -19,6 +17,8 @@ void main() {
     cachePolicy: CachePolicy.noCache,
     language: 'en',
   );
+  GetIt.I.registerSingleton<GameUtil>(GameUtil()); // 注册GameUtil实例
+
   runApp(const MyApp());
   runApp(const MyApp());
 }

@@ -10,9 +10,10 @@ import 'package:tennis_robot/utils/robot_manager.dart';
 import 'package:tennis_robot/utils/robot_send_data.dart';
 
 import '../utils/ble_send_util.dart';
+import '../utils/ble_util.dart';
 import '../utils/dialog.dart';
 import '../utils/event_bus.dart';
-// import 'dart:html';
+
 class ConnectRobotController extends StatefulWidget {
   const ConnectRobotController({super.key});
 
@@ -31,8 +32,15 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
 
     // TODO: implement initState
     super.initState();
+
+    BluetoothManager();
     // 扫描蓝牙设备
-    BluetoothManager().startScan();
+
+    Future.delayed(Duration(milliseconds: 1000),(){
+      BleUtil.begainScan(context);
+    });
+    // 扫描蓝牙设备
+    // BluetoothManager().startScan();
     subscription = EventBus().stream.listen((event){
       if (event == kRobotConnectChange) {
         print('机器人断连，蓝牙名字修改为默认名字');
@@ -175,7 +183,7 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
                           NavigatorUtil.pop();
                         });
                         // 扫描蓝牙设备
-                        BluetoothManager().startScan();
+                        BluetoothManager().startNewScan();
                       } else {
                         var list = BluetoothManager().deviceList;
                         for (var model in list) {
@@ -186,7 +194,7 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
 
                         NavigatorUtil.push(Routes.connectSuccess);
                       }
-                      // NavigatorUtil.push(Routes.connectSuccess);
+                    // NavigatorUtil.push(Routes.connectSuccess);
 
                     },
                     child: Container(

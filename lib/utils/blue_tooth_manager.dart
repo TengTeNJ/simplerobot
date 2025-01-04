@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:get_it/get_it.dart';
 import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tennis_robot/utils/data_base.dart';
@@ -16,6 +17,7 @@ import 'ble_data_service.dart';
 import 'package:tennis_robot/utils/robot_send_data.dart';
 
 import 'dialog.dart';
+import 'global.dart';
 import 'navigator_util.dart';
 
 
@@ -25,6 +27,8 @@ class BluetoothManager {
   static final BluetoothManager _instance = BluetoothManager._internal();
 
   factory BluetoothManager() {
+    _instance.listenBLEStatu();
+
     return _instance;
   }
 
@@ -53,6 +57,11 @@ class BluetoothManager {
   final ValueNotifier<int> conectedDeviceCount = ValueNotifier(0);
 
   Stream<DiscoveredDevice>? _scanStream;
+
+  StreamSubscription? _bleStatuListen;
+  StreamSubscription? _bleListen;
+
+
 
   /* 开始扫描 */
   Future<void> startScan() async {
@@ -87,7 +96,7 @@ class BluetoothManager {
              var model = this.deviceList.last;
              if (conectedDeviceCount.value == 0 && model.device.name == kBLEDevice_NewName) {
                // 已经连接的设备少于两个 则自动连接
-               conectToDevice(this.deviceList.last);
+              // conectToDevice(this.deviceList.last);
                BluetoothManager().blueNameChange?.call(model.device.name);
 
              }
@@ -109,13 +118,44 @@ class BluetoothManager {
          var model = this.deviceList.last;
          if (conectedDeviceCount.value == 0 && model.device.name == kBLEDevice_NewName) {
            // 已经连接的设备少于两个 则自动连接
-           conectToDevice(this.deviceList.last);
+          // conectToDevice(this.deviceList.last);
            BluetoothManager().blueNameChange?.call(model.device.name);
          }
        }
      });
 
    }
+  }
+
+  /*开始扫描*/
+  Future<void> startNewScan() async {
+    // 不能重复扫描
+    if (_scanStream != null) {
+      return;
+    }
+    _scanStream = _ble.scanForDevices(
+      withServices: [],
+      scanMode: ScanMode.lowLatency,
+    );
+    _bleListen = _scanStream!.listen((DiscoveredDevice event) {
+      // 处理扫描到的蓝牙设备
+      if (event.name.isEmpty) {
+        return;
+      }
+      print('蓝牙设备=${event.name}');
+
+      if (!hasDevice(event.id) ) {
+        print('蓝牙名字${event.name}');
+        this.deviceList.add(BLEModel(device: event));
+        deviceListLength.value = this.deviceList.length;
+        var model = this.deviceList.last;
+        if (conectedDeviceCount.value == 0 && model.device.name == kBLEDevice_NewName) {
+          // 已经连接的设备少于两个 则自动连接
+          // conectToDevice(this.deviceList.last);
+          BluetoothManager().blueNameChange?.call(model.device.name);
+        }
+      }
+    });
   }
 
   /*连接设备*/
@@ -212,6 +252,27 @@ class BluetoothManager {
   stopScan() {
     _scanStream = null;
   }
+
+  listenBLEStatu() {
+    if (_bleStatuListen == null) {
+      _bleStatuListen = FlutterReactiveBle().statusStream.listen((status) {
+        print('蓝牙状态status===${status}');
+        GameUtil gameUtil = GetIt.instance<GameUtil>();
+        gameUtil.bleStatus = status;
+        if (status == BleStatus.poweredOff) {
+          // 蓝牙开关关闭
+          _instance._bleListen?.cancel();
+          _instance._bleListen = null;
+          _instance._scanStream = null;
+        } else if (status == BleStatus.locationServicesDisabled) {
+          // 安卓位置权限不允许
+        } else if (status == BleStatus.unauthorized) {
+          // 未授权蓝牙权限
+        } else if (status == BleStatus.ready) {}
+      });
+    }
+  }
+
 
   /*发送数据*/
   Future<void> writerDataToDevice(BLEModel model, List<int> data) async {
