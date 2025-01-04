@@ -150,7 +150,7 @@ class TTDialog {
                 color: Constants.dialogBgColor,
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              child:RobotConnectFailedDialog(exchange: exchange, title: 'Connection Failed',descTitle: 'Failed to connect to device \n"Seekerbot".\n Check for issues and try again.',imgName: 'images/base/connect_fail.png',),
+              child:RobotConnectFailedDialog(exchange: exchange, title: 'Connection Failed',descTitle: 'Failed to connect to device \n"${kBLEDevice_NewName}".\n Check for issues and try again.',imgName: 'images/base/connect_fail.png',),
             ),
           );
         }

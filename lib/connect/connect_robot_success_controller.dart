@@ -76,7 +76,7 @@ class _ConnectRobotSuccessControllerState extends State<ConnectRobotSuccessContr
                         Constants.customTextWidget('Current Bluetooth Network', 18 , '#CCCCCC', fontWeight:FontWeight.w400),
                         SizedBox(height: 5,),
 
-                        Constants.customTextWidget('Seekerbot', 18 , '#E96415', fontWeight:FontWeight.w400),
+                        Constants.customTextWidget('${kBLEDevice_NewName}', 18 , '#E96415', fontWeight:FontWeight.w400),
                       ],
                     ),
                   ),
