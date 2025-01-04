@@ -144,7 +144,7 @@ class _SettingRollerSpeedState extends State<SettingRollerSpeed> {
                 height: 36,
                 margin: EdgeInsets.only(right: 16, top: 16),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                //  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     GestureDetector(onTap: (){
@@ -165,7 +165,8 @@ class _SettingRollerSpeedState extends State<SettingRollerSpeed> {
                       ),),
 
                     Constants.boldWhiteTextWidget('Roller Speed', 22),
-                    Text('')
+                    Constants.mediumWhiteTextWidget('123456', 16, Constants.dialogBgColor),
+
                   ],
                 ),
               ),
