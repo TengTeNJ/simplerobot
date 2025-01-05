@@ -109,9 +109,12 @@ class _PickModeControllerState extends State<PickModeController> {
     // 界面一进来默认是捡球训练模式
     Future.delayed(Duration(milliseconds: 500), () {
       BleSendUtil.setRobotMode(RobotMode.training);
+    //  Future.delayed(Duration(milliseconds: 200), () {
+        getDBSpeedData();
+     // });
     });
     // 默认设置机器人的速度
-    getDBSpeedData();
+  //  getDBSpeedData();
 
     getTodayBallNumsByDB();
     getTodayRobotUserTime();
@@ -196,43 +199,47 @@ class _PickModeControllerState extends State<PickModeController> {
     if (currentRobotSpeed == 0) {
       currentRobotSpeed = 1;
     }
-    if (currentRobotSpeed == 2) {
-      BleSendUtil.setSpeed(RobotSpeed.fast); //高速
-      print('默认机器人速度为高速');
-    } else if (currentRobotSpeed == 3) {
-      BleSendUtil.setSpeed(RobotSpeed.faster); //超高速
-      print('默认机器人速度为超高速');
-    } else {
-      BleSendUtil.setSpeed(RobotSpeed.slow); //低速
-      print('默认机器人速度为低速');
-    }
 
     /// 默认设置BallType
     var currentBallType = await DataBaseHelper().fetchBallTypeData();
-    if (currentBallType == 0) {
-      print('收球轮速度慢速${currentBallType}');
-      Future.delayed(Duration(milliseconds: 100),() {
-        BleSendUtil.setRobotCollectingWheelSpeed(1);
-      });
-    } else {
-      print('收球轮速度快速${currentBallType}');
-      Future.delayed(Duration(milliseconds: 100),() {
-        BleSendUtil.setRobotCollectingWheelSpeed(2);
-      });
-    }
 
     /// 设置机器人捡球时间间隔
     var currentGap = await DataBaseHelper().fetchResetGapData();
-    if (currentGap == 3) {
-      BleSendUtil.setRobotWaitTime(RobotResetGap.six);
-      print('机器人休息间隔${currentGap}');
-    } else if (currentGap == 2) {
-      BleSendUtil.setRobotWaitTime(RobotResetGap.three);
-      print('机器人休息间隔111${currentGap}');
-    } else {
-      BleSendUtil.setRobotWaitTime(RobotResetGap.zero);
-      print('机器人休息间隔${currentGap}');
-    }
+    Future.delayed(Duration(milliseconds: 200),(){
+      if (currentRobotSpeed == 2) {
+        BleSendUtil.setSpeed(RobotSpeed.fast); //高速
+        print('默认机器人速度为高速');
+      } else if (currentRobotSpeed == 3) {
+        BleSendUtil.setSpeed(RobotSpeed.faster); //超高速
+        print('默认机器人速度为超高速');
+      } else {
+        BleSendUtil.setSpeed(RobotSpeed.slow); //低速
+        print('默认机器人速度为低速');
+      }
+
+      Future.delayed(Duration(milliseconds: 200),(){
+        if (currentBallType == 0) {
+          print('收球轮速度慢速${currentBallType}');
+            BleSendUtil.setRobotCollectingWheelSpeed(1);
+        } else {
+          print('收球轮速度快速${currentBallType}');
+            BleSendUtil.setRobotCollectingWheelSpeed(2);
+        }
+
+        Future.delayed(Duration(milliseconds: 200),(){
+          if (currentGap == 3) {
+            BleSendUtil.setRobotWaitTime(RobotResetGap.six);
+            print('机器人休息间隔${currentGap}');
+          } else if (currentGap == 2) {
+            BleSendUtil.setRobotWaitTime(RobotResetGap.three);
+            print('机器人休息间隔111${currentGap}');
+          } else {
+            BleSendUtil.setRobotWaitTime(RobotResetGap.zero);
+            print('机器人休息间隔${currentGap}');
+          }
+        });
+      });
+    });
   }
 
   // 计算文字宽高

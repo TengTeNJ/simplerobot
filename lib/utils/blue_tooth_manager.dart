@@ -96,7 +96,7 @@ class BluetoothManager {
              var model = this.deviceList.last;
              if (conectedDeviceCount.value == 0 && model.device.name == kBLEDevice_NewName) {
                // 已经连接的设备少于两个 则自动连接
-              // conectToDevice(this.deviceList.last);
+
                BluetoothManager().blueNameChange?.call(model.device.name);
 
              }
@@ -118,8 +118,12 @@ class BluetoothManager {
          var model = this.deviceList.last;
          if (conectedDeviceCount.value == 0 && model.device.name == kBLEDevice_NewName) {
            // 已经连接的设备少于两个 则自动连接
-          // conectToDevice(this.deviceList.last);
+
+           //conectToDevice(this.deviceList.last);
+          // EasyLoading.showToast('${model.device.name}');
+
            BluetoothManager().blueNameChange?.call(model.device.name);
+
          }
        }
      });
@@ -214,7 +218,7 @@ class BluetoothManager {
 
               writerDataToDevice(model, heartBeatData());
               //EasyLoading.showToast('心跳');
-              updateRobotTodayUseTime();
+             // updateRobotTodayUseTime();
               // 定时器执行完后的任务
               // 如果需要停止定时器，可以调用 timer.cancel()
             });
@@ -223,11 +227,13 @@ class BluetoothManager {
         // 连接成功弹窗
       //  EasyLoading.showSuccess('Bluetooth connection successful');
         // 监听数据
-        _ble.subscribeToCharacteristic(notifyCharacteristic).listen((data) {
-          print("deviceId =${model.device.id}---上报来的数据data = $data");
-          // EasyLoading.showSuccess('蓝牙传输的数据');
-          BluetoothDataParse.parseData(data,model);
-        });
+       Future.delayed(Duration(milliseconds: 2000),(){
+         _ble.subscribeToCharacteristic(notifyCharacteristic).listen((data) {
+           print("deviceId =${model.device.id}---上报来的数据data = $data");
+           // EasyLoading.showSuccess('蓝牙传输的数据');
+           BluetoothDataParse.parseData(data,model);
+         });
+       });
       } else if (connectionStateUpdate.connectionState ==
           DeviceConnectionState.disconnected) {
             // EasyLoading.showError('disconected');
@@ -288,11 +294,20 @@ class BluetoothManager {
       return;
     }
     print('999${model}');
-    Future.delayed(Duration(milliseconds: 50),() async{
-     return await _ble.writeCharacteristicWithResponse(model.writerCharacteristic!,
+    // Future.delayed(Duration(milliseconds: 50),() async{
+    _ble.writeCharacteristicWithResponse(model.writerCharacteristic!,
          value: data);
+    // try {
+    //   // 向特征写入数据，并等待响应
+    //   await _ble.writeCharacteristicWithoutResponse(
+    //       model.writerCharacteristic!,
+    //       value: data);
+    //   print("Command sent and acknowledged"); // 如果写入成功并且设备响应了，会执行到这里
+    // } catch (e) {
+    //   print("Command failed: $e"); // 如果写入失败，会捕获异常
+    // }
 
-    });
+    // });
   }
 
   /*判断是否已经被添加设备列表*/

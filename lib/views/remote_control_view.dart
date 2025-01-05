@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:tennis_robot/constant/constants.dart';
@@ -83,6 +84,8 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                           BleSendUtil.setRobotAngle(2);
                           _topImageIndex = 1;
                           Vibration.vibrate();
+                          print('长按向上移动开始');
+
                         });
                       });
                     },
@@ -92,6 +95,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                         rightMoveTimer?.cancel();
                       // }
                         BleSendUtil.setRobotAngle(0);
+                        print('长按向上移动结束');
 
                         setState(() {
                         _topImageIndex = 0;
@@ -120,6 +124,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                         rightMoveTimer?.cancel();
                       // }
                         BleSendUtil.setRobotAngle(0);
+                        print('长按向下移动结束');
 
                         setState(() {
                         _bottomImageIndex = 0;
@@ -148,6 +153,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                         rightMoveTimer?.cancel();
                       // }
                         BleSendUtil.setRobotAngle(0);
+                        print('长按向左移动结束');
 
                         setState(() {
                         _leftImageIndex = 0;
@@ -177,6 +183,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                         rightMoveTimer?.cancel();
                       // }
                         BleSendUtil.setRobotAngle(0);
+                        print('长按向右移动结束');
 
                         setState(() {
                         _rightImageIndex = 0;
@@ -246,9 +253,20 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                     // lastTime = DateTime.now();
                     // var timeInterval = StringUtil.differenceInSeconds(lastTime, DateTime.now());
                     // print('间隔${timeInterval}');
-                    if (_updateTime(position, 0) > 10) { // 发送角度间隔需大于20毫秒
+
+
+                    if (Platform.isIOS){
                       print('${getCurrentTime()}发送角度${degrees.toInt()}');
-                      BleSendUtil.setRobotAngle(degrees.toInt());
+
+                     if (_updateTime(position, 0) > 200) { // 发送角度间隔需大于20毫秒
+                        print('${getCurrentTime()}发送角度ios${degrees.toInt()}');
+                        BleSendUtil.setRobotAngle(degrees.toInt());
+                      }
+                    } else {
+                      if (_updateTime(position, 0) > 10) { // 发送角度间隔需大于20毫秒
+                        print('${getCurrentTime()}发送角度${degrees.toInt()}');
+                        BleSendUtil.setRobotAngle(degrees.toInt());
+                      }
                     }
                   });
                 },
@@ -260,7 +278,12 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                     firstPosition = Offset(0, 0);
                     position = Offset(0, 0);
                     isMove = false;
-                    BleSendUtil.setRobotAngle(0);
+
+
+                    Future.delayed(Duration(milliseconds: 200), () {
+                      BleSendUtil.setRobotAngle(0);
+                      print('松手发送角度0');
+                    });
 
                   });
                 },
@@ -288,9 +311,12 @@ class _RemoteControlViewState extends State<RemoteControlView> {
 
     // 计算时间差
     final timeDifference = DateTime.now().difference(_lastUpdateTime).inMilliseconds;
-   // print('时间差: $timeDifference');
+    print('时间差: $timeDifference');
+    if (timeDifference > 200) {
+      _lastUpdateTime = DateTime.now();
+    }
     // 更新最后一次时间
-    _lastUpdateTime = DateTime.now();
+ //   _lastUpdateTime = DateTime.now();
     return timeDifference;
   }
 
