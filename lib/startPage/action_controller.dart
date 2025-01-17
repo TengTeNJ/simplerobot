@@ -6,9 +6,11 @@ import 'package:intl/intl.dart';
 import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/customAppBar.dart';
 import 'package:tennis_robot/models/pickupBall_time.dart';
+import 'package:tennis_robot/startPage/action_bottom_view.dart';
 import 'package:tennis_robot/startPage/action_data_list_view.dart';
 import 'package:tennis_robot/utils/event_bus.dart';
 import 'package:tennis_robot/utils/robot_send_data.dart';
+import 'package:tt_indicator/tt_indicator.dart';
 
 import '../models/pickup_ball_model.dart';
 import '../route/routes.dart';
@@ -45,8 +47,9 @@ class _ActionControllerState extends State<ActionController> {
 
     print('界面初始化');
     // 断链退到连接界面
-   BluetoothManager().disConnect = () {
+    BluetoothManager().disConnect = () {
       TTDialog.robotBleDisconnectDialog(context, () async {
+        print('首页蓝牙断开');
         // 发送通知到连接界面
         EventBus().sendEvent(kRobotConnectChange);
         NavigatorUtil.popToRoot();
@@ -103,7 +106,9 @@ class _ActionControllerState extends State<ActionController> {
       });
       if (type == TCPDataType.deviceInfo) {
         print('robot battery ${RobotManager().dataModel.powerValue}');
-
+        if (RobotManager().dataModel.powerOn == true){
+          EasyLoading.showToast('正在关机',duration: Duration(milliseconds: 10000));
+        }
       } else if(type == TCPDataType.speed) {
         print('robot speed ${RobotManager().dataModel.speed}');
       }  else if(type == TCPDataType.finishOneFlag) { // 機器人撿球成功上報
@@ -187,6 +192,11 @@ class _ActionControllerState extends State<ActionController> {
 
 
   }
+
+  void _pageViewOnChange(int index) {
+    print('index = ${index}');
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -279,7 +289,6 @@ class _ActionControllerState extends State<ActionController> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
-
                   children: [
                     Text('Stats',
                       style: TextStyle(
@@ -300,43 +309,75 @@ class _ActionControllerState extends State<ActionController> {
               ),
             ),
             Container(
+              // color: Colors.orange,
               margin: EdgeInsets.only(top: 18),
               width: Constants.screenWidth(context),
+             // height: 100,
               child: ActionDataListView(todayCount: '${todayPickUpBalls}',useMinutes: todayRobotWorkTime,todayCal: todayCal,),
             ),
-
             Container(
+              height: 20,
+              // color: Colors.green,
               margin: EdgeInsets.only(left: 0,top: 10) ,
               child: GestureDetector(onTap: (){
                 NavigatorUtil.push(Routes.pickMode).then((value){
                   print('pop回来刷新电量了${value}');
                   listenBattery(); // pop回来监听电量上报
                   getTodayBallNumsByDB();// 刷新捡球数，防止两个界面捡球数有差异
-
                 });
               },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(child:  Image(
-                      width:118,
-                      height: 282,
-                      image: AssetImage('images/connect/left_mask.png'),
-                    ),),
+                // child: Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     Expanded(child:  Image(
+                //       width:118/2,
+                //       height: 282/2,
+                //       image: AssetImage('images/connect/left_mask.png'),
+                //     ),),
+                //
+                //     Image(
+                //       width:126/2,
+                //       height: 126/2,
+                //       image: AssetImage('images/connect/robot_shutdown1.apng'),
+                //     ),
+                //
+                //     Expanded(child:  Image(
+                //       width:118/2,
+                //       height: 282/2,
+                //       image: AssetImage('images/connect/right_mask.png'),
+                //     ),),
+                //   ],
+                // ),
+              ),
+            ),
 
-                    Image(
-                      width:126,
-                      height: 126,
-                      image: AssetImage('images/connect/robot_shutdown1.apng'),
+           GestureDetector(onTap: (){
+
+           },
+           child: Container(
+             // color: Colors.red,
+             margin: EdgeInsets.only(top: 10),
+             width: Constants.screenWidth(context),
+             height: 156,
+             child: ActionBottomView(onChange: _pageViewOnChange,),
+           ),
+           ),
+
+            Container(
+              // color: Colors.green,
+              height: 34,
+              child: Column(
+                children: [
+                  Container(
+                    height: 30,
+                    child:  IndicatorView(
+                      count: 2,
+                      currentPage: 1,
+                      defaultColor: Color.fromRGBO(204, 204, 204, 1.0),
+                      currentPageColor: Constants.baseStyleColor,
                     ),
-                    Expanded(child:  Image(
-                      width:118,
-                      height: 282,
-                      image: AssetImage('images/connect/right_mask.png'),
-                    ),),
-
-                  ],
-                ),
+                  )
+                ],
               ),
             ),
           ],

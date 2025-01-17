@@ -198,12 +198,20 @@ handleData(List<int> element) {
       int power_data = element[2]; // 电量
       // 开关机
       RobotManager().dataModel.powerOn = switch_data == 1;
-      print('开关机=======${switch_data}');
+      // print('开关机=======${switch_data}');
       // 电量
       RobotManager().dataModel.powerValue = power_data;
       print('电量=======${power_data}');
       RobotManager()._triggerCallback(type: TCPDataType.deviceInfo);
       break;
+    case ResponseCMDType.powerOffResponse:
+      print('开关机=======}');
+
+      RobotManager().dataModel.powerOn = true;
+
+      RobotManager()._triggerCallback(type: TCPDataType.deviceInfo);
+
+
     case ResponseCMDType.workStatu:
       int statu_data = element[2];
       RobotManager().dataModel.statu = [

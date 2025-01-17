@@ -179,6 +179,28 @@ class TTDialog {
     );
   }
 
+  // 关机提醒
+  static robotPowerOff(BuildContext context,Function exchange) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            child: Container(
+              padding: EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+                // color: hexStringToColor('#3E3E55'),
+                color: Constants.powerOffDialogBgColor,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child:RobotLowBatteryDialog(exchange: exchange, title: 'Power OFF',descTitle: 'The Bot will power off.',imgName: 'images/base/robot_poweroff.png',),
+            ),
+          );
+        }
+    );
+  }
+
   // 死角提示
   static robotBlindCornerPrompt(BuildContext context,Function exchange) {
     showDialog(
@@ -823,7 +845,10 @@ class RobotLowBatteryDialog extends StatelessWidget {
           SizedBox(
             height: 11,
           ),
-          Constants.boldWhiteTextWidget('${this.title}', 19),
+
+          this.title == 'Power OFF' ? Constants.mediumWhiteTextWidget('${this.title}', 19,Color.fromRGBO(194, 35, 38, 1.0))
+              : Constants.boldWhiteTextWidget('${this.title}', 19),
+
           SizedBox(
             height: 20,
           ),
@@ -835,7 +860,7 @@ class RobotLowBatteryDialog extends StatelessWidget {
           ),
           Padding(padding: EdgeInsets.only(left: 24,right: 24),child: BaseButton(
               borderRadius: BorderRadius.circular(20),
-              title: 'Got It',
+              title: this.title == 'Power OFF' ? 'Close': 'Got It',
               height: 40,
               onTap: () {
                 this.exchange();

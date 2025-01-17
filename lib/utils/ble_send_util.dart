@@ -53,6 +53,15 @@ class BleSendUtil {
     BluetoothManager().writerDataToDevice(getWriterDevice(), setRobotWatiTimeData(gap));
   }
 
+  // 设置机器人关机
+  static setRobotPoweroff() {
+    if (BluetoothManager().hasConnectedDeviceList.isEmpty) {
+      return;
+    }
+    BluetoothManager().writerDataToDevice(getWriterDevice(), setRobotPowerData());
+  }
+
+
   static BLEModel getWriterDevice() {
     final model = BluetoothManager()
         .hasConnectedDeviceList

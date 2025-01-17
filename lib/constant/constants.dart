@@ -183,6 +183,8 @@ class Constants {
   static Color selectedModelTransparencyBgColor = Color.fromRGBO(233, 100, 21, 0.39);
   static Color selectedModelOrangeBgColor = Color.fromRGBO(233, 100, 21, 1.0);
   static Color dialogBgColor = Color.fromRGBO(49, 52, 67, 1);
+  static Color powerOffDialogBgColor = Color.fromRGBO(61, 19, 18, 1);
+
 
   static Color customSliderUnselectedColor = Color.fromRGBO(220, 220, 220, 1);
   static Color customSliderSelectedColor = Color.fromRGBO(233, 100, 21, 1);

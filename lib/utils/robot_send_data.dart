@@ -96,6 +96,19 @@ List<int> setRobotWatiTimeData(RobotResetGap distance) {
   return [start, length, cmd, data, cs, end];
 }
 
+/*设置收球轮速度*/
+List<int> setRobotPowerData() {
+  int start = kDataFrameHeader;
+  int length = 6;
+  int cmd = 0x50;
+  int data = 0;
+  int cs = start + length + cmd + data;
+  int end = kDataFrameFoot;
+  print('设置关机:${[start, length, cmd, data, cs, end]}');
+  return [start, length, cmd, data, cs, end];
+}
+
+
 /*设置区域*/
 List<int> setAreaData(int area) {
   int start = kDataFrameHeader;

@@ -16,6 +16,7 @@ class ResponseCMDType {
   static const int speed = 0x42; // 机器人速度
   static const int coordinate = 0x43; // 机器人坐标
   static const int ballsInView = 0x44; // 机器人视野的所有数据
+  static const int powerOffResponse = 0x51; // 机器人关机响应
 }
 class TcpUtil {
   Socket? socket;
