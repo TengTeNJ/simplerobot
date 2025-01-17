@@ -50,6 +50,7 @@ class _ActionControllerState extends State<ActionController> {
     BluetoothManager().disConnect = () {
       TTDialog.robotBleDisconnectDialog(context, () async {
         print('首页蓝牙断开');
+        EasyLoading.dismiss();
         // 发送通知到连接界面
         EventBus().sendEvent(kRobotConnectChange);
         NavigatorUtil.popToRoot();
@@ -107,7 +108,12 @@ class _ActionControllerState extends State<ActionController> {
       if (type == TCPDataType.deviceInfo) {
         print('robot battery ${RobotManager().dataModel.powerValue}');
         if (RobotManager().dataModel.powerOn == true){
-          EasyLoading.showToast('正在关机',duration: Duration(milliseconds: 10000));
+         // EasyLoading.showToast('正在关机',duration: Duration(milliseconds: 10000));
+          EasyLoading.show(
+            status: 'powerOff...',
+            maskType: EasyLoadingMaskType.black,
+          );
+
         }
       } else if(type == TCPDataType.speed) {
         print('robot speed ${RobotManager().dataModel.speed}');
