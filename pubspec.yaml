@@ -63,6 +63,8 @@ dependencies:
 
   get_it: ^7.6.8
   open_settings: ^2.0.2
+  tt_indicator: ^0.0.2
+
 
 
 
