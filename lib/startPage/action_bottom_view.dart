@@ -31,8 +31,6 @@ class _ActionBottomViewState extends State<ActionBottomView> {
   @override
   Widget build(BuildContext context) {
     return PageView.builder(  itemBuilder: (context, index) {
-     // SceneModel sceneModel = gameUtil.sceneList[index];
-    //  int _index = int.parse(sceneModel.dictKey) - 1;
       return Padding(
         padding: EdgeInsets.only(left: 0, right: 0, top: 0, bottom: 10),
         child: ActionBottomCardView(

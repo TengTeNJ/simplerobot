@@ -166,7 +166,7 @@ class _SettingResetGapControllerState extends State<SettingResetGapController> {
                       child:Constants.boldWhiteTextWidget('Reset Gap', 22),
                     ),
 
-                    Text('')
+                    Constants.mediumWhiteTextWidget('123456', 16, Constants.dialogBgColor),
                   ],
                 ),
               ),

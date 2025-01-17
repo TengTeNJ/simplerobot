@@ -47,7 +47,7 @@ class _FaultInfoControllerState extends State<FaultInfoController> {
                         ),
                       ),),
                     Constants.boldWhiteTextWidget('Fault', 22),
-                    Text('')
+                    Constants.mediumWhiteTextWidget('123456', 16, Constants.dialogBgColor),
                   ],
                 ),
               ),

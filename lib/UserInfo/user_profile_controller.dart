@@ -106,7 +106,7 @@ class _UserProfileControllerState extends State<UserProfileController> {
                           ),
                         ),),
                       Constants.boldWhiteTextWidget('Profile', 22),
-                      Text('')
+                      Constants.mediumWhiteTextWidget('123456', 16, Constants.dialogBgColor),
                     ],
                   ),
                 ),
