@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/route/routes.dart';
@@ -26,6 +28,17 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
   var currentWifiName = 'SeekerBot';
 
   late StreamSubscription subscription;
+// 查询扫描到的机器人信息
+  void queryRobotInfo() {
+    var list = BluetoothManager().deviceList;
+    for (var model in list) {
+      if (model.device.name == kBLEDevice_NewName) {
+        setState(() {
+          currentWifiName = kBLEDevice_NewName;
+        });
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -45,27 +58,14 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
       if (event == kRobotConnectChange) {
         print('机器人断连，蓝牙名字修改为默认名字');
         currentWifiName = 'SeekerBot';
+        // 再查询一下机器人信息
+        queryRobotInfo();
         setState(() {});
       }
     });
 
-
-    // setAngleData(35.toInt());
-
-    // Future.delayed(Duration(milliseconds: 3000), () {
-    //   var list = BluetoothManager().deviceList;
-    //   print('扫描到的蓝牙列表${list}');
-    //   if (list.length >0) {
-    //      setState(() {
-    //        for (var model in list) {
-    //          if (model.device.name == kBLEDevice_NewName) {
-    //            currentWifiName = model.device.name;
-    //          }
-    //        }
-    //
-    //      });
-    //   }
-    // });
+    // 遍历有没有扫描到机器人
+    queryRobotInfo();
 
     BluetoothManager().blueNameChange = (blueName){
       setState(() {
@@ -73,16 +73,26 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
       });
     };
 
+      // 连接界面系统蓝牙关闭
+      BluetoothManager().disConnect = () {
+        print('连接蓝牙断开');
+        // app控制关机的不显示蓝牙弹窗
+        setState(() {
+          currentWifiName = 'SeekerBot';
+        });
+      };
 
-    // var isConnected = true;
-    // Future.delayed(Duration(milliseconds: 300),() {
-    //   if (isConnected) {
-    //     NavigatorUtil.push(Routes.action);
-    //     NavigatorUtil.push(Routes.pickMode);
-    //   }
-    // });
+    // 连接界面系统蓝牙打开
+    BluetoothManager().openBlueTooth = () {
+      queryRobotInfo();
+    };
+  }
 
-
+  bool checkBluIsOpen() {
+    if (FlutterReactiveBle().status == BleStatus.poweredOff) {
+      return false;
+    }
+    return true;
   }
 
   @override
@@ -176,6 +186,10 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
                   ),
                   GestureDetector(
                     onTap: () {
+                      if (checkBluIsOpen() == false) {
+                        EasyLoading.showToast('please open bluetooth');
+                        return;
+                      }
 
                       if (currentWifiName != kBLEDevice_NewName) {
                         // 扫描连接失败弹窗
@@ -183,18 +197,18 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
                           NavigatorUtil.pop();
                         });
                         // 扫描蓝牙设备
-                        BluetoothManager().startNewScan();
+                       // BluetoothManager().startNewScan();
                       } else {
                         var list = BluetoothManager().deviceList;
                         for (var model in list) {
                           if (model.device.name == kBLEDevice_NewName) {
+                            print('开始连接机器人');
                             BluetoothManager().conectToDevice(model);
                           }
                         }
 
                         NavigatorUtil.push(Routes.connectSuccess);
                       }
-                   // NavigatorUtil.push(Routes.connectSuccess);
 
                     },
                     child: Container(

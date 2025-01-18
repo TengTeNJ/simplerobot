@@ -182,7 +182,7 @@ class TTDialog {
   // 关机提醒
   static robotPowerOff(BuildContext context,Function exchange) {
     showDialog(
-        barrierDismissible: false,
+        barrierDismissible: true,
         context: context,
         builder: (BuildContext context) {
           return Dialog(

@@ -161,6 +161,7 @@ class BleUtil {
       if (result) {
         BluetoothManager().startNewScan();
       }else{
+        print('苹果手机蓝牙没开');
         Future.delayed(Duration(milliseconds: 2000),(){
           BluetoothManager().startNewScan();
         });

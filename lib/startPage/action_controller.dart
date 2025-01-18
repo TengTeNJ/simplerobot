@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -14,6 +15,7 @@ import 'package:tt_indicator/tt_indicator.dart';
 
 import '../models/pickup_ball_model.dart';
 import '../route/routes.dart';
+import '../utils/ble_send_util.dart';
 import '../utils/blue_tooth_manager.dart';
 import '../utils/data_base.dart';
 import '../utils/dialog.dart';
@@ -41,22 +43,57 @@ class _ActionControllerState extends State<ActionController> {
 
   late StreamSubscription subscription;
 
-  @override
-  void initState() {
-    super.initState();
+  int _currentIndex = 0; //底部滑动条索引
+  bool isAppControlPowerOff = false; // 是否是机器人控制关机的
 
-    print('界面初始化');
+
+  void showDisconnectAlert() {
     // 断链退到连接界面
     BluetoothManager().disConnect = () {
-      TTDialog.robotBleDisconnectDialog(context, () async {
-        print('首页蓝牙断开');
-        EasyLoading.dismiss();
+      print('首页蓝牙断开');
+      EasyLoading.dismiss();
+      // app控制关机的不显示蓝牙弹窗
+      if (isAppControlPowerOff == true) {
         // 发送通知到连接界面
         EventBus().sendEvent(kRobotConnectChange);
         NavigatorUtil.popToRoot();
-      });
-   };
+      } else {
+        TTDialog.robotBleDisconnectDialog(context, () async {
+          // 发送通知到连接界面
+          EventBus().sendEvent(kRobotConnectChange);
+          NavigatorUtil.popToRoot();
+        });
+      }
+    };
+  }
 
+  // 捡球关机点击事件回调
+  void pickOrPowerOffBack() {
+    BluetoothManager().clickIndex = (index){
+      if (index == 1) { //关机
+        TTDialog.robotPowerOff(context, () async{
+          NavigatorUtil.pop();
+          BleSendUtil.setRobotPoweroff();
+        });
+      } else {
+        NavigatorUtil.push(Routes.pickMode).then((value){
+          listenBattery(); // pop回来监听电量上报
+          getTodayBallNumsByDB();// 刷新捡球数，防止两个界面捡球数有差异
+          // 断链退到连接界面
+          showDisconnectAlert();
+        });
+
+      }
+    };
+  }
+  
+  @override
+  void initState() {
+    super.initState();
+    showDisconnectAlert();
+    pickOrPowerOffBack();
+    
+    print('界面初始化');
     getTodayBallNumsByDB();
     getTodayRobotUserTime();
 
@@ -79,6 +116,15 @@ class _ActionControllerState extends State<ActionController> {
         } else if (event == kRobotPickballCountChange) {
           print('机器人捡球数量更新了');
           getTodayBallNumsByDB();
+        } else if (event == KJumpPickPage) {
+          NavigatorUtil.push(Routes.pickMode).then((value){
+            print('pop回来刷新电量了${value}');
+            listenBattery(); // pop回来监听电量上报
+            getTodayBallNumsByDB();// 刷新捡球数，防止两个界面捡球数有差异
+            // 断链退到连接界面
+            showDisconnectAlert();
+          });
+
         }
     });
   }
@@ -107,13 +153,12 @@ class _ActionControllerState extends State<ActionController> {
       });
       if (type == TCPDataType.deviceInfo) {
         print('robot battery ${RobotManager().dataModel.powerValue}');
-        if (RobotManager().dataModel.powerOn == true){
-         // EasyLoading.showToast('正在关机',duration: Duration(milliseconds: 10000));
+        if (RobotManager().dataModel.powerOn == true){ // app控制机器人关机
           EasyLoading.show(
             status: 'powerOff...',
             maskType: EasyLoadingMaskType.black,
           );
-
+          isAppControlPowerOff = true;
         }
       } else if(type == TCPDataType.speed) {
         print('robot speed ${RobotManager().dataModel.speed}');
@@ -200,7 +245,8 @@ class _ActionControllerState extends State<ActionController> {
   }
 
   void _pageViewOnChange(int index) {
-    print('index = ${index}');
+    _currentIndex = index;
+    setState(() {});
   }
 
   @override
@@ -236,8 +282,14 @@ class _ActionControllerState extends State<ActionController> {
 
 
                   GestureDetector(onTap: (){
-                    NavigatorUtil.push(Routes.setting);
-                  },
+
+                    NavigatorUtil.push(Routes.setting).then((value){
+                      listenBattery(); // pop回来监听电量上报
+                      getTodayBallNumsByDB();// 刷新捡球数，防止两个界面捡球数有差异
+                      // 断链退到连接界面
+                      showDisconnectAlert();
+                    });
+                    },
                     child:  Container(
                       // padding: EdgeInsets.only(top: 10),
                       margin: EdgeInsets.only(right: 16),
@@ -290,7 +342,12 @@ class _ActionControllerState extends State<ActionController> {
               // margin: EdgeInsets.only(left: 170 ,top: 10),
 
               child: GestureDetector(onTap: (){
-                NavigatorUtil.push(Routes.stats);
+                NavigatorUtil.push(Routes.stats).then((value){
+                  listenBattery(); // pop回来监听电量上报
+                  getTodayBallNumsByDB();// 刷新捡球数，防止两个界面捡球数有差异
+                  // 断链退到连接界面
+                  showDisconnectAlert();
+                });
               },
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -322,70 +379,63 @@ class _ActionControllerState extends State<ActionController> {
               child: ActionDataListView(todayCount: '${todayPickUpBalls}',useMinutes: todayRobotWorkTime,todayCal: todayCal,),
             ),
             Container(
-              height: 20,
+              // height: 20,
               // color: Colors.green,
-              margin: EdgeInsets.only(left: 0,top: 10) ,
+              margin: EdgeInsets.only(left: 0,top: 0) ,
               child: GestureDetector(onTap: (){
-                NavigatorUtil.push(Routes.pickMode).then((value){
-                  print('pop回来刷新电量了${value}');
-                  listenBattery(); // pop回来监听电量上报
-                  getTodayBallNumsByDB();// 刷新捡球数，防止两个界面捡球数有差异
-                });
+                // NavigatorUtil.push(Routes.pickMode).then((value){
+                //   print('pop回来刷新电量了${value}');
+                //   listenBattery(); // pop回来监听电量上报
+                //   getTodayBallNumsByDB();// 刷新捡球数，防止两个界面捡球数有差异
+                //   // 断链退到连接界面
+                //   showDisconnectAlert();
+                // });
               },
-                // child: Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //   children: [
-                //     Expanded(child:  Image(
-                //       width:118/2,
-                //       height: 282/2,
-                //       image: AssetImage('images/connect/left_mask.png'),
-                //     ),),
-                //
-                //     Image(
-                //       width:126/2,
-                //       height: 126/2,
-                //       image: AssetImage('images/connect/robot_shutdown1.apng'),
-                //     ),
-                //
-                //     Expanded(child:  Image(
-                //       width:118/2,
-                //       height: 282/2,
-                //       image: AssetImage('images/connect/right_mask.png'),
-                //     ),),
-                //   ],
-                // ),
-              ),
-            ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(child: Image(
+                      width:118,
+                      height: 282,
+                      image: AssetImage('images/connect/left_mask.png'),
+                    ),),
 
-           GestureDetector(onTap: (){
+                    Container(
+                    //  height: 160,
+                      width: 160,
+                      child: Column(
+                        children: [
+                          Container(
+                          margin: EdgeInsets.only(top: 10),
+                          width: 160,
+                          height: 160,
+                          child: ActionBottomView(onChange: _pageViewOnChange,),
+                        ),
 
-           },
-           child: Container(
-             // color: Colors.red,
-             margin: EdgeInsets.only(top: 10),
-             width: Constants.screenWidth(context),
-             height: 156,
-             child: ActionBottomView(onChange: _pageViewOnChange,),
-           ),
-           ),
-
-            Container(
-              // color: Colors.green,
-              height: 34,
-              child: Column(
-                children: [
-                  Container(
-                    height: 30,
-                    child:  IndicatorView(
-                      count: 2,
-                      currentPage: 1,
-                      defaultColor: Color.fromRGBO(204, 204, 204, 1.0),
-                      currentPageColor: Constants.baseStyleColor,
+                         Container(
+                          // color: Colors.orange,
+                          margin: EdgeInsets.only(top: 36),
+                          height: 10,
+                          child:  IndicatorView(
+                            count: 2,
+                            currentPage: _currentIndex,
+                            defaultColor: Color.fromRGBO(49, 52, 67, 1.0),
+                            currentPageColor: Color.fromRGBO(248, 98, 21, 1.0),
+                          ),
+                         ),
+                        ],
+                      ),
                     ),
-                  )
-                ],
+                    Expanded(child:  Image(
+                      width:118,
+                      height: 282,
+                      image: AssetImage('images/connect/right_mask.png'),
+                    ),),
+                  ],
+                ),
               ),
             ),
+
           ],
         ),
       ),onWillPop: (){
@@ -393,4 +443,11 @@ class _ActionControllerState extends State<ActionController> {
       },),
     );
   }
+
+  // @override
+  // void dispose() {
+  //   // 在不需要监听事件时取消订阅
+  //   subscription.cancel();
+  //   super.dispose();
+  // }
 }

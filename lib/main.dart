@@ -5,6 +5,7 @@ import 'package:tennis_robot/connect/connect_robot_controller.dart';
 import 'package:tennis_robot/pickmode/pick_mode_controller.dart';
 import 'package:tennis_robot/route/routes.dart';
 import 'package:tennis_robot/utils/global.dart';
+import 'package:tennis_robot/startPage/action_controller.dart';
 import 'package:tennis_robot/utils/navigator_util.dart';
 import 'package:shopify_flutter/shopify_flutter.dart';
 
@@ -32,10 +33,9 @@ class MyApp extends StatelessWidget {
     if (isLoggedIn) {
       return ConnectRobotController();
     } else {
-      return PickModeController();
+      return ActionController();
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +44,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       onGenerateRoute: Routes.onGenerateRoute,
-      home: ConnectRobotController(),
-    //   home: getHomeWidget(),
+      //home: ConnectRobotController(),
+      home: getHomeWidget(),
       builder: EasyLoading.init(),
     );
   }

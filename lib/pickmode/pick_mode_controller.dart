@@ -269,7 +269,7 @@ class _PickModeControllerState extends State<PickModeController> {
     return Scaffold(
       backgroundColor: Constants.darkControllerColor,
       appBar: CustomAppBar(),
-      body: WillPopScope(child:SingleChildScrollView(
+      body: WillPopScope(child:Container(
       child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
         // Container(
@@ -403,4 +403,9 @@ class _PickModeControllerState extends State<PickModeController> {
     ),
     );
   }
+
+  // @override
+  // // void dispose() {
+  // //   super.dispose();
+  // // }
 }

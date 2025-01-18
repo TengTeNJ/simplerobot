@@ -211,6 +211,9 @@ const kBLE_270_CHARACTERISTIC_NOTIFY_UUID = "2A6E";
 const kBLE_270_CHARACTERISTIC_WRITER_UUID = "2A6F";
 
 /// 数据回调
+/// 跳转到捡球界面
+const KJumpPickPage =
+    'robot_jump_pick_page';
 //机器人捡球时间更新
 const kRobotPickballTimeChange =
     'robot_pickball_time_change';

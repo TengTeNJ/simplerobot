@@ -50,6 +50,12 @@ class BluetoothManager {
   Function(String blueName)? blueNameChange; // 机器人名字
   Function()? disConnect; // 机器人断链
 
+  Function(int index)? clickIndex ; // 机器人手动关机或者捡球操作
+
+  Function()? openBlueTooth; // 蓝牙打开
+
+
+
 
   final ValueNotifier<int> deviceListLength = ValueNotifier(-1);
 
@@ -61,80 +67,11 @@ class BluetoothManager {
   StreamSubscription? _bleStatuListen;
   StreamSubscription? _bleListen;
 
-
-
-  /* 开始扫描 */
-  Future<void> startScan() async {
-
-    // 不能重复扫描
-    if (_scanStream != null) {
-      return;
-    }
-    print('开始扫描');
-
-   if (Platform.isAndroid) {
-      PermissionStatus locationPermission =
-      await Permission.location.request();
-      PermissionStatus bleScan =
-      await Permission.bluetoothScan.request();
-      PermissionStatus bleConnect =
-      await Permission.bluetoothConnect.request();
-
-      if (locationPermission == PermissionStatus.granted
-          && bleScan == PermissionStatus.granted
-          && bleConnect == PermissionStatus.granted){
-         _scanStream = _ble.scanForDevices(withServices: [],
-             scanMode: ScanMode.lowLatency );
-        _scanStream!.listen((DiscoveredDevice event) {
-            // 处理扫描到的蓝牙设备
-           // print('扫描到的蓝牙设备event.name = ${event.name}');
-           //&& event.name == kBLEDevice_NewName
-           if (!hasDevice(event.id) ) {
-             print('蓝牙名字${event.name}');
-             this.deviceList.add(BLEModel(device: event));
-             deviceListLength.value = this.deviceList.length;
-             var model = this.deviceList.last;
-             if (conectedDeviceCount.value == 0 && model.device.name == kBLEDevice_NewName) {
-               // 已经连接的设备少于两个 则自动连接
-
-               BluetoothManager().blueNameChange?.call(model.device.name);
-
-             }
-           }
-        });
-      }
-   }
-    else {
-     _scanStream = _ble.scanForDevices(withServices: [],
-         scanMode: ScanMode.lowLatency );
-     _scanStream!.listen((DiscoveredDevice event) {
-       // 处理扫描到的蓝牙设备
-       //print('扫描到的蓝牙设备event.name = ${event.name}');
-       //&& event.name == kBLEDevice_NewName
-       if (!hasDevice(event.id) ) {
-         print('蓝牙名字${event.name}');
-         this.deviceList.add(BLEModel(device: event));
-         deviceListLength.value = this.deviceList.length;
-         var model = this.deviceList.last;
-         if (conectedDeviceCount.value == 0 && model.device.name == kBLEDevice_NewName) {
-           // 已经连接的设备少于两个 则自动连接
-
-           //conectToDevice(this.deviceList.last);
-          // EasyLoading.showToast('${model.device.name}');
-
-           BluetoothManager().blueNameChange?.call(model.device.name);
-
-         }
-       }
-     });
-
-   }
-  }
-
   /*开始扫描*/
   Future<void> startNewScan() async {
     // 不能重复扫描
     if (_scanStream != null) {
+      print('返回了');
       return;
     }
     _scanStream = _ble.scanForDevices(
@@ -146,7 +83,6 @@ class BluetoothManager {
       if (event.name.isEmpty) {
         return;
       }
-      print('蓝牙设备=${event.name}');
 
       if (!hasDevice(event.id) ) {
         print('蓝牙名字${event.name}');
@@ -218,7 +154,7 @@ class BluetoothManager {
 
               writerDataToDevice(model, heartBeatData());
               //EasyLoading.showToast('心跳');
-             // updateRobotTodayUseTime();
+              updateRobotTodayUseTime();
               // 定时器执行完后的任务
               // 如果需要停止定时器，可以调用 timer.cancel()
             });
@@ -254,11 +190,6 @@ class BluetoothManager {
     });
   }
 
-  /*停止扫描*/
-  stopScan() {
-    _scanStream = null;
-  }
-
   listenBLEStatu() {
     if (_bleStatuListen == null) {
       _bleStatuListen = FlutterReactiveBle().statusStream.listen((status) {
@@ -270,11 +201,19 @@ class BluetoothManager {
           _instance._bleListen?.cancel();
           _instance._bleListen = null;
           _instance._scanStream = null;
+          _instance.disConnect?.call();
+          print('蓝牙关闭');
         } else if (status == BleStatus.locationServicesDisabled) {
           // 安卓位置权限不允许
         } else if (status == BleStatus.unauthorized) {
           // 未授权蓝牙权限
-        } else if (status == BleStatus.ready) {}
+        } else if (status == BleStatus.ready) {
+          _instance.openBlueTooth?.call();
+          Future.delayed(Duration(milliseconds: 100),(){
+            startNewScan();
+          });
+
+        }
       });
     }
   }
