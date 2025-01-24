@@ -65,6 +65,10 @@ dependencies:
   open_settings: ^2.0.2
   tt_indicator: ^0.0.2
 
+  # 屏幕管理器（设置屏幕常亮）
+  flutter_windowmanager: ^0.2.0
+
+
 
 
 

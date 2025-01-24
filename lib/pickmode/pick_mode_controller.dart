@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tennis_robot/models/robot_data_model.dart';
 import 'package:tennis_robot/pickmode/robot_speed_adjust_view.dart';
@@ -44,6 +45,15 @@ class _PickModeControllerState extends State<PickModeController> {
   bool lowBatteryAlertIsShow = false; // 低电量弹窗是否弹出过
   bool shutDownAlertIsShow = false; // 低电量关机弹窗是否弹出过
 
+  /// 使屏幕保持常亮的函数
+  Future<void> enableKeepScreenOn() async {
+    await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_KEEP_SCREEN_ON);
+  }
+
+  /// 关闭屏幕常亮的函数
+  Future<void> clearScreenOn() async {
+    await FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_KEEP_SCREEN_ON);
+  }
 
   // 获取今日的捡球数
   void getTodayBallNumsByDB() async{
@@ -84,6 +94,7 @@ class _PickModeControllerState extends State<PickModeController> {
   }
 
   void initState() {
+    enableKeepScreenOn();
 
     // 断链退到连接界面
   BluetoothManager().disConnect = () {
