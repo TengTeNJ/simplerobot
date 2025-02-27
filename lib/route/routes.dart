@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:tennis_robot/UserInfo/user_info_input_controller.dart';
 import 'package:tennis_robot/connect/connect_robot_controller.dart';
 import 'package:tennis_robot/connect/connect_robot_success_controller.dart';
+import 'package:tennis_robot/guide/camera_calibration_controller.dart';
+import 'package:tennis_robot/guide/camera_pick_controller.dart';
+import 'package:tennis_robot/guide/guide_avoidsun_controller.dart';
+import 'package:tennis_robot/guide/guide_camera_placement_controller.dart';
+import 'package:tennis_robot/guide/guide_page_controller.dart';
 import 'package:tennis_robot/pickmode/pick_mode_controller.dart';
 import 'package:tennis_robot/profile/profile_controller.dart';
 import 'package:tennis_robot/robotstats/robot_stats_controller.dart';
@@ -22,6 +27,15 @@ class Routes {
   static const String setting = 'setting';// 设置界面
   static const String connectSuccess = 'connectSuccess'; // 连接成功界面
   static const String inputUserInfo = 'inputUserInfo';// 用户信息输入界面
+
+  /// 鹰眼系统
+  static const String guideCameraPlacementPage = 'guideCameraPlacementPage';//
+  static const String guidePage = 'guidePage';//
+  static const String guideThreePage = 'guideThreePage';//
+  static const String cameraCalibration = 'cameraCalibration';
+  static const String cameraPick = 'cameraPick';
+
+
 
   static RouteFactory onGenerateRoute = (settings) {
     switch (settings.name) {
@@ -44,6 +58,21 @@ class Routes {
 
       case trainMode:
         return MaterialPageRoute(builder: (_) => TrainModeController());
+
+      case guidePage:
+        return MaterialPageRoute(builder: (_) => GuidePageController());
+
+      case guideCameraPlacementPage:
+        return MaterialPageRoute(builder: (_) => GuideCameraPlacementController());
+
+      case guideThreePage:
+        return MaterialPageRoute(builder: (_) => GuideAvoidsunController());
+
+      case cameraCalibration:
+        return MaterialPageRoute(builder: (_) => CameraCalibrationController());
+      case cameraPick:
+        return MaterialPageRoute(builder: (_) => CameraPickController());
+
     }
   };
 }

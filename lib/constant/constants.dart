@@ -186,6 +186,10 @@ class Constants {
   static Color powerOffDialogBgColor = Color.fromRGBO(61, 19, 18, 1);
 
 
+  static Color cameraPickBgColor = Color.fromRGBO(19 , 19, 20, 1);
+  static Color cameraPickChooseAreaBgColor = Color.fromRGBO(27 , 66, 197, 0.75);
+
+
   static Color customSliderUnselectedColor = Color.fromRGBO(220, 220, 220, 1);
   static Color customSliderSelectedColor = Color.fromRGBO(233, 100, 21, 1);
 

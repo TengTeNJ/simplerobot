@@ -25,7 +25,6 @@ class _GuidePageControllerState extends State<GuidePageController> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]); // 设置横屏模式
     return Scaffold(
       backgroundColor: Constants.darkControllerColor,
-
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -41,7 +40,13 @@ class _GuidePageControllerState extends State<GuidePageController> {
                  margin: EdgeInsets.only(top: 32,left: 32),
                  width: 52,
                  height: 52,
-                 color: Constants.selectedModelOrangeBgColor,
+                 decoration: BoxDecoration(
+                   color: Constants.selectedModelOrangeBgColor,
+                   borderRadius: BorderRadius.circular(26),
+                 ),
+                 child: Center(
+                   child: Image(image: AssetImage('images/guide/back_icon.png'),width: 10,height: 20,),
+                 ),
                ),
              ),
 
@@ -53,7 +58,13 @@ class _GuidePageControllerState extends State<GuidePageController> {
                  margin: EdgeInsets.only(top: 32,right: 32),
                  width: 52,
                  height: 52,
-                 color: Constants.selectedModelOrangeBgColor,
+                 decoration: BoxDecoration(
+                   color: Constants.selectedModelOrangeBgColor,
+                   borderRadius: BorderRadius.circular(26),
+                 ),
+                 child: Center(
+                   child: Image(image: AssetImage('images/guide/next_icon.png'),width: 10,height: 20,),
+                 ),
                ),
              ),
            ],
@@ -65,7 +76,7 @@ class _GuidePageControllerState extends State<GuidePageController> {
            child: Image(
                width: 233,
                height: 130,
-               image: AssetImage('images/home/under_way.png')),
+               image: AssetImage('images/guide/guide_first.png')),
          ) ,
           SizedBox(height: 25,),
           Constants.regularWhiteTextWidget('In the intelligent mode, '

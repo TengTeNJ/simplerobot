@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:tennis_robot/route/routes.dart';
-import 'package:tennis_robot/utils/navigator_util.dart';
 
 import '../constant/constants.dart';
+import '../route/routes.dart';
+import '../utils/navigator_util.dart';
 
-/// 摄像头放置位置提示
-class GuideCameraPlacementController extends StatefulWidget {
-  const GuideCameraPlacementController({super.key});
+/// 避免阳关直射提示
+class GuideAvoidsunController extends StatefulWidget {
+  const GuideAvoidsunController({super.key});
 
   @override
-  State<GuideCameraPlacementController> createState() => _GuideCameraPlacementControllerState();
+  State<GuideAvoidsunController> createState() => _GuideAvoidsunControllerState();
 }
 
-class _GuideCameraPlacementControllerState extends State<GuideCameraPlacementController> {
+class _GuideAvoidsunControllerState extends State<GuideAvoidsunController> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]); // 设置横屏模式
     return Scaffold(
       backgroundColor: Constants.darkControllerColor,
+
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -29,7 +30,6 @@ class _GuideCameraPlacementControllerState extends State<GuideCameraPlacementCon
             children: [
               GestureDetector(onTap: (){
                 NavigatorUtil.pop();
-                print('点击进行下一步');
               },
                 child: Container(
                   margin: EdgeInsets.only(top: 32,left: 32),
@@ -43,11 +43,13 @@ class _GuideCameraPlacementControllerState extends State<GuideCameraPlacementCon
                     child: Image(image: AssetImage('images/guide/back_icon.png'),width: 10,height: 20,),
                   ),
                 ),
+
               ),
 
+
               GestureDetector(onTap: (){
-                NavigatorUtil.push(Routes.guideThreePage);
-                },
+                NavigatorUtil.push(Routes.cameraCalibration);
+              },
                 child: Container(
                   margin: EdgeInsets.only(top: 32,right: 32),
                   width: 52,
@@ -60,28 +62,46 @@ class _GuideCameraPlacementControllerState extends State<GuideCameraPlacementCon
                     child: Image(image: AssetImage('images/guide/next_icon.png'),width: 10,height: 20,),
                   ),
                 ),
-              )
+              ),
             ],
           ),
 
-          Constants.mediumWhiteTextWidget('Camera Placement', 36, Colors.white),
+          Constants.mediumWhiteTextWidget('Reminders', 36, Colors.white),
           SizedBox(height: 25,),
+
           Center(
-            child: Image(
-                width: 233,
-                height: 130,
-                image: AssetImage('images/guide/guide_second.png')),
-          ) ,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image(
+                    width: 65,
+                    height: 65,
+                    image: AssetImage('images/guide/guide_three_sun.png')
+                ),
+                SizedBox(width: 119,),
+                Image(
+                    width: 65,
+                    height: 65,
+                    image: AssetImage('images/guide/guide_three_sund.png')
+                ),
+
+              ],
+
+            ),
+          ),
+
           SizedBox(height: 25,),
-          Constants.regularWhiteTextWidget('Place the phone mount at either end of the tennis court net,'
-              ' and position the camera towards the direction of the court you wish to capture, '
-              'ensuring that the mount is set higher than the net.', 16, Colors.white),
-
-
+          Constants.regularWhiteTextWidget('Please secure your phone and avoid direct exposure to sunlight.', 16, Colors.white),
         ],
 
       ),
     );
 
   }
+
+  // void dispose() {
+  //   super.dispose();
+  //   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp,]); // 设置竖屏模式
+  // }
+
 }
