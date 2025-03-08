@@ -1,0 +1,50 @@
+//
+//  BatteryView.swift
+//  Runner
+//
+//  Created by 孟恒 on 2025/3/4.
+//
+
+import UIKit
+
+class BatteryView: UIView {
+
+    /*
+    // Only override draw() if you perform custom drawing.
+    // An empty implementation adversely affects performance during animation.
+    override func draw(_ rect: CGRect) {
+        // Drawing code
+    }
+    */
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
+        
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupView() {
+        let screenWidth = UIScreen.main.bounds.width
+        let screenHeight = UIScreen.main.bounds.height
+        
+        
+        self.frame = CGRect(x: 658, y: 304 , width: 75 , height: 36)
+       
+        self.backgroundColor = UIColor(red: 19/255.0, green: 19/255.0, blue: 20/255.0, alpha: 0.8)
+        self.layer.cornerRadius = 18
+        
+        let img = UIImageView(image: UIImage(named: "camera_battery"))
+        img.frame = CGRect(x: 12, y: 10, width: 10, height: 15)
+        addSubview(img)
+        
+        let lab = UILabel(frame: CGRect(x: 27, y: 0, width: 40, height: 36))
+        lab.textColor = .white
+        lab.text = "70%"
+        addSubview(lab)
+
+    }
+
+}
