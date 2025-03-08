@@ -70,7 +70,12 @@ class _GuidePageControllerState extends State<GuidePageController> {
            ],
          ),
 
-         Constants.mediumWhiteTextWidget('Intelligent Mode', 36, Colors.white),
+         Container(
+           margin: EdgeInsets.only(top: 0),
+           child:  Constants.mediumWhiteTextWidget('Intelligent Mode', 36, Colors.white),
+
+         ),
+
          SizedBox(height: 25,),
          Center(
            child: Image(
@@ -79,10 +84,15 @@ class _GuidePageControllerState extends State<GuidePageController> {
                image: AssetImage('images/guide/guide_first.png')),
          ) ,
           SizedBox(height: 25,),
-          Constants.regularWhiteTextWidget('In the intelligent mode, '
-             'your robot will remain within the boundaries of the court,'
-             ' and you can select the position to which the robot returns '
-             'after the balls are full by clicking the HOME icon.', 16, Colors.white),
+
+          Container(
+            margin: EdgeInsets.only(left: 88,right: 88),
+            child:  Constants.regularWhiteTextWidget('In the intelligent mode, '
+                'your robot will remain within the boundaries of the court,'
+                ' and you can select the position to which the robot returns '
+                'after the balls are full by clicking the HOME icon.', 16, Colors.white,height: 1.5),
+          ),
+
         ],
 
       ),

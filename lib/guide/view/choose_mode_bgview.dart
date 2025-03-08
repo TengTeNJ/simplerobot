@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../constant/constants.dart';
 
+/// 区域选择
 class ChooseModeBgview extends StatefulWidget {
   Function? areaClick;
 
@@ -14,9 +15,25 @@ class ChooseModeBgview extends StatefulWidget {
 class _ChooseModeBgviewState extends State<ChooseModeBgview> {
   int _currentIndex = 0;
 
+  bool leftSelected= false;
+  bool topSelected= false;
+  bool rightSelected= false;
+  bool bottomSelected= false;
+
+
   void _actionClick(int index) {
     setState(() {
       _currentIndex = index;
+      /// 只能选中相邻的两个  或者选中一个
+      if (index == 0 && rightSelected == false)  {
+        leftSelected = true;
+      } else if(index == 1 && bottomSelected == false) {
+        topSelected =  true;
+      } else if(index == 2 && leftSelected == false) {
+        rightSelected = true;
+      } else if(index == 3 && topSelected == false){
+        bottomSelected = true;
+      }
     });
   }
   @override
@@ -43,12 +60,12 @@ class _ChooseModeBgviewState extends State<ChooseModeBgview> {
               _actionClick(0);
             },  child: Container(
                 decoration: BoxDecoration(
-                  color: Constants.cameraPickChooseAreaBgColor,
+                  color: leftSelected ? Constants.cameraPickChoosedAreaBgColor
+        :Constants.cameraPickChooseAreaBgColor,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 height: 266,
                 width: 54,
-
             ), ),
           ),
           Positioned(
@@ -58,10 +75,11 @@ class _ChooseModeBgviewState extends State<ChooseModeBgview> {
               if (widget.areaClick != null) {
                 widget.areaClick!(0);
               }
-              _actionClick(0);
+              _actionClick(1);
             },  child: Container(
               decoration: BoxDecoration(
-                color: Constants.cameraPickChooseAreaBgColor,
+                color: topSelected ? Constants.cameraPickChoosedAreaBgColor
+                    :Constants.cameraPickChooseAreaBgColor,
                 borderRadius: BorderRadius.circular(10),
               ),
               height: 26,
@@ -76,10 +94,11 @@ class _ChooseModeBgviewState extends State<ChooseModeBgview> {
               if (widget.areaClick != null) {
                 widget.areaClick!(0);
               }
-              _actionClick(0);
+              _actionClick(2);
             },  child: Container(
               decoration: BoxDecoration(
-                color: Constants.cameraPickChooseAreaBgColor,
+                color:rightSelected ? Constants.cameraPickChoosedAreaBgColor
+                    :Constants.cameraPickChooseAreaBgColor,
                 borderRadius: BorderRadius.circular(10),
               ),
               height: 266,
@@ -95,10 +114,11 @@ class _ChooseModeBgviewState extends State<ChooseModeBgview> {
               if (widget.areaClick != null) {
                 widget.areaClick!(0);
               }
-              _actionClick(0);
+              _actionClick(3);
             },  child: Container(
               decoration: BoxDecoration(
-                color: Constants.cameraPickChooseAreaBgColor,
+                color: bottomSelected ? Constants.cameraPickChoosedAreaBgColor
+                    :Constants.cameraPickChooseAreaBgColor,
                 borderRadius: BorderRadius.circular(10),
               ),
               height: 26,

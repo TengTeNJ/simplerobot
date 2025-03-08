@@ -188,6 +188,7 @@ class Constants {
 
   static Color cameraPickBgColor = Color.fromRGBO(19 , 19, 20, 1);
   static Color cameraPickChooseAreaBgColor = Color.fromRGBO(27 , 66, 197, 0.75);
+  static Color cameraPickChoosedAreaBgColor = Color.fromRGBO(25 , 243, 134, 1.0);
 
 
   static Color customSliderUnselectedColor = Color.fromRGBO(220, 220, 220, 1);

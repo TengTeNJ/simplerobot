@@ -8,9 +8,9 @@ class ActionListView extends StatefulWidget {
       required this.desc,
       this.code = 0,
       this.unit,
-      this.showNext = false,this.onTap});
+      this.showIcon = true,this.onTap});
 
-  bool showNext;
+  bool showIcon;
   String? assetPath;
   String title;
   String desc;
@@ -33,6 +33,7 @@ class _ActionListViewState extends State<ActionListView> {
           crossAxisAlignment: CrossAxisAlignment.center,
 
           children: [
+          widget.showIcon == true ?
           Container(
           width: 34,
           height: 34,
@@ -41,7 +42,7 @@ class _ActionListViewState extends State<ActionListView> {
             borderRadius: BorderRadius.circular(17)
           ),
           child: Center(child: Image(image: AssetImage(widget.assetPath ??
-            'images/connect/today_number_icon.png'),width: 16,),)),
+            'images/connect/today_number_icon.png'),width: 16,),)) : Container(),
           SizedBox(height: 10,),
           Container(
               child: Row(

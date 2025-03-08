@@ -1,4 +1,8 @@
+import 'dart:async';
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tennis_robot/models/robot_data_model.dart';
@@ -44,6 +48,23 @@ class _PickModeControllerState extends State<PickModeController> {
 
   bool lowBatteryAlertIsShow = false; // 低电量弹窗是否弹出过
   bool shutDownAlertIsShow = false; // 低电量关机弹窗是否弹出过
+
+  Timer? _timer;
+  var imagePath = 'images/camerapick/full_court.apng';
+  int _currentGifIndex = 0;
+  List<String> gifPaths = [
+    'images/camerapick/full_court.apng', // 第一张动图的路径
+    'images/camerapick/a_court.apng', // 第二张动图的路径
+    'images/camerapick/b_court.apng', // 第三张动图的路径
+  ];
+
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 16), (timer) { // 假设每张 APNG 动图播放时长为 5 秒
+      setState(() {
+        _currentGifIndex = (_currentGifIndex + 1) % gifPaths.length;
+      });
+    });
+  }
 
   /// 使屏幕保持常亮的函数
   Future<void> enableKeepScreenOn() async {
@@ -93,9 +114,37 @@ class _PickModeControllerState extends State<PickModeController> {
     });
   }
 
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> getSwiftData() async {
+    MethodChannel _channel = const MethodChannel('start_pick');
+    final result = await _channel.invokeMethod('apple_two');
+    Map map = result as LinkedHashMap<Object?, Object?>;
+    print("result122: ${map["result"]}");
+    print("code33: ${map["code"]}");
+  }
+
+
   void initState() {
     enableKeepScreenOn();
+    _startTimer();
+    getSwiftData();
+    var channel = MethodChannel('com.flutter.guide.MethodChannel');
+    // channel.setMethodCallHandler((call) {
+    //   setState(() {
+    //    // _nativeData = call.arguments['count'];
+    //   });
+    // });
 
+    channel.setMethodCallHandler((call) {
+        var data = call.arguments['count'];
+        print('swift 返回的数据${data}');
+        return call.arguments['count'];
+    });
     // 断链退到连接界面
   BluetoothManager().disConnect = () {
     TTDialog.robotBleDisconnectDialog(context, () async {
@@ -333,9 +382,9 @@ class _PickModeControllerState extends State<PickModeController> {
           ),
 
           Container(
-            margin: EdgeInsets.only(top: 64),
+            margin: EdgeInsets.only(top: 32),
             width: Constants.screenWidth(context),
-            child: ActionDataListView(todayCount: '${todayPickUpBalls}',useMinutes: todayRobotWorkTime,todayCal: todayCal,),
+            child: ActionDataListView(todayCount: '${todayPickUpBalls}',useMinutes: todayRobotWorkTime,todayCal: todayCal,showIcon: false,),
           ),
           selectedMode == SelectedMode.pickMode ?
           Container(
@@ -348,35 +397,32 @@ class _PickModeControllerState extends State<PickModeController> {
                 BleSendUtil.setRobotMode(RobotMode.training);
                 print('start training');
               }
+              NavigatorUtil.push(Routes.guidePage);
+
               Vibration.vibrate(duration: 500);
               setState(() {
                 imageName = imageName == 'mode_start' ? 'mode_pause' :'mode_start';
               });
             },
-              child: Column(
-                children: [
-                  Padding(padding: EdgeInsets.only(left: 0,top: 10)),
-                  Image(image: AssetImage('images/home/${imageName}.apng'),
-                    width:204,
-                    height: 204,
-                  ),
-                  SizedBox(height: 34),
-                  Constants.regularWhiteTextWidget('AUTO', 16, Constants.selectedModelBgColor),
-                ],
+              child: Image.asset(
+                gifPaths[_currentGifIndex],
+                width: 209,
+                height: 376,
+                gaplessPlayback: true,
               ),
             ),
           ) :
           Container(
             alignment: Alignment.center,
-            margin: EdgeInsets.only(top: 68),
+            margin: EdgeInsets.only(top: 42),
             child: RemoteControlView(),
           ),
 
           Container(
             alignment: Alignment.center,
-            margin: EdgeInsets.only(top:  selectedMode == SelectedMode.pickMode ? getMargin() + 75 : 75),
+            margin: EdgeInsets.only(top: 42),
             child: Padding(
-              padding: EdgeInsets.only(bottom: 64),
+             padding: EdgeInsets.only(bottom: 0),
               child: ModeSwitchView(areaClick: (index){
                 setState(() {
                   Vibration.vibrate(duration: 500); // 触发震动

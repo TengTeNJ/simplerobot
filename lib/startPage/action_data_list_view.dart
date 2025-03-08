@@ -12,8 +12,13 @@ class ActionDataListView extends StatefulWidget {
   String todayCount;
   int todayCal;
   int useMinutes;
+  bool showIcon ;
 
-  ActionDataListView({required this.todayCount, required this.useMinutes, required this.todayCal});
+  ActionDataListView({required this.todayCount,
+    required this.useMinutes,
+    required this.todayCal,
+    this.showIcon = true,
+  });
 
   @override
   State<ActionDataListView> createState() => _ActionDataListViewState();
@@ -69,18 +74,23 @@ class _ActionDataListViewState extends State<ActionDataListView> {
             ActionListView(
                 assetPath: 'images/connect/today_number_icon.png',
                 title: 'Today',
-                desc: "${widget.todayCount}"),
+                desc: "${widget.todayCount}",
+                showIcon: widget.showIcon,
+            ),
             ActionListView(
               assetPath: 'images/connect/today_use_time.png',
               title: 'Today Use',
               desc: '${widget.useMinutes}',
               unit: 'mins',
+              showIcon: widget.showIcon,
             ),
             // SizedBox(width: 20),
             ActionListView(
                 assetPath: 'images/connect/today_cal.png',
                 title: 'Calorie',
-                desc: '${widget.todayCal}'),
+                desc: '${widget.todayCal}',
+                showIcon: widget.showIcon,
+            ),
           ],
         ),
       ],

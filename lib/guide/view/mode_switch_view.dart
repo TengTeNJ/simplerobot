@@ -13,7 +13,7 @@ class ModeSwitchView extends StatefulWidget {
 }
 
 class _ModeSwitchViewState extends State<ModeSwitchView> {
-  int _currentIndex = 0;
+  int _currentIndex = 1;
 
   void _actionClick(int index) {
     setState(() {

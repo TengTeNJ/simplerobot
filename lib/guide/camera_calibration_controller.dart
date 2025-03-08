@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
+// import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
 import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/route/routes.dart';
@@ -17,12 +17,15 @@ class CameraCalibrationController extends StatefulWidget {
 
 class _CameraCalibrationControllerState
     extends State<CameraCalibrationController> {
-  late CameraController _controller;
-  late CameraPreview _preview;
+  // late CameraController _controller;
+  // late CameraPreview _preview;
   late Future<void> _initializeControllerFuture;
 
   var  cameraRatio = 0.0;
+  var  deviceRatio = 0.0;
 
+
+  bool calibrationSuccess = true;/// 相机校准是否成功
 
   @override
   void initState() {
@@ -32,46 +35,42 @@ class _CameraCalibrationControllerState
     //   DeviceOrientation.landscapeLeft,
     //   DeviceOrientation.landscapeRight,
     // ]);
-    _initializeCamera();
+   // _initializeCamera();
   }
 
-  Future<void> _initializeCamera() async {
-    WidgetsFlutterBinding.ensureInitialized(); // 确保 Flutter 绑定初始化
-    final cameras = await availableCameras(); // 获取设备上的摄像头列表
-    final firstCamera = cameras.first; // 使用第一个摄像头
-    _controller = CameraController(
-      firstCamera,
-      ResolutionPreset.medium, // 设置分辨率
-      enableAudio: false, // 禁用音频（如果不需要）
-    );
-    await _controller.initialize(); // 初始化摄像头
-    _preview = CameraPreview(_controller);
-
-    cameraRatio = _controller.value.aspectRatio;
-    setState(() {}); // 触发界面更新
-  }
-
+  // Future<void> _initializeCamera() async {
+  //   WidgetsFlutterBinding.ensureInitialized(); // 确保 Flutter 绑定初始化
+  //   final cameras = await availableCameras(); // 获取设备上的摄像头列表
+  //   final firstCamera = cameras.first; // 使用第一个摄像头
+  //   _controller = CameraController(
+  //     firstCamera,
+  //     ResolutionPreset.medium, // 设置分辨率
+  //     enableAudio: false, // 禁用音频（如果不需要）
+  //   );
+  //   await _controller.initialize(); // 初始化摄像头
+  //   _preview = CameraPreview(_controller);
+  //
+  //   cameraRatio = _controller.value.aspectRatio;
+  //   final size = MediaQuery.of(context).size;
+  //   deviceRatio = size.width / size.height;
+  //
+  //   setState(() {}); // 触发界面更新
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Constants.baseControllerColor,
-      body: SingleChildScrollView(
+      body: FittedBox(
+        fit: BoxFit.cover,
         child: Stack(
           children: [
-            Opacity(opacity: 0.4,
+            Opacity(opacity: 0.8,
               child: SizedBox(
                 width: Constants.screenWidth(context),
                 height: Constants.screenHeight(context),
-                child: Transform.rotate(angle: -3.14 /2,
-                  child: AspectRatio(
-                      aspectRatio: cameraRatio,
-                    child:  CameraPreview(
-                          _controller,
-                        ),
-                  ),
-                ),
-
+              //  child: CameraPreview(_controller),
+                child: Container(),
               ),
             ),
 
@@ -85,15 +84,14 @@ class _CameraCalibrationControllerState
                     width: 52,
                     height: 52,
                     decoration: BoxDecoration(
-                      color: Constants.selectedModelOrangeBgColor,
+                      color:Constants.selectedModelOrangeBgColor,
                       borderRadius: BorderRadius.circular(26),
                     ),
                     child: Center(
                       child: Image(image: AssetImage('images/guide/back_icon.png'),width: 10,height: 20,),
                     ),
                   ),
-
-                )
+                ),
             ),
 
             Positioned(
@@ -106,11 +104,11 @@ class _CameraCalibrationControllerState
                     width: 52,
                     height: 52,
                     decoration: BoxDecoration(
-                      color: Constants.selectedModelOrangeBgColor,
+                      color: calibrationSuccess == true ? Color.fromRGBO(19 , 154, 108, 1): Constants.grayTextColor,
                       borderRadius: BorderRadius.circular(26),
                     ),
                     child: Center(
-                      child: Image(image: AssetImage('images/guide/next_icon.png'),width: 10,height: 20,),
+                      child: Image(image: AssetImage('images/guide/ready_icon.png'),width: 21,height: 15,),
                     ),
                   ),
 
@@ -123,7 +121,7 @@ class _CameraCalibrationControllerState
                   children: [
                     Constants.regularWhiteTextWidget('Please position the key points '
                         'of the court within the calibration circle'
-                        ' to achieve field of view calibration.', 16 , Colors.white),
+                        ' to achieve field of view calibration.', 16 , Colors.white,height: 1.5),
                   ],
                 )),
 

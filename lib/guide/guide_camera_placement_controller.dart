@@ -73,9 +73,14 @@ class _GuideCameraPlacementControllerState extends State<GuideCameraPlacementCon
                 image: AssetImage('images/guide/guide_second.png')),
           ) ,
           SizedBox(height: 25,),
-          Constants.regularWhiteTextWidget('Place the phone mount at either end of the tennis court net,'
-              ' and position the camera towards the direction of the court you wish to capture, '
-              'ensuring that the mount is set higher than the net.', 16, Colors.white),
+
+          Container(
+            margin: EdgeInsets.only(left: 78,right: 78),
+            child:  Constants.regularWhiteTextWidget('Place the phone mount at either end of the tennis court net,'
+                ' and position the camera towards the direction of the court you wish to capture, '
+                'ensuring that the mount is set higher than the net.', 16, Colors.white,height: 1.5),
+
+          ),
 
 
         ],

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../constant/constants.dart';
 import '../route/routes.dart';
+import '../utils/NativeCommunication.dart';
 import '../utils/navigator_util.dart';
 
 /// 避免阳关直射提示
@@ -14,6 +15,27 @@ class GuideAvoidsunController extends StatefulWidget {
 }
 
 class _GuideAvoidsunControllerState extends State<GuideAvoidsunController> {
+  static const platfrom = MethodChannel('native_screen');
+  
+  void openNativeScreen() async {
+    try {
+      await platfrom.invokeMethod('openNativeScreen');
+    } on PlatformException catch(e) {
+      print('Failed to open native screen: ${e.message}');
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getDataFromSwift();
+  }
+
+  void getDataFromSwift() async {
+     await NativeCommunication().setupMethodChannel();
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]); // 设置横屏模式
@@ -43,12 +65,12 @@ class _GuideAvoidsunControllerState extends State<GuideAvoidsunController> {
                     child: Image(image: AssetImage('images/guide/back_icon.png'),width: 10,height: 20,),
                   ),
                 ),
-
               ),
 
 
               GestureDetector(onTap: (){
-                NavigatorUtil.push(Routes.cameraCalibration);
+               // NavigatorUtil.push(Routes.cameraCalibration);
+                openNativeScreen();
               },
                 child: Container(
                   margin: EdgeInsets.only(top: 32,right: 32),

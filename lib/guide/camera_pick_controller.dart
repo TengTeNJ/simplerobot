@@ -1,5 +1,8 @@
-import 'package:camera/camera.dart';
+import 'dart:collection';
+
+//import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tennis_robot/guide/view/choose_mode_bgview.dart';
 import 'package:tennis_robot/guide/view/mode_switch_view.dart';
 
@@ -16,11 +19,24 @@ class CameraPickController extends StatefulWidget {
 }
 
 class _CameraPickControllerState extends State<CameraPickController> {
-  late CameraController _controller;
-  late CameraPreview _preview;
+  // late CameraController _controller;
+  // late CameraPreview _preview;
   late Future<void> _initializeControllerFuture;
 
   var  cameraRatio = 1.0;
+
+  var actionBtnTitle = 'Start';
+
+  Future<void> appleOne() async {
+    MethodChannel _channel = const MethodChannel('plugin_apple');
+    final result = await _channel.invokeMethod('apple_one');
+    Map map = result as LinkedHashMap<Object?, Object?>;
+    print("result: ${map["result"]}");
+    print("code: ${map["code"]}");
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +84,7 @@ class _CameraPickControllerState extends State<CameraPickController> {
                 right: 24,
                 top: 24,
                 child: GestureDetector(onTap: (){
-                  NavigatorUtil.push(Routes.cameraPick);
+                 // NavigatorUtil.push(Routes.cameraPick);
                 }, child: Container(
                   width: 140,
                   height: 36,
@@ -157,7 +173,10 @@ class _CameraPickControllerState extends State<CameraPickController> {
                 right: 64,
                 top: 157,
                 child: GestureDetector(onTap: (){
-                  NavigatorUtil.push(Routes.cameraPick);
+                    appleOne();
+                    setState(() {
+                    actionBtnTitle = 'Pause';
+                  });
                 }, child: Container(
                   decoration: BoxDecoration(
                     color: Constants.selectedModelOrangeBgColor,
@@ -166,7 +185,7 @@ class _CameraPickControllerState extends State<CameraPickController> {
                   width: 84,
                   height: 84,
                   child: Center(
-                    child: Constants.regularWhiteTextWidget('Start', 20, Colors.white),
+                    child: Constants.regularWhiteTextWidget('${actionBtnTitle}', 20, Colors.white),
                   ),
                 ),
                 )),
