@@ -7,6 +7,7 @@
 
 import UIKit
 import opencv2
+import Accelerate
 
 import CoreML
 import Vision
@@ -27,7 +28,9 @@ var mlmodelConfig: MLModelConfiguration = {
 }()
 
 /// 相机校准界面
-class CameraCalibrationController: UIViewController {
+class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
+   
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -75,6 +78,32 @@ class CameraCalibrationController: UIViewController {
     var keyPointSize = 15.0
     var pointColor = UIColor(red: 91/255.0, green: 204/255.0, blue: 106/255.0, alpha: 1.0)
     
+    // 关键点模型检测的四个点
+  let quadrilateralPoints: [CGPoint] = [
+    CGPoint(x: 320, y: 116),  // 左上
+    CGPoint(x: 430, y: 105),  // 右上
+    CGPoint(x: 670, y: 124),  // 右下
+    CGPoint(x: 586, y: 146)   // 左下
+  ]
+    
+    // 定义图像中的菱形四个顶点
+    let srcPoints: [CGPoint] = [
+        CGPoint(x: 100, y: 100),  // 左上
+        CGPoint(x: 300, y: 100),  // 右上
+        CGPoint(x: 200, y: 300),  // 右下
+        CGPoint(x: 0, y: 300)     // 左下
+    ]
+
+    // 定义目标矩形的四个顶点
+    let dstPoints: [CGPoint] = [
+        CGPoint(x: 420, y: 126),       // 左上
+        CGPoint(x: 515, y: 126),     // 右上
+        CGPoint(x: 515, y: 285),   // 右下
+        CGPoint(x: 420, y: 285)      // 左下
+    ]
+    
+    var canvas: CameraPickCanvas!
+
     
     lazy var visionRequest: VNCoreMLRequest = {
       let request = VNCoreMLRequest(
@@ -86,29 +115,95 @@ class CameraCalibrationController: UIViewController {
       request.imageCropAndScaleOption = .scaleFill  // .scaleFit, .scaleFill, .centerCrop
       return request
     }()
+    
+    var transform = CGAffineTransform()
 
+    func calculateAffineTransform(from virtualPoints: [CGPoint], to realPoints: [CGPoint]) -> CGAffineTransform {
+        let A = [
+            virtualPoints[0].x, virtualPoints[0].y, 1, 0, 0, 0,
+            0, 0, 0, virtualPoints[0].x, virtualPoints[0].y, 1,
+            virtualPoints[1].x, virtualPoints[1].y, 1, 0, 0, 0,
+            0, 0, 0, virtualPoints[1].x, virtualPoints[1].y, 1,
+            virtualPoints[2].x, virtualPoints[2].y, 1, 0, 0, 0,
+            0, 0, 0, virtualPoints[2].x, virtualPoints[2].y, 1,
+            virtualPoints[3].x, virtualPoints[3].y, 1, 0, 0, 0,
+            0, 0, 0, virtualPoints[3].x, virtualPoints[3].y, 1
+        ]
+        let B = [
+            realPoints[0].x, realPoints[0].y,
+            realPoints[1].x, realPoints[1].y,
+            realPoints[2].x, realPoints[2].y,
+            realPoints[3].x, realPoints[3].y
+        ]
+        
+        var AMatrix = [Double](repeating: 0, count: 8 * 6)
+        var BMatrix = [Double](repeating: 0, count: 8 * 1)
+        for i in 0..<8 {
+            for j in 0..<6 {
+                AMatrix[i * 6 + j] = A[i * 6 + j]
+            }
+            BMatrix[i] = B[i]
+        }
+        
+      var ipiv = [__CLPK_integer](repeating: 0, count: 6)
+       var info: __CLPK_integer = 0
+       var lda = __CLPK_integer(8)
+       var ldb = __CLPK_integer(8)
+       var nrhs = __CLPK_integer(1)
+       var n = __CLPK_integer(6)
+       
+        dgesv_(&n, &nrhs, &AMatrix, &lda, &ipiv, &BMatrix, &ldb, &info)
+       
+//        if info != 0 {
+//          print("Error in dgesv: \(info)")
+//          return nil
+//        }
+        
+        let a = BMatrix[0]
+        let b = BMatrix[1]
+        let c = BMatrix[2]
+        let d = BMatrix[3]
+        let e = BMatrix[4]
+        let f = BMatrix[5]
+        
+        return CGAffineTransform(a: a, b: b, c: d, d: e, tx: c, ty: f)
+    }
+    
+    func pointsToImage(points: [CGPoint]) -> UIImage? {
+        guard points.count == 4 else { return nil }
+        
+        // 创建矩形路径
+        let path = UIBezierPath()
+        path.move(to: points[0])
+        path.addLine(to: points[1])
+        path.addLine(to: points[2])
+        path.addLine(to: points[3])
+
+        path.close()
+        
+        // 创建基于路径的图像
+        UIGraphicsBeginImageContext(CGSize(width: 100, height: 100)) // 根据需要调整大小
+        UIColor.blue.set() // 设置填充颜色
+        path.fill()
+        
+        if let image = UIGraphicsGetImageFromCurrentImageContext() {
+            UIGraphicsEndImageContext() // 结束图像上下文
+            return image
+        }
+        UIGraphicsEndImageContext() // 结束图像上下文（即使没有创建图像）
+        return nil
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-       
-//        let path  = Bundle.main.path(forResource: "WechatIMG37", ofType: "jpg") ?? ""
-//        let file = OpenCVBridgeFile()
+
+        ///未矫正的图像上（也就是相机原始拍到的图上）的点A
+        let srcpoint: CGPoint = CGPoint(x: 670, y: 124)
+        let dstPoint = try! MHPerspectiveTransform.perspectiveTransform(points: [srcpoint,])
         
-//        let cvMat = file.callCVImage(path)
-        
-//        let image =  file.getImage(cvMat)
-        
-//          let file = OpenCVBridgeFile()
-//          var img = file.transfromImage()
-//
-//        let path = Bundle.main.path(forResource: "WechatIMG37", ofType: "jpg") ?? ""
-//        let image = UIImage(contentsOfFile: path ?? "")
-//
-//        
-//        let Imageview = UIImageView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
-//        Imageview.image = img
-//        view.addSubview(Imageview)
-    //    return
+                                
     
         setUpBoundingBoxViews()
         setUpOrientationChangeNotification()
@@ -179,6 +274,20 @@ class CameraCalibrationController: UIViewController {
         
     }
     
+    // MARK: - CameraPickCanvasDelegate
+    func CameraPickCanvasDelegate(_ view: CameraPickCanvas, didSendData data: String) {
+        self.dismiss(animated: false)
+    }
+    
+    func ModeSwitchDelegate(_ view: CameraPickCanvas, didSendData data: Int) {
+        
+    }
+    
+    // MARK: - beginPickBallDelegate 点击开始捡球的代理方法
+    func beginPickBallDelegate(_ view: CameraPickCanvas, didSendData data: Bool) {
+        channel.invokeMethod("beginPickBall", arguments: true)
+     }
+    
     // MARK: - 按钮点击事件处理
        @objc func back(_ sender: UIButton) {
            print("返回了")
@@ -196,7 +305,8 @@ class CameraCalibrationController: UIViewController {
           self.readyBtn.removeFromSuperview()
           self.desLab.removeFromSuperview()
           
-          let canvas = CameraPickCanvas(frame: self.view.bounds)
+          canvas = CameraPickCanvas(frame: self.view.bounds)
+          canvas.delegate = self
           view.addSubview(canvas)
           
          /// 切换到另一个界面
@@ -576,12 +686,18 @@ class CameraCalibrationController: UIViewController {
             let alpha = CGFloat((confidence - 0.2) / (1.0 - 0.2) * 0.9)
               
               print("检测到的机器人的结果为\(rect)\(alpha)")
-
+            let isKeyPoints =  CommonTool.isPointInsideQuadrilateral(point: CGPoint(x: rect.origin.x, y: rect.origin.y), quadrilateralPoints: quadrilateralPoints)
+             
+              let srcpoint: CGPoint = CGPoint(x: rect.origin.x, y: rect.origin.y)
+              let dstPoints = try! MHPerspectiveTransform.perspectiveTransform(points: [srcpoint,])
+              let dstPoint = dstPoints.first
+              /// 更新机器人位置
+              canvas.updateRobotLocation(x: Double(dstPoint!.x), y: Double(dstPoint!.y))
             // Show the bounding box.
             boundingBoxViews[i].show(
               frame: rect,
               label: label,
-              color: UIColor.red,
+              color: isKeyPoints ? UIColor.red : UIColor.white,
               alpha: alpha)  // alpha 0 (transparent) to 1 (opaque) for conf threshold 0.2 to 1.0)
           } else {
             boundingBoxViews[i].hide()
