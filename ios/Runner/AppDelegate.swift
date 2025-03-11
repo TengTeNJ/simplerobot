@@ -8,6 +8,59 @@ import UIKit
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
+      let controller1: FlutterViewController = window?.rootViewController as! FlutterViewController
+      let channe = FlutterMethodChannel(name: "com.example/native",
+                                                binaryMessenger: controller1.binaryMessenger)
+      
+      
+      let messenger: FlutterBinaryMessenger = window?.rootViewController as! any FlutterBinaryMessenger as FlutterBinaryMessenger
+      testPlugin(messenger: messenger)
+      
+      
+      let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
+       let channel = FlutterMethodChannel(name: "native_screen", binaryMessenger: controller.binaryMessenger)
+      channel.setMethodCallHandler { (call,result) in
+          if call.method == "openNativeScreen" { // Flutter 打开原生界面
+              self.openNativeScreen(message: messenger)
+          } else if call.method == "getNativeData" {
+              let data = "Hello from Swift!"
+              result(data)
+          } else if call.method == "receiveData" {
+              if let args = call.arguments as? String {
+                  print("Received data from Flutter: \(args)")
+              }
+              result(nil)
+          }
+          
+          else {
+              result(FlutterMethodNotImplemented)
+          }
+      }
+      
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
+    
+    func openNativeScreen(message :FlutterBinaryMessenger) {
+        let nativeViewController = CameraCalibrationController(binaryMessenger: message)
+       let navigationController = UINavigationController(rootViewController: nativeViewController)
+       let flutterViewController = window?.rootViewController as! FlutterViewController
+       flutterViewController.present(navigationController, animated: true, completion: nil)
+    }
+    
+    
+   func testPlugin(messenger: FlutterBinaryMessenger) {
+       let channel = FlutterMethodChannel(name: "plugin_apple", binaryMessenger: messenger)
+       channel.setMethodCallHandler { (call:FlutterMethodCall, result:@escaping FlutterResult) in
+       
+           if (call.method == "apple_one") {
+               result(["result":"success","code":200]);
+           }
+           
+           if (call.method == "apple_two") {
+               result(["result":"success","code":404]);
+           }
+    
+       }
+   }
+
 }
