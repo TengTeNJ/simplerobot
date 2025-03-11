@@ -116,85 +116,6 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
       return request
     }()
     
-    var transform = CGAffineTransform()
-
-    func calculateAffineTransform(from virtualPoints: [CGPoint], to realPoints: [CGPoint]) -> CGAffineTransform {
-        let A = [
-            virtualPoints[0].x, virtualPoints[0].y, 1, 0, 0, 0,
-            0, 0, 0, virtualPoints[0].x, virtualPoints[0].y, 1,
-            virtualPoints[1].x, virtualPoints[1].y, 1, 0, 0, 0,
-            0, 0, 0, virtualPoints[1].x, virtualPoints[1].y, 1,
-            virtualPoints[2].x, virtualPoints[2].y, 1, 0, 0, 0,
-            0, 0, 0, virtualPoints[2].x, virtualPoints[2].y, 1,
-            virtualPoints[3].x, virtualPoints[3].y, 1, 0, 0, 0,
-            0, 0, 0, virtualPoints[3].x, virtualPoints[3].y, 1
-        ]
-        let B = [
-            realPoints[0].x, realPoints[0].y,
-            realPoints[1].x, realPoints[1].y,
-            realPoints[2].x, realPoints[2].y,
-            realPoints[3].x, realPoints[3].y
-        ]
-        
-        var AMatrix = [Double](repeating: 0, count: 8 * 6)
-        var BMatrix = [Double](repeating: 0, count: 8 * 1)
-        for i in 0..<8 {
-            for j in 0..<6 {
-                AMatrix[i * 6 + j] = A[i * 6 + j]
-            }
-            BMatrix[i] = B[i]
-        }
-        
-      var ipiv = [__CLPK_integer](repeating: 0, count: 6)
-       var info: __CLPK_integer = 0
-       var lda = __CLPK_integer(8)
-       var ldb = __CLPK_integer(8)
-       var nrhs = __CLPK_integer(1)
-       var n = __CLPK_integer(6)
-       
-        dgesv_(&n, &nrhs, &AMatrix, &lda, &ipiv, &BMatrix, &ldb, &info)
-       
-//        if info != 0 {
-//          print("Error in dgesv: \(info)")
-//          return nil
-//        }
-        
-        let a = BMatrix[0]
-        let b = BMatrix[1]
-        let c = BMatrix[2]
-        let d = BMatrix[3]
-        let e = BMatrix[4]
-        let f = BMatrix[5]
-        
-        return CGAffineTransform(a: a, b: b, c: d, d: e, tx: c, ty: f)
-    }
-    
-    func pointsToImage(points: [CGPoint]) -> UIImage? {
-        guard points.count == 4 else { return nil }
-        
-        // 创建矩形路径
-        let path = UIBezierPath()
-        path.move(to: points[0])
-        path.addLine(to: points[1])
-        path.addLine(to: points[2])
-        path.addLine(to: points[3])
-
-        path.close()
-        
-        // 创建基于路径的图像
-        UIGraphicsBeginImageContext(CGSize(width: 100, height: 100)) // 根据需要调整大小
-        UIColor.blue.set() // 设置填充颜色
-        path.fill()
-        
-        if let image = UIGraphicsGetImageFromCurrentImageContext() {
-            UIGraphicsEndImageContext() // 结束图像上下文
-            return image
-        }
-        UIGraphicsEndImageContext() // 结束图像上下文（即使没有创建图像）
-        return nil
-    }
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -202,9 +123,6 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
         ///未矫正的图像上（也就是相机原始拍到的图上）的点A
         let srcpoint: CGPoint = CGPoint(x: 670, y: 124)
         let dstPoint = try! MHPerspectiveTransform.perspectiveTransform(points: [srcpoint,])
-        
-                                
-    
         setUpBoundingBoxViews()
         setUpOrientationChangeNotification()
 
@@ -212,8 +130,6 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
         loadModel()
         setModel()
         startVideo()
-        
-        
         self.navigationController?.navigationBar.isHidden = true
     }
     
@@ -226,7 +142,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     
     @objc func orientationDidChange() {
       videoCapture.updateVideoOrientation()
-      //      frameSizeCaptured = false
+      //frameSizeCaptured = false
     }
     
     func setUpUi() {
