@@ -86,9 +86,9 @@ class AreaChooseView: UIView {
     private func setupView() {
         self.frame = CGRect(x: 344, y: 66 , width: widgetWidthVertical*2 + 2*margin + widgetWidthHorizontal , height: widgetHeightVertical)
         self.addSubview(areaABtn)
-        self.addSubview(areaBBtn)
+       // self.addSubview(areaBBtn)
         self.addSubview(areaCBtn)
-        self.addSubview(areaDBtn)
+       // self.addSubview(areaDBtn)
 
     }
     

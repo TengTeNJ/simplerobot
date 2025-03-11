@@ -105,6 +105,7 @@
      NSString * path = [[NSBundle mainBundle] pathForResource:@"WechatIMG37" ofType:@"jpg"];
     // 读取输入图像
       cv::Mat inputImage = cv::imread([path cStringUsingEncoding:NSUTF8StringEncoding]);
+    
       if (inputImage.empty()) {
           std::cerr << "Error: Image not loaded!" << std::endl;
           UIImage *img;
@@ -116,10 +117,10 @@
   //  Point2f dstPoints[4] = {Point2f(0, 0), Point2f(image.cols - 1, 0), Point2f(image.cols - 100, image.rows - 100), Point2f(100, image.rows - 100)};
     
       // 定义透视变换矩阵
-      std::vector<cv::Point2f> srcPoints = {cv::Point2f(0, 0), cv::Point2f(inputImage.cols -1, 0),
-                                            cv::Point2f(inputImage.cols-1, inputImage.rows-1), cv::Point2f(0, inputImage.rows -1)};
-      std::vector<cv::Point2f> dstPoints = {cv::Point2f(0, 0), cv::Point2f(inputImage.cols - 1, 0),
-                                            cv::Point2f(inputImage.cols - 100, inputImage.rows - 100), cv::Point2f(100, inputImage.rows - 100)};
+      std::vector<cv::Point2f> srcPoints = {cv::Point2f(320, 116), cv::Point2f(430, 105),
+                                            cv::Point2f(670, 124), cv::Point2f(586, 146)};
+      std::vector<cv::Point2f> dstPoints = {cv::Point2f(0, 0), cv::Point2f(844, 0),
+                                            cv::Point2f(844/2, 390), cv::Point2f(0, 390)};
       cv::Mat transformMatrix = cv::getPerspectiveTransform(srcPoints, dstPoints);
 
     // 调用封装的 warpPerspective 方法
@@ -129,6 +130,40 @@
 
     UIImage *handleImg = [self getImage:warpedImage];
     return  handleImg;
+}
+
+- (void)calculateHomegraphyMatsss {
+    cv::Mat homographyMatrix = [self calculateHomegraphyMat];
+    
+}
+
+// 获取单应性矩阵
+- (cv::Mat)calculateHomegraphyMat {
+    // 将 CGPoint 转换为 OpenCV 的 Mat 格式
+    
+    std::vector<cv::Point2f> srcPoints = {cv::Point2f(320, 116), cv::Point2f(430, 105),
+                                          cv::Point2f(670, 124), cv::Point2f(586, 146)};
+    std::vector<cv::Point2f> dstPoints = {cv::Point2f(420, 126), cv::Point2f(515, 126),
+                                          cv::Point2f(515, 285), cv::Point2f(420, 285)};
+  
+    cv::Mat homographyMatrix = cv::findHomography(srcPoints, dstPoints);
+    
+    // 逐元素访问并打印
+        for (int i = 0; i < homographyMatrix.rows; i++) {
+            for (int j = 0; j < homographyMatrix.cols; j++) {
+                std::cout << homographyMatrix.at<double>(i, j) << " ";
+
+            }
+            std::cout << std::endl;
+
+        }
+    return homographyMatrix;
+}
+
+/// 转换成矩形
+- (void)tranferRectangle {
+    
+    
 }
 
 

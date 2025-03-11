@@ -13,7 +13,6 @@
 
 using namespace cv;
 using namespace std;
-///Users/mengheng/Desktop/WechatIMG37.jpg
 
 void TransformImage::transform_image(const std::string& name) {
     
