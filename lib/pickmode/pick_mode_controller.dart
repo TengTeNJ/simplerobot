@@ -130,7 +130,7 @@ class _PickModeControllerState extends State<PickModeController> {
 
 
   void initState() {
-    enableKeepScreenOn();
+   // enableKeepScreenOn();
     _startTimer();
     getSwiftData();
     var channel = MethodChannel('com.flutter.guide.MethodChannel');
@@ -161,6 +161,8 @@ class _PickModeControllerState extends State<PickModeController> {
         for (var model in list) {
           if (model.device.name == kBLEDevice_NewName) {
              BluetoothManager().writerDataToDevice(model, heartBeatData());
+
+
           }
         }
       });
@@ -169,6 +171,8 @@ class _PickModeControllerState extends State<PickModeController> {
     // 界面一进来默认是捡球训练模式
     Future.delayed(Duration(milliseconds: 500), () {
       BleSendUtil.setRobotMode(RobotMode.training);
+      ///三个字节（1个字节机器人转向：1向左，2向右+2个字节机器人转向角度）
+      BleSendUtil.setRobotElectronicFence(1, 270);
     //  Future.delayed(Duration(milliseconds: 200), () {
         getDBSpeedData();
      // });

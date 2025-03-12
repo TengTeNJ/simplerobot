@@ -28,7 +28,7 @@ class AreaChooseView: UIView {
 
     lazy var areaABtn: UIButton = {
           let trainbtn = UIButton(type: .custom)
-          trainbtn.frame = CGRect(x: 0, y: 0, width: widgetWidthVertical, height: widgetHeightVertical)
+          trainbtn.frame = CGRect(x: 0, y: 0, width: 79, height: widgetHeightVertical)
           trainbtn.backgroundColor = bgColor
           trainbtn.layer.cornerRadius = 4;
           trainbtn.tag = 10
@@ -61,17 +61,17 @@ class AreaChooseView: UIView {
           return trainbtn
       }()
       
-      lazy var areaDBtn: UIButton = {
-          let trainbtn = UIButton(type: .custom)
-          trainbtn.frame = CGRect(x: widgetWidthVertical + margin, y: widgetHeightVertical - widgetHeightHorizontal, width: widgetWidthHorizontal, height: widgetHeightHorizontal)
-          trainbtn.backgroundColor = bgColor
-          trainbtn.layer.cornerRadius = 4;
-          trainbtn.clipsToBounds = true
-          trainbtn.tag = 13
+    lazy var areaDBtn: UIButton = {
+        let trainbtn = UIButton(type: .custom)
+        trainbtn.frame = CGRect(x: widgetWidthVertical + margin, y: widgetHeightVertical - widgetHeightHorizontal, width: widgetWidthHorizontal, height: widgetHeightHorizontal)
+        trainbtn.backgroundColor = bgColor
+        trainbtn.layer.cornerRadius = 4;
+        trainbtn.clipsToBounds = true
+        trainbtn.tag = 13
 
-          trainbtn.addTarget(self, action: #selector(btnAction(_:)), for: .touchUpInside)
-          return trainbtn
-      }()
+        trainbtn.addTarget(self, action: #selector(btnAction(_:)), for: .touchUpInside)
+        return trainbtn
+    }()
   
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -84,7 +84,7 @@ class AreaChooseView: UIView {
     }
     
     private func setupView() {
-        self.frame = CGRect(x: 344, y: 66 , width: widgetWidthVertical*2 + 2*margin + widgetWidthHorizontal , height: widgetHeightVertical)
+        self.frame = CGRect(x: 344, y: 66 , width: widgetWidthVertical*2 + 2*margin + widgetWidthHorizontal +  25, height: widgetHeightVertical)
         self.addSubview(areaABtn)
        // self.addSubview(areaBBtn)
         self.addSubview(areaCBtn)

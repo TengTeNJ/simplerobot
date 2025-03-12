@@ -88,7 +88,7 @@ public class VideoCapture: NSObject {
 
   // Configures the camera and capture session with optional session presets.
   public func setUp(
-    sessionPreset: AVCaptureSession.Preset = .hd1920x1080, completion: @escaping (Bool) -> Void
+    sessionPreset: AVCaptureSession.Preset = .hd4K3840x2160, completion: @escaping (Bool) -> Void
   ) {
     queue.async {
       let success = self.setUpCamera(sessionPreset: sessionPreset)

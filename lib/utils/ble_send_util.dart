@@ -21,6 +21,25 @@ class BleSendUtil {
     BluetoothManager().writerDataToDevice(getWriterDevice(), changeRobotMode(mode));
   }
 
+  /// 设置电子围栏指令
+  static setRobotElectronicFence(int direction,int angle) {
+    if (BluetoothManager().hasConnectedDeviceList.isEmpty) {
+      return;
+    }
+    BluetoothManager().writerDataToDevice(getWriterDevice(), setElectronicFenceData(direction, angle));
+
+  }
+
+  // 设置机器人开始捡球
+  static setRobotStartPick(int state) {
+    if (BluetoothManager().hasConnectedDeviceList.isEmpty) {
+      return;
+    }
+    BluetoothManager().writerDataToDevice(getWriterDevice(), setRobotStartPickData(state));
+  }
+
+
+
   // 设置收球轮速度
   static setRobotCollectingWheelSpeed(int mode) {
     if (BluetoothManager().hasConnectedDeviceList.isEmpty) {

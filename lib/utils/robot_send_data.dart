@@ -136,6 +136,34 @@ List<int> setAngleData(int angle) {
   return [start, length, cmd, data1, data2, cs, end];
 }
 
+/*设置电子围栏围栏*/
+List<int> setElectronicFenceData(int direction,int angle) {
+  int start = kDataFrameHeader;
+  int length = 8;
+  int cmd = 0x52;
+  int data = direction;
+  String dataString = angle.toRadixString(2).padLeft(16, '0');
+  int data1 = binaryStringToDecimal(dataString.substring(0, 8));
+  int data2 = binaryStringToDecimal(dataString.substring(8, 16));
+  //int data = angle;
+  int cs = start + length + cmd + data +  data1 + data2;
+  int end = kDataFrameFoot;
+  print('设置电子围栏:${[start, length, cmd, data,data1, data2, cs, end]}');
+  return [start, length, cmd, data, data1, data2, cs, end];
+}
+
+//设置机器人速度开始 捡球  暂停捡球（0 stop 1 start）
+List<int> setRobotStartPickData(int state) {
+  int start = kDataFrameHeader;
+  int length = 6;
+  int cmd = 0x59;
+  int data = state;
+  int cs = start + length + cmd + data;
+  int end = kDataFrameFoot;
+  print('设置机器人速度:${[start, length, cmd, data, cs, end]}');
+  return [start, length, cmd, data, cs, end];
+}
+
 List<int> manualFetchData(ManualFetchType type){
   List<int> _cmds = [
     0x20,

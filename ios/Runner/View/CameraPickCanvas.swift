@@ -106,5 +106,19 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate {
         robot.frame.origin.y = y
 
     }
+    
+    // MARK: -计算机器人的角度
+    func calculateRobotAngle(lastPoint: CGPoint, currentPoint: CGPoint) -> Double {
+        let deltaX = currentPoint.x - lastPoint.x
+        let deltaY = currentPoint.y - lastPoint.y
+        let angleInRadians = atan2(deltaY, deltaX)
+        let angleInDegrees = angleInRadians * (180 / Double.pi)
+        print("机器人的角度\(angleInDegrees)")
+        UIView.animate(withDuration: 0.1) {
+            
+            self.robot.transform = self.robot.transform.rotated(by: 2*CGFloat.pi * angleInDegrees / 360) 
+        }
+        return angleInDegrees
+    }
 
 }

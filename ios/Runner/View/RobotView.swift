@@ -10,7 +10,7 @@ import UIKit
 class RobotView: UIView {
     ///原点icon
     lazy var robotIconImageview: UIImageView = {
-        let rightImageview = UIImageView(frame: CGRect(x: 0, y: 0, width: 36, height: 36))
+        let rightImageview = UIImageView(frame: CGRect(x: 0, y: 0, width: 19, height: 13))
         rightImageview.image = UIImage(named: "robot")
          return rightImageview
     }()
@@ -29,4 +29,6 @@ class RobotView: UIView {
         self.addSubview(robotIconImageview)
         
     }
+    
+  
 }
