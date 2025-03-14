@@ -108,7 +108,6 @@ List<int> setRobotPowerData() {
   return [start, length, cmd, data, cs, end];
 }
 
-
 /*设置区域*/
 List<int> setAreaData(int area) {
   int start = kDataFrameHeader;
@@ -150,6 +149,18 @@ List<int> setElectronicFenceData(int direction,int angle) {
   int end = kDataFrameFoot;
   print('设置电子围栏:${[start, length, cmd, data,data1, data2, cs, end]}');
   return [start, length, cmd, data, data1, data2, cs, end];
+}
+
+/*APP 发送导航结束指令*/ // 1 到达原点  2 区域位置到达
+List<int> setRobotNavigationEndData(int type) {
+  int start = kDataFrameHeader;
+  int length = 6;
+  int cmd = 0x54;
+  int data = type;
+  int cs = start + length + cmd + data;
+  int end = kDataFrameFoot;
+  print('设置关机:${[start, length, cmd, data, cs, end]}');
+  return [start, length, cmd, data, cs, end];
 }
 
 //设置机器人速度开始 捡球  暂停捡球（0 stop 1 start）

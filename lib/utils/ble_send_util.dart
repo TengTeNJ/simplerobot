@@ -30,15 +30,13 @@ class BleSendUtil {
 
   }
 
-  // 设置机器人开始捡球
+  /// 设置机器人开始捡球
   static setRobotStartPick(int state) {
     if (BluetoothManager().hasConnectedDeviceList.isEmpty) {
       return;
     }
     BluetoothManager().writerDataToDevice(getWriterDevice(), setRobotStartPickData(state));
   }
-
-
 
   // 设置收球轮速度
   static setRobotCollectingWheelSpeed(int mode) {
@@ -78,6 +76,14 @@ class BleSendUtil {
       return;
     }
     BluetoothManager().writerDataToDevice(getWriterDevice(), setRobotPowerData());
+  }
+
+  // 给机器人发送导航结束指令  1 到达原点  2 区域位置到达
+  static setRobotNavigationEnd(int type) {
+    if (BluetoothManager().hasConnectedDeviceList.isEmpty) {
+      return;
+    }
+    BluetoothManager().writerDataToDevice(getWriterDevice(), setRobotNavigationEndData(type));
   }
 
 
