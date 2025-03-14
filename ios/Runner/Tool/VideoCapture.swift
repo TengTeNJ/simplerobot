@@ -14,7 +14,7 @@
 import AVFoundation
 import CoreVideo
 import UIKit
-
+import Photos
 // Defines the protocol for handling video frame capture events.
 public protocol VideoCaptureDelegate: AnyObject {
   func videoCapture(_ capture: VideoCapture, didCaptureVideoFrame: CMSampleBuffer)
@@ -76,7 +76,7 @@ func bestCaptureDevice(for position: AVCaptureDevice.Position) -> AVCaptureDevic
 //  }
 }
 
-public class VideoCapture: NSObject {
+public class VideoCapture: NSObject,AVCaptureFileOutputRecordingDelegate {
   public var previewLayer: AVCaptureVideoPreviewLayer?
   public weak var delegate: VideoCaptureDelegate?
 
@@ -84,11 +84,14 @@ public class VideoCapture: NSObject {
   let captureSession = AVCaptureSession()
   let videoOutput = AVCaptureVideoDataOutput()
   var cameraOutput = AVCapturePhotoOutput()
+  var movieFileOutput = AVCaptureMovieFileOutput() // 视频输出，保存视频用
+  var isRecording = false // 是否正在录制视频
+
   let queue = DispatchQueue(label: "camera-queue")
 
   // Configures the camera and capture session with optional session presets.
   public func setUp(
-    sessionPreset: AVCaptureSession.Preset = .hd4K3840x2160, completion: @escaping (Bool) -> Void
+    sessionPreset: AVCaptureSession.Preset = .hd1920x1080, completion: @escaping (Bool) -> Void
   ) {
     queue.async {
       let success = self.setUpCamera(sessionPreset: sessionPreset)
@@ -110,8 +113,12 @@ public class VideoCapture: NSObject {
     if captureSession.canAddInput(videoInput) {
       captureSession.addInput(videoInput)
     }
+    if captureSession.canAddOutput(movieFileOutput) {
+     captureSession.addOutput(movieFileOutput)
+    }
 
     let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+    ///使用 AVLayerVideoGravity.resizeAspectFill 可以填充整个预览层，但可能会裁切部分内容
     previewLayer.videoGravity = .resizeAspectFill
     previewLayer.connection?.videoOrientation = .portrait
     self.previewLayer = previewLayer
@@ -148,8 +155,13 @@ public class VideoCapture: NSObject {
     }
     do {
       try captureDevice.lockForConfiguration()
-      captureDevice.focusMode = .continuousAutoFocus
-      captureDevice.focusPointOfInterest = CGPoint(x: 0.5, y: 0.5)
+       if captureDevice.isFocusModeSupported(.continuousAutoFocus) {
+           captureDevice.focusMode = .continuousAutoFocus
+           captureDevice.focusPointOfInterest = CGPoint(x: 0.5, y: 0.5)
+       } else {
+           print("Continuous auto-focus not supported")
+       }
+        
       captureDevice.exposureMode = .continuousAutoExposure
       captureDevice.unlockForConfiguration()
     } catch {
@@ -176,6 +188,49 @@ public class VideoCapture: NSObject {
       captureSession.stopRunning()
     }
   }
+    
+    
+  // 开始录制视频
+  public func startRecordVideo() {
+    
+      if (isRecording) {
+          // 停止录制
+         movieFileOutput.stopRecording()
+      } else {
+          // 开始录制
+          print("开始录制视频")
+          let fileName = "\(Date().timeIntervalSince1970).mp4"
+          let filePath = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent(fileName)
+          let fileURL = URL(fileURLWithPath: filePath)
+          movieFileOutput.startRecording(to: fileURL, recordingDelegate: self)
+          isRecording = !isRecording
+      }
+   }
+    
+  public func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: (any Error)?) {
+    if let error = error {
+                print("录制失败: \(error.localizedDescription)")
+                return
+            }
+      DispatchQueue.main.async {
+          // 保存到相册
+         PHPhotoLibrary.requestAuthorization { status in
+             if status == .authorized {
+                 PHPhotoLibrary.shared().performChanges({
+                     PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: outputFileURL)
+                 }) { success, error in
+                     if success {
+                         print("视频已保存到相册")
+                     } else {
+                         print("保存失败: \(error?.localizedDescription ?? "未知错误")")
+                     }
+                 }
+             } else {
+                 print("用户未授权访问相册")
+             }
+         }
+      }
+}
 
   func updateVideoOrientation() {
     guard let connection = videoOutput.connection(with: .video) else { return }
