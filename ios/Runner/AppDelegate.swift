@@ -25,7 +25,7 @@ import UIKit
           } else if call.method == "getNativeData" {
               let data = "Hello from Swift!"
               result(data)
-          } else if call.method == "receiveData" {
+          } else if call.method == "fLutterSendMessage" {
               if let args = call.arguments as? String {
                   print("Received data from Flutter: \(args)")
               }
@@ -35,7 +35,9 @@ import UIKit
           else {
               result(FlutterMethodNotImplemented)
           }
-      }
+          
+    }
+      
       
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
