@@ -17,12 +17,24 @@ protocol CameraPickCanvasDelegate: AnyObject {
 
 /// 捡球界面画布view
 class CameraPickCanvas: UIView, ModeSwitchViewDelegate {
+    var areaChoose =  AreaChooseView()
+    var virtualView = VirtualMapView()
     
     func ModeSwitchViewDelegate(_ view: ModeSwitchView, didSendData data: Int) {
         delegate?.ModeSwitchDelegate(self, didSendData: data)
-        if (data == 99) {
-            let area = AreaChooseView() // 四个捡球区域选择View
-            self.addSubview(area)
+        if (data == 99) { /// 训练模式
+           self.addSubview(areaChoose) // 两个捡球区域选择View
+           /// 不显示三个导航起点
+            virtualView.rightImageview.isHidden = true
+            virtualView.bottomleftImageview.isHidden = true
+            virtualView.bottomRightImageview.isHidden = true
+
+        } else { // 休息模式不显示两个捡球区域选择View
+            areaChoose.removeFromSuperview()
+             /// 休息模式下显示三个导航起点
+            virtualView.rightImageview.isHidden = false
+             virtualView.bottomleftImageview.isHidden = false
+             virtualView.bottomRightImageview.isHidden = false
         }
     }
     
@@ -49,11 +61,17 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate {
         self.addSubview(backBtn)
 
         /// 虚拟地图
-        let virtualView = VirtualMapView(frame: CGRect(x: 82, y: 60, width: 500, height: 280))
+        virtualView = VirtualMapView(frame: CGRect(x: 82, y: 60, width: 500, height: 280))
+        virtualView.isUserInteractionEnabled = true
         self.addSubview(virtualView)
         
         /// 机器人视图
-        self.addSubview(robot)
+//        self.addSubview(robot)
+        let keyWindow = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .first { $0.isKeyWindow }
+        keyWindow!.addSubview(robot)
         
         let cameraState = CameraStateView(frame: CGRect(x: 0, y: 0, width: 80, height: 20))
         self.addSubview(cameraState)
@@ -89,7 +107,13 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate {
     }
     
     @objc func beginPick(_ sender: UIButton) {
-        delegate?.beginPickBallDelegate(self, didSendData: true)
+        if sender.titleLabel?.text == "Start" {
+            sender.setTitle("Pause", for: .normal)
+            delegate?.beginPickBallDelegate(self, didSendData: true)
+        } else {
+            sender.setTitle("Start", for: .normal)
+            delegate?.beginPickBallDelegate(self, didSendData: false)
+        }
     }
     
     func ModeSwitchDelegate(_ view: CameraPickCanvas, didSendData data: Int) {
@@ -102,9 +126,7 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate {
     
     // MARK: - 更新机器人位置
     func updateRobotLocation(x: Double,y: Double) {
-        robot.frame.origin.x = x
-        robot.frame.origin.y = y
-
+        robot.center = CGPoint(x: x, y: y)
     }
     
     // MARK: -计算机器人的角度
@@ -114,11 +136,19 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate {
         let angleInRadians = atan2(deltaY, deltaX)
         let angleInDegrees = angleInRadians * (180 / Double.pi)
         print("机器人的角度\(angleInDegrees)")
-        UIView.animate(withDuration: 0.1) {
             
-            self.robot.transform = self.robot.transform.rotated(by: 2*CGFloat.pi * angleInDegrees / 360) 
-        }
+            //self.robot.transform = self.robot.transform.rotated(by: 2*CGFloat.pi * 10 / 360)
+        self.startRotating(view: self.robot,angle: angleInDegrees)
         return angleInDegrees
+    }
+    
+    func startRotating(view: UIView,angle: Double) {
+//        UIView.animate(withDuration: 0.1, delay: 0, options: [.repeat, .curveLinear], animations: {
+//            view.transform = view.transform.rotated(by: 2*CGFloat.pi * 1 / 360) // 旋转 360 度
+//        }, completion: nil)
+        
+        view.transform = view.transform.rotated(by: 2*CGFloat.pi * angle / 360) // 旋转 360 度
+
     }
 
 }

@@ -22,6 +22,7 @@ var mlmodelConfig: MLModelConfiguration = {
 
   if #available(iOS 17.0, *) {
     config.setValue(1, forKey: "experimentalMLE5EngineUsage")
+
   }
 
   return config
@@ -103,7 +104,15 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     ]
     
     var canvas: CameraPickCanvas!
+    
+    /// 上次机器人的位置
+    var lastRobotPosition  = CGPoint(x: 0, y: 0)
+    
+    /// 上次检测到机器人的时间
+    var lastTime = Date()
 
+    /// 运动坐标合集
+    var queue = NSMutableArray()
     
     lazy var visionRequest: VNCoreMLRequest = {
       let request = VNCoreMLRequest(
@@ -120,8 +129,10 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
         super.viewDidLoad()
         view.backgroundColor = .white
 
+        let bridge = OpenCVBridgeFile()
+        bridge.calculateHomegraphyMatsss()
         ///未矫正的图像上（也就是相机原始拍到的图上）的点A
-        let srcpoint: CGPoint = CGPoint(x: 670, y: 124)
+        let srcpoint: CGPoint = CGPoint(x: 586, y: 146)
         let dstPoint = try! MHPerspectiveTransform.perspectiveTransform(points: [srcpoint,])
         setUpBoundingBoxViews()
         setUpOrientationChangeNotification()
@@ -131,6 +142,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
         setModel()
         startVideo()
         self.navigationController?.navigationBar.isHidden = true
+        
     }
     
     /// 检测屏幕横竖屏
@@ -146,7 +158,9 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     }
     
     func setUpUi() {
-        videoPreview = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenWidth))
+        videoPreview = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
+        
+        
         view.addSubview(videoPreview)
         
         let backbtn = UIButton(frame: CGRect(x: 32, y: 32, width: 52, height: 52))
@@ -192,25 +206,36 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     
     // MARK: - CameraPickCanvasDelegate
     func CameraPickCanvasDelegate(_ view: CameraPickCanvas, didSendData data: String) {
+        videoCapture.startRecordVideo()
         self.dismiss(animated: false)
     }
     
     func ModeSwitchDelegate(_ view: CameraPickCanvas, didSendData data: Int) {
-        
+        if data == 99 { // 训练模式
+            channel.invokeMethod("changeRobotMode", arguments: "training")
+         } else { // 休息模式
+            channel.invokeMethod("changeRobotMode", arguments: "rest")
+         }
     }
     
     // MARK: - beginPickBallDelegate 点击开始捡球的代理方法
     func beginPickBallDelegate(_ view: CameraPickCanvas, didSendData data: Bool) {
-        channel.invokeMethod("beginPickBall", arguments: true)
+        channel.invokeMethod("beginPickBall", arguments: data)
+        self.canvas.robot.transform = self.canvas.robot.transform.rotated(by: 2*CGFloat.pi * 10 / 360)
+
      }
     
     // MARK: - 按钮点击事件处理
        @objc func back(_ sender: UIButton) {
+
            print("返回了")
            self.dismiss(animated: true)
        }
     
       @objc func nextAction(_ sender: UIButton) {
+          /// 开始录制视频
+         // videoCapture.startRecordVideo()
+          
           /// 切换机器人位置模型检测
           mlModel = try! robot(configuration: .init()).model
           setModel()
@@ -223,6 +248,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
           
           canvas = CameraPickCanvas(frame: self.view.bounds)
           canvas.delegate = self
+          canvas.isUserInteractionEnabled = true
           view.addSubview(canvas)
           
          /// 切换到另一个界面
@@ -241,6 +267,8 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
        /// VNCoreMLModel
       detector = try! VNCoreMLModel(for: mlModel)
       detector.featureProvider = ThresholdProvider()
+      /// 机器人的置信度修改为0.7，防止误识别
+        detector.featureProvider = ThresholdProvider(iouThreshold: 0.45, confidenceThreshold: 0.6)
 
       /// VNCoreMLRequest
       let request = VNCoreMLRequest(
@@ -287,7 +315,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
                     self.show(predictions: results)
                  }
                 
-                print("监测的结果\(results)");
+               // print("监测的结果\(results)");
             } else {
               self.show(predictions: [])
             }
@@ -406,18 +434,15 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
                let rectangleWIdth =  CommonTool.calculateDistance(point1: CGPoint(x: 320, y: 116), point2: CGPoint(x: 670, y: 124))
                 
                 let rectangleHeight =  CommonTool.calculateDistance(point1: CGPoint(x: 430, y: 105), point2: CGPoint(x: 586, y: 146))
-                print("矩形的宽高为\(rectangleWIdth)---\(rectangleHeight)")
+               //print("矩形的宽高为\(rectangleWIdth)---\(rectangleHeight)")
                 
                 /// finley 那边数据
                 let rectangleWIdth1 =  CommonTool.calculateDistance(point1: CGPoint(x: 1525, y: 342), point2: CGPoint(x: 727, y: 325))
                 
                 let rectangleHeight1 =  CommonTool.calculateDistance(point1: CGPoint(x: 1336, y: 411), point2: CGPoint(x: 994, y: 300))
                 
-                print("真实的矩形的宽高为\(rectangleWIdth1)---\(rectangleHeight1)")
-
-                
-                
-            }
+              //print("真实的矩形的宽高为\(rectangleWIdth1)---\(rectangleHeight1)")
+           }
         }
     }
 }
@@ -607,8 +632,31 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
               let srcpoint: CGPoint = CGPoint(x: rect.origin.x, y: rect.origin.y)
               let dstPoints = try! MHPerspectiveTransform.perspectiveTransform(points: [srcpoint,])
               let dstPoint = dstPoints.first
+//              if (calculateTimeStamp() > 50) {
+                  /// 计算机器人的角度
+               //   canvas.calculateRobotAngle(lastPoint: lastRobotPosition, currentPoint: dstPoint!)
+//              }
+              let doubleXValue: Double = Double(dstPoint?.x ?? 0) as Double
+              let doubleYValue: Double = Double(dstPoint?.y ?? 0) as Double
+
+              /// 坐标进行线性
+              self.queue.add((doubleXValue,doubleYValue))
+              if (self.queue.count == 10) {
+                  let c = ElectronicFence.fitMotionTrend(coordinateQueue: queue as! [(Double, Double)])
+                  print("\(c)")
+                  /// 清空queue 数据
+                  self.queue.removeAllObjects()
+                  /// 计算机器人角度
+                 // canvas.calculateRobotAngle(lastPoint: CGPoint(x: c.x, y: c.y), currentPoint: dstPoint!)
+                  
+              }
+             
+              lastRobotPosition = dstPoint ?? CGPoint(x: 0, y: 0)
+             
               /// 更新机器人位置
-              canvas.updateRobotLocation(x: Double(dstPoint!.x), y: Double(dstPoint!.y))
+             // canvas.updateRobotLocation(x: Double(dstPoint!.x), y: Double(dstPoint!.y))
+              canvas.updateRobotLocation(x: 443, y: 138)
+
             // Show the bounding box.
             boundingBoxViews[i].show(
               frame: rect,
@@ -620,9 +668,19 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
           }
         }
       }
-     
     }
-
+    
+    func calculateTimeStamp() -> Double{
+        if (lastTime == nil) {
+            lastTime = Date()
+            return 0
+        }
+        let timeDifference = Date().timeIntervalSince(lastTime)
+        if (timeDifference > 50) {
+            lastTime = Date()
+        }
+        return timeDifference
+    }
 }
 
 extension CameraCalibrationController: VideoCaptureDelegate {

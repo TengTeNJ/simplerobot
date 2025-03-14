@@ -36,19 +36,7 @@ class AreaChooseView: UIView {
           trainbtn.addTarget(self, action: #selector(btnAction(_:)), for: .touchUpInside)
           return trainbtn
       }()
-      
-      lazy var areaBBtn: UIButton = {
-          let trainbtn = UIButton(type: .custom)
-          trainbtn.frame = CGRect(x: widgetWidthVertical + margin, y: 0, width: widgetWidthHorizontal, height: widgetHeightHorizontal)
-          trainbtn.backgroundColor = bgColor
-          trainbtn.layer.cornerRadius = 4;
-          trainbtn.clipsToBounds = true
-          trainbtn.tag = 11
-
-          trainbtn.addTarget(self, action: #selector(btnAction(_:)), for: .touchUpInside)
-          return trainbtn
-      }()
-    
+          
     lazy var areaCBtn: UIButton = {
           let trainbtn = UIButton(type: .custom)
         trainbtn.frame = CGRect(x: widgetWidthHorizontal + widgetWidthVertical + 2 * margin, y: 0, width: widgetWidthVertical, height: widgetHeightVertical)
@@ -61,22 +49,10 @@ class AreaChooseView: UIView {
           return trainbtn
       }()
       
-    lazy var areaDBtn: UIButton = {
-        let trainbtn = UIButton(type: .custom)
-        trainbtn.frame = CGRect(x: widgetWidthVertical + margin, y: widgetHeightVertical - widgetHeightHorizontal, width: widgetWidthHorizontal, height: widgetHeightHorizontal)
-        trainbtn.backgroundColor = bgColor
-        trainbtn.layer.cornerRadius = 4;
-        trainbtn.clipsToBounds = true
-        trainbtn.tag = 13
-
-        trainbtn.addTarget(self, action: #selector(btnAction(_:)), for: .touchUpInside)
-        return trainbtn
-    }()
   
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
-        
     }
     
     required init?(coder: NSCoder) {
@@ -86,9 +62,7 @@ class AreaChooseView: UIView {
     private func setupView() {
         self.frame = CGRect(x: 344, y: 66 , width: widgetWidthVertical*2 + 2*margin + widgetWidthHorizontal +  25, height: widgetHeightVertical)
         self.addSubview(areaABtn)
-       // self.addSubview(areaBBtn)
         self.addSubview(areaCBtn)
-       // self.addSubview(areaDBtn)
 
     }
     
@@ -98,17 +72,10 @@ class AreaChooseView: UIView {
                areaABtn.backgroundColor = bgSelectedColor
            }
            
-           if (sender.tag == 11 && areaDBtn.backgroundColor != bgSelectedColor) {
-               areaBBtn.backgroundColor = bgSelectedColor
-           }
-           
            if (sender.tag == 12 && areaABtn.backgroundColor != bgSelectedColor) {
                areaCBtn.backgroundColor = bgSelectedColor
            }
-           
-           if (sender.tag == 13 && areaBBtn.backgroundColor != bgSelectedColor) {
-               areaDBtn.backgroundColor = bgSelectedColor
-           }
+
        }
     
  

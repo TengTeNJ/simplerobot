@@ -82,7 +82,7 @@ class CameraPickVC: UIViewController,CameraPickCanvasDelegate{
     return request
   }()
     
-    // 关键点模型检车的四个点
+    // 关键点模型检测的四个点
   let quadrilateralPoints: [CGPoint] = [
     CGPoint(x: 320, y: 116),  // 左上
     CGPoint(x: 430, y: 105),  // 右上
@@ -504,7 +504,7 @@ class CameraPickVC: UIViewController,CameraPickCanvasDelegate{
               alpha: alpha)  // alpha 0 (transparent) to 1 (opaque) for conf threshold 0.2 to 1.0)
             
             /// 更新机器人位置
-            //canvas.updateRobotLocation(x: rect.origin.x, y: rect.origin.y)
+            canvas.updateRobotLocation(x: rect.origin.x, y: rect.origin.y)
             
         } else {
           boundingBoxViews[i].hide()
