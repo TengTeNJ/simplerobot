@@ -20,7 +20,7 @@ List<int> changeRobotMode(RobotMode mode) {
   int start = kDataFrameHeader;
   int length = 6;
   int cmd = 0x35;
-  int data = mode.index;
+  int data = mode.index + 1;
   int cs = start + length + cmd + data;
   int end = kDataFrameFoot;
   print('切换机器人模式:${[start, length, cmd, data, cs, end]}');
@@ -151,6 +151,24 @@ List<int> setElectronicFenceData(int direction,int angle) {
   return [start, length, cmd, data, data1, data2, cs, end];
 }
 
+/*APP发送导航指令*/
+List<int> setRobotBeginNavigationData(int type,int direction,int angle) {
+  int start = kDataFrameHeader;
+  int length = 9;
+  int cmd = 0x52;
+  int typeData = type;
+  int data = direction;
+  String dataString = angle.toRadixString(2).padLeft(16, '0');
+  int data1 = binaryStringToDecimal(dataString.substring(0, 8));
+  int data2 = binaryStringToDecimal(dataString.substring(8, 16));
+  //int data = angle;
+  int cs = start + length + cmd + typeData + data +  data1 + data2;
+  int end = kDataFrameFoot;
+  print('APP发送导航指令:${[start, length, cmd, typeData,data,data1, data2, cs, end]}');
+  return [start, length, cmd, typeData,data, data1, data2, cs, end];
+}
+
+
 /*APP 发送导航结束指令*/ // 1 到达原点  2 区域位置到达
 List<int> setRobotNavigationEndData(int type) {
   int start = kDataFrameHeader;
@@ -163,15 +181,15 @@ List<int> setRobotNavigationEndData(int type) {
   return [start, length, cmd, data, cs, end];
 }
 
-//设置机器人速度开始 捡球  暂停捡球（0 stop 1 start）
+//设置机器人开始 捡球  暂停捡球（0 stop 1 start）
 List<int> setRobotStartPickData(int state) {
   int start = kDataFrameHeader;
   int length = 6;
-  int cmd = 0x59;
+  int cmd = 0x56;
   int data = state;
   int cs = start + length + cmd + data;
   int end = kDataFrameFoot;
-  print('设置机器人速度:${[start, length, cmd, data, cs, end]}');
+  print('设置机器人开始 捡球:${[start, length, cmd, data, cs, end]}');
   return [start, length, cmd, data, cs, end];
 }
 

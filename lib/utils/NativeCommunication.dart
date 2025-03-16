@@ -8,6 +8,7 @@ import 'ble_send_util.dart';
 class NativeCommunication {
   static const platform = MethodChannel('com.example/native');
   static const platformToSwift = MethodChannel('com.example.fluttertoswift');
+  static const platfrom1 = MethodChannel('native_screen');
 
 
   Future<void> getDataFromNative() async {
@@ -32,15 +33,30 @@ class NativeCommunication {
           BleSendUtil.setRobotMode(RobotMode.rest);
           print('Received notification from Swift: 休息模式');
         }
+      } else if(call.method == "beginNavigation") { /// 通知机器人开始导航
+       /// final String mode = call.arguments;
+        /// （1个字节：电子围栏1，区域导航2，原点导航3+1个字节机器人转向：1向左，2向右+2个字节机器人转向角度）
+        final String mode = call.arguments;
 
-
+        BleSendUtil.setRobotBeginNavigation(3,1, 130);
+        print('Received notification from Swift: 发送导航指令');
+      } else if(call.method == "endNavigation") { /// 到达位置结束导航
+       /// APP 发送导航结束指令*/ // 1 到达原点  2 区域位置到达
+        BleSendUtil.setRobotNavigationEnd(1);
       }
     });
   }
 
-  Future<void> sendDataToNative(String data) async {
+  Future<void> sendDataToNative(String type) async {
     try {
-      await platform.invokeMethod('sendMessage', {'message': '${data}'});
+      if (type =="RobotBallFullSingle") {
+        await platfrom1.invokeMethod('${type}', '');
+      } else if(type == 'RobotBeginNaviSingle') {
+        await platfrom1.invokeMethod('${type}', '');
+      } else if(type == 'RobotEndNaviSingle') {
+        await platfrom1.invokeMethod('${type}', '');
+      }
+
       print('sendDataToNative6666');
     } on PlatformException catch(e) {
       print('Failed to open native screen: ${e.message}');

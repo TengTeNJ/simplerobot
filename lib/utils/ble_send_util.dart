@@ -30,6 +30,15 @@ class BleSendUtil {
 
   }
 
+  //// app发送导航指令
+  static setRobotBeginNavigation(int type,int direction,int angle) {
+    if (BluetoothManager().hasConnectedDeviceList.isEmpty) {
+      return;
+    }
+    BluetoothManager().writerDataToDevice(getWriterDevice(), setRobotBeginNavigationData(type,direction, angle));
+
+  }
+
   /// 设置机器人开始捡球
   static setRobotStartPick(int state) {
     if (BluetoothManager().hasConnectedDeviceList.isEmpty) {

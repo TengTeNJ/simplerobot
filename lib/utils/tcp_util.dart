@@ -19,6 +19,8 @@ class ResponseCMDType {
   static const int powerOffResponse = 0x51; // 机器人关机响应
   static const int robotResponseBeginNavigation = 0x53; // 机器人回复导航指令
   static const int robotResponseEndNavigation = 0x55; // 机器人回复导航结束指令
+  static const int robotResponseBallIsFull = 0x57; // 机器人发送球满指令
+
 
 }
 class TcpUtil {

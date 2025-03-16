@@ -25,15 +25,27 @@ class _GuideAvoidsunControllerState extends State<GuideAvoidsunController> {
     }
   }
 
+  void sendDataToSwift() async {
+    try {
+      await platfrom.invokeMethod('fLutterSendMessage', {'message': '当前电量8%'});
+    } on PlatformException catch(e) {
+      print('Failed to open native screen: ${e.message}');
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getDataFromSwift();
+   // sendDataToSwift();
   }
 
+  // void sendDataToSwift() async {
+  //   await NativeCommunication().sendDataToNative("电量10%");
+  // }
   void getDataFromSwift() async {
-     await NativeCommunication().setupMethodChannel();
+     await NativeCommunication().getDataFromNative();
   }
 
   @override
@@ -70,7 +82,10 @@ class _GuideAvoidsunControllerState extends State<GuideAvoidsunController> {
 
               GestureDetector(onTap: (){
                // NavigatorUtil.push(Routes.cameraCalibration);
+
                 openNativeScreen();
+                sendDataToSwift();
+
               },
                 child: Container(
                   margin: EdgeInsets.only(top: 32,right: 32),

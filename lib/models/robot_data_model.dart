@@ -10,9 +10,9 @@ enum RobotStatu {
 
 /*机器人运行模式*/
 enum RobotMode {
-  rest, // 休息模式
   training, // 训练模式
-  remote // 遥控模式
+  remote, // 遥控模式
+  rest // 休息模式
 }
 
 /*机器人避障距离 */

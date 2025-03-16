@@ -18,7 +18,10 @@ enum TCPDataType {
   area,
   speed,
   coordinate,
-  ballsInView
+  ballsInView,
+  robotBallIsFull,// 球满了
+  robotResponseBeginNavigation, // 机器人收到开始导航的应答
+  robotResponseEndNavigation, // 机器人收到结束导航的应答
 }
 
 class RobotManager {
@@ -229,6 +232,21 @@ handleData(List<int> element) {
           [RobotMode.rest, RobotMode.training, RobotMode.remote][mode_data];
       print('机器人模式=======${mode_data}');
       RobotManager()._triggerCallback(type: TCPDataType.mode);
+      break;
+    case ResponseCMDType.robotResponseBeginNavigation:
+      print('开始导航=======');
+      RobotManager()._triggerCallback(type: TCPDataType.robotResponseBeginNavigation);
+      break;
+
+    case ResponseCMDType.robotResponseEndNavigation:
+      RobotManager()._triggerCallback(type: TCPDataType.robotResponseEndNavigation);
+      print('导航结束=======');
+      break;
+
+
+    case ResponseCMDType.robotResponseBallIsFull:
+      RobotManager()._triggerCallback(type: TCPDataType.robotBallIsFull);
+      print('球满了开始导航=======');
       break;
     case ResponseCMDType.speed:
       int speed_data = element[2];
