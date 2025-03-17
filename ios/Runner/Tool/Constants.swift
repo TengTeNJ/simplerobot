@@ -30,6 +30,9 @@ class Constants {
     static let ScreenHeight = UIScreen.main.bounds.size.height
     static let Scale =  500.0 / 748.0
     
+    static let areaBgColor = UIColor(red: 27/255.0, green: 66/255.0, blue: 197/255.0, alpha: 0.75)
+    static let areaBgSelectedColor = UIColor(red: 25/255.0, green: 243/255.0, blue: 134/255.0, alpha: 0.75)
+    
     /// 电量通知
     static let Notification_Battery = "NotificationBattery"
     /// 机器人球满通知
