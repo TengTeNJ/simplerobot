@@ -25,7 +25,47 @@ import UIKit
           } else if call.method == "getNativeData" {
               let data = "Hello from Swift!"
               result(data)
-          } else if call.method == "fLutterSendMessage" {
+          } else if call.method == "fLutterSendBattery" {
+              if let battery = call.arguments as? String {
+                  print("Received battery from Flutter: \(battery)")
+                  let userInfo = ["message": "\(battery)"]
+                  NotificationCenter.default.post(name: Notification.Name(Constants.Notification_Battery), object: nil, userInfo: userInfo)
+
+              }
+              result(nil)
+              
+          } else if call.method == "RobotBallFullSingle" {
+              print("收到FLutter机器人的球满指令了")
+
+              if let battery = call.arguments as? String {
+                  print("Received battery from Flutter: \(battery)")
+                  let userInfo = ["message": "\(battery)"]
+                  NotificationCenter.default.post(name: Notification.Name(Constants.Notification_Robot_Ball_Full), object: nil, userInfo: userInfo)
+
+              }
+              result(nil)
+          } else if call.method == Constants.Notification_Robot_Begin_Navi {
+              if let battery = call.arguments as? String {
+                  print("Received battery from Flutter: \(battery)")
+                  let userInfo = ["message": "\(battery)"]
+                  NotificationCenter.default.post(name: Notification.Name(Constants.Notification_Robot_Begin_Navi), object: nil, userInfo: userInfo)
+
+              }
+              result(nil)
+          } else if call.method == Constants.Notification_Robot_End_Navi {
+              if let battery = call.arguments as? String {
+                  print("Received battery from Flutter: \(battery)")
+                  let userInfo = ["message": "\(battery)"]
+                  NotificationCenter.default.post(name: Notification.Name(Constants.Notification_Robot_End_Navi), object: nil, userInfo: userInfo)
+
+              }
+              result(nil)
+          }
+          
+          
+          
+          
+          else if call.method == "fLutterSendMessage" {
               if let args = call.arguments as? String {
                   print("Received data from Flutter: \(args)")
               }

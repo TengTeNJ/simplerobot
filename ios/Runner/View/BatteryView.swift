@@ -8,29 +8,30 @@
 import UIKit
 
 class BatteryView: UIView {
+    var batteryLab =  UILabel()
 
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
-    }
-    */
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
+        // 注册通知监听器
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNotification(_:)), name: Notification.Name(Constants.Notification_Battery), object: nil)
         setupView()
-        
     }
+    
+    @objc func handleNotification(_ notification: Notification) {
+            // 获取通知中传递的数据
+            if let userInfo = notification.userInfo,
+               let message = userInfo["message"] as? String {
+                batteryLab.text = "\(message)%"
+            }
+        }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     private func setupView() {
-        let screenWidth = UIScreen.main.bounds.width
-        let screenHeight = UIScreen.main.bounds.height
-        
-        
+       
         self.frame = CGRect(x: 658, y: 304 , width: 75 , height: 36)
        
         self.backgroundColor = UIColor(red: 19/255.0, green: 19/255.0, blue: 20/255.0, alpha: 0.8)
@@ -40,10 +41,10 @@ class BatteryView: UIView {
         img.frame = CGRect(x: 12, y: 10, width: 10, height: 15)
         addSubview(img)
         
-        let lab = UILabel(frame: CGRect(x: 27, y: 0, width: 40, height: 36))
-        lab.textColor = .white
-        lab.text = "70%"
-        addSubview(lab)
+        batteryLab = UILabel(frame: CGRect(x: 27, y: 0, width: 40, height: 36))
+        batteryLab.textColor = .white
+        batteryLab.text = "50%"
+        addSubview(batteryLab)
 
     }
 

@@ -16,13 +16,11 @@ import Flutter
 
 
 var mlModel = try!key_point(configuration: mlmodelConfig).model
-
 var mlmodelConfig: MLModelConfiguration = {
   let config = MLModelConfiguration()
 
   if #available(iOS 17.0, *) {
     config.setValue(1, forKey: "experimentalMLE5EngineUsage")
-
   }
 
   return config
@@ -79,29 +77,17 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     var keyPointSize = 15.0
     var pointColor = UIColor(red: 91/255.0, green: 204/255.0, blue: 106/255.0, alpha: 1.0)
     
-    // 关键点模型检测的四个点
-  let quadrilateralPoints: [CGPoint] = [
-    CGPoint(x: 320, y: 116),  // 左上
-    CGPoint(x: 430, y: 105),  // 右上
-    CGPoint(x: 670, y: 124),  // 右下
-    CGPoint(x: 586, y: 146)   // 左下
-  ]
-    
-    // 定义图像中的菱形四个顶点
-    let srcPoints: [CGPoint] = [
-        CGPoint(x: 100, y: 100),  // 左上
-        CGPoint(x: 300, y: 100),  // 右上
-        CGPoint(x: 200, y: 300),  // 右下
-        CGPoint(x: 0, y: 300)     // 左下
-    ]
+    /// 当前机器人的模式（休息模式与训练模式）
+    var currentRobotMode = Constants.CurrentRobotModel.rest// 默认休息模式
+    /// 当前原点的坐标（机器人捡满50球回到的地方）默认右下角
+    var currebtOriginPoint: CGPoint = CGPoint(x: 82 + 396 + 21 / 2, y: 62 + 252 + 21 / 2)
+    /// 当前机器人在虚拟地图上的位置
+    var curentRobotPosition  = CGPoint(x: 0, y: 0)
+    /// 当前的电子围栏区域（休息默认下默认电子围栏为整个屏幕区域）
+    var currentElectronicFenceArea = CGRect(x: 0, y: 0, width: 0, height: 0)
+    ///  是否开始原点导航（机器人捡满50球开始）
+    var originNavigation: Bool = false
 
-    // 定义目标矩形的四个顶点
-    let dstPoints: [CGPoint] = [
-        CGPoint(x: 420, y: 126),       // 左上
-        CGPoint(x: 515, y: 126),     // 右上
-        CGPoint(x: 515, y: 285),   // 右下
-        CGPoint(x: 420, y: 285)      // 左下
-    ]
     
     var canvas: CameraPickCanvas!
     
@@ -114,6 +100,9 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     /// 运动坐标合集
     var queue = NSMutableArray()
     
+    /// 第一次计算出来的机器人的角度
+    var firstRobotAngle: Double = 0
+    
     lazy var visionRequest: VNCoreMLRequest = {
       let request = VNCoreMLRequest(
         model: detector,
@@ -124,6 +113,12 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
       request.imageCropAndScaleOption = .scaleFill  // .scaleFit, .scaleFill, .centerCrop
       return request
     }()
+       // demo 旋转 测试
+       var robotImageView: UIImageView!
+       var currentPoint: CGPoint = CGPoint(x: 100, y: 100) // 当前坐标
+       var nextPoint: CGPoint = CGPoint(x: 200, y: 200) // 下一个目标坐标
+       var currentAngle: Int = 10
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -142,8 +137,37 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
         setModel()
         startVideo()
         self.navigationController?.navigationBar.isHidden = true
-        
+        // 注册通知监听器
+        NotificationCenter.default.addObserver(self, selector: #selector(handleFullNotification(_:)), name: Notification.Name(Constants.Notification_Robot_Ball_Full), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleBeginNotification(_:)), name: Notification.Name(Constants.Notification_Robot_Begin_Navi), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleEndNotification(_:)), name: Notification.Name(Constants.Notification_Robot_End_Navi), object: nil)
+        ///  默认给机器人训练模式
+        channel.invokeMethod("changeRobotMode", arguments: "training")
+
     }
+   
+    
+    // MARK: - 与FLutter 机器人指令交互的通知方法
+    @objc func handleFullNotification(_ notification: Notification) {
+          //App 收到机器人 球满的指令// 0x57
+        print("收到机器人的球满指令了开始通知机器人导航")
+        
+        /// 导航机器人到右下角的原点
+        originNavigation = true
+        commonNavigation()
+     }
+    
+    @objc func handleBeginNotification(_ notification: Notification) {
+        /// 开始给机器人发送角度信息0x53
+        print("收到机器人的回复开始导航指令了")
+   }
+    
+    @objc func handleEndNotification(_ notification: Notification) {
+        /// 机器人导航结束以后 ///
+       ///  需要app 告知机器人 start 指令
+        channel.invokeMethod("beginPickBall", arguments: true)
+    }
+        
     
     /// 检测屏幕横竖屏
     private func setUpOrientationChangeNotification() {
@@ -206,29 +230,52 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     
     // MARK: - CameraPickCanvasDelegate
     func CameraPickCanvasDelegate(_ view: CameraPickCanvas, didSendData data: String) {
-        videoCapture.startRecordVideo()
         self.dismiss(animated: false)
+        self.canvas.robot.removeFromSuperview()
+        /// APP 发送导航结束指令*/ //0x54   1 到达原点  2 区域位置到达
+        //channel.invokeMethod("endNavigation", arguments: true)
     }
+    
     
     func ModeSwitchDelegate(_ view: CameraPickCanvas, didSendData data: Int) {
         if data == 99 { // 训练模式
             channel.invokeMethod("changeRobotMode", arguments: "training")
+            currentRobotMode = Constants.CurrentRobotModel.training
          } else { // 休息模式
             channel.invokeMethod("changeRobotMode", arguments: "rest")
-         }
+            currentRobotMode = Constants.CurrentRobotModel.rest
+          }
     }
     
     // MARK: - beginPickBallDelegate 点击开始捡球的代理方法
     func beginPickBallDelegate(_ view: CameraPickCanvas, didSendData data: Bool) {
         channel.invokeMethod("beginPickBall", arguments: data)
+        
+        
         self.canvas.robot.transform = self.canvas.robot.transform.rotated(by: 2*CGFloat.pi * 10 / 360)
-
-     }
+        
+    }
+    
+    //  MARK: - 导航通用方法
+    func commonNavigation() {
+        /// 模拟导航机器人到右下角的原点
+        let currentPoint = (x: Double(curentRobotPosition.x), y: Double(curentRobotPosition.y))
+        let currentDirection = (x: Double(curentRobotPosition.x), y: Double(curentRobotPosition.y))
+        let targetPoint = (x: Double(currebtOriginPoint.x), y: Double(currebtOriginPoint.y))
+        let result = ElectronicFence.calculateSteeringDirectionAndAngle(currentPoint: currentPoint, currentDirection: currentDirection , targetPoint: targetPoint )
+              print("转向方向: \(result.direction), 夹角: \(result.angle) 度")
+        
+        /// 通知机器人开始导航 // 0x52
+        channel.invokeMethod("beginNavigation", arguments: [
+          "type":"3",
+          "direction": "\(result.direction)",
+          "angle": "\(result.angle)"
+      ])
+    }
     
     // MARK: - 按钮点击事件处理
        @objc func back(_ sender: UIButton) {
-
-           print("返回了")
+           print("关键点检测界面返回了")
            self.dismiss(animated: true)
        }
     
@@ -247,6 +294,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
           self.desLab.removeFromSuperview()
           
           canvas = CameraPickCanvas(frame: self.view.bounds)
+          canvas.alpha = 0.5
           canvas.delegate = self
           canvas.isUserInteractionEnabled = true
           view.addSubview(canvas)
@@ -387,6 +435,22 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
                 let x4 = values[6]
                 let y4 = values[7]
 
+                
+                /// 固定坐标写死四个点
+                ///   double scale = 844.0/812.0;
+                //std::vector<cv::Point2f> srcPoints = {cv::Point2f(376 * scale, 86 * scale), cv::Point2f(471* scale, 82*scale),
+                  //  cv::Point2f(698 * scale, 112 * scale), cv::Point2f(607 * scale, 133 * scale)};
+                let scale = 844.0/812.0;
+                point1 = CommonTool.createVIew(CGRect(x: 376 * scale, y: 86 * scale, width: 5, height: 5))
+                view.addSubview(point1)
+                point2 = CommonTool.createVIew(CGRect(x: 471 * scale, y: 82 * scale, width: 5, height: 5))
+                view.addSubview(point2)
+                point3 = CommonTool.createVIew(CGRect(x: 698 * scale, y: 112 * scale, width: 5, height: 5))
+                view.addSubview(point3)
+                point4 = CommonTool.createVIew(CGRect(x: 607 * scale, y: 133 * scale, width: 5, height: 5))
+                view.addSubview(point4)
+                return
+                
                 // 根据需要处理其他值
                 print("Bounding box: (\(x1), \(y1), \(x2), \(y2), \(x3), \(y3), \(x4), \(y4))")
                 let screenWidth = UIScreen.main.bounds.width
@@ -429,19 +493,6 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
 
                 cavasView.addSubview(point4)
                 
-                CommonTool.tranferRectangle(point1: CGPoint(x: CGFloat(x1) / (x_scsle), y: CGFloat(y2) / (y_scsle)), point2: CGPoint(x: CGFloat(x2) / (x_scsle), y: CGFloat(y2) / (y_scsle)), point3: CGPoint(x: CGFloat(x3) / (x_scsle), y: CGFloat(y3) / (y_scsle)), point4: CGPoint(x: CGFloat(x4) / (x_scsle), y: CGFloat(y4) / (y_scsle)))
-                
-               let rectangleWIdth =  CommonTool.calculateDistance(point1: CGPoint(x: 320, y: 116), point2: CGPoint(x: 670, y: 124))
-                
-                let rectangleHeight =  CommonTool.calculateDistance(point1: CGPoint(x: 430, y: 105), point2: CGPoint(x: 586, y: 146))
-               //print("矩形的宽高为\(rectangleWIdth)---\(rectangleHeight)")
-                
-                /// finley 那边数据
-                let rectangleWIdth1 =  CommonTool.calculateDistance(point1: CGPoint(x: 1525, y: 342), point2: CGPoint(x: 727, y: 325))
-                
-                let rectangleHeight1 =  CommonTool.calculateDistance(point1: CGPoint(x: 1336, y: 411), point2: CGPoint(x: 994, y: 300))
-                
-              //print("真实的矩形的宽高为\(rectangleWIdth1)---\(rectangleHeight1)")
            }
         }
     }
@@ -498,6 +549,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     }
     
     /// 机器人位置
+    // MARK: - 显示机器人的位置
     func show(predictions: [VNRecognizedObjectObservation]) {
       var str = ""
       // date
@@ -626,16 +678,38 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
             let label = String(format: "%@ %.1f", bestClass, confidence * 100)
             let alpha = CGFloat((confidence - 0.2) / (1.0 - 0.2) * 0.9)
               
-              print("检测到的机器人的结果为\(rect)\(alpha)")
-            let isKeyPoints =  CommonTool.isPointInsideQuadrilateral(point: CGPoint(x: rect.origin.x, y: rect.origin.y), quadrilateralPoints: quadrilateralPoints)
              
-              let srcpoint: CGPoint = CGPoint(x: rect.origin.x, y: rect.origin.y)
+              var srcpoint: CGPoint = CGPoint(x: rect.origin.x, y: rect.origin.y)
+              
+             /// 透视效果机器人的位置坐标以机器人的中心计算，不应该以机器人的左上角计算。
+              srcpoint.x = rect.origin.x + rect.size.width / 2
+             // srcpoint.y = rect.origin.y + rect.size.height / 2
+              /// 对位置进行校正
+              let center_y = rect.origin.y + rect.size.height / 2
+              let center_percent = center_y / screenHeight
+              let half_y_distance =  rect.size.height / 2
+              let real_point_y = center_y + half_y_distance * (1-center_percent)
+              srcpoint.y = real_point_y
+//              
+              
+            
+
+
               let dstPoints = try! MHPerspectiveTransform.perspectiveTransform(points: [srcpoint,])
               let dstPoint = dstPoints.first
-//              if (calculateTimeStamp() > 50) {
-                  /// 计算机器人的角度
-               //   canvas.calculateRobotAngle(lastPoint: lastRobotPosition, currentPoint: dstPoint!)
-//              }
+              
+              curentRobotPosition = dstPoint ?? CGPoint(x: 0, y: 0)
+
+              /// 电子围栏内场区域,超出显示红色
+              var isKeyPoints = true
+              let rectangle = CGRect(x: 344, y: 66, width: 78, height: 266)
+              if (rectangle.contains(dstPoint ?? CGPoint(x: 0, y: 0))) {
+                  isKeyPoints  = true
+              } else {
+                  isKeyPoints  = false
+              }
+
+              
               let doubleXValue: Double = Double(dstPoint?.x ?? 0) as Double
               let doubleYValue: Double = Double(dstPoint?.y ?? 0) as Double
 
@@ -643,25 +717,68 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
               self.queue.add((doubleXValue,doubleYValue))
               if (self.queue.count == 10) {
                   let c = ElectronicFence.fitMotionTrend(coordinateQueue: queue as! [(Double, Double)])
-                  print("\(c)")
+                  print("融合出来的机器人的方向\(c.x)\(c.y)")
                   /// 清空queue 数据
                   self.queue.removeAllObjects()
                   /// 计算机器人角度
-                 // canvas.calculateRobotAngle(lastPoint: CGPoint(x: c.x, y: c.y), currentPoint: dstPoint!)
+                  // 第一次计算 需要大角度旋转机器人，后边只需要计算角度的差值
+                  let calulteAngle =  canvas.calculateAngleAndDirection(from: CGPoint(x: c.x, y: c.y), to: dstPoint ?? CGPoint(x: 0, y: 0))
+                  if (firstRobotAngle == 0) {
+                      firstRobotAngle = Double(Int(calulteAngle.angle))
+                      // 更新图标方向
+                      UIView.animate(withDuration: 0.1) {
+                          print("第一次的方向\(self.firstRobotAngle)")
+                          /// 角度为弧度
+                          let hu = 2 * (M_PI) * self.firstRobotAngle / 360.0
+                          self.canvas.robot.transform = CGAffineTransform(rotationAngle:hu + M_PI)
+                      }
+                  } else {
+                      var angleCha = calulteAngle.angle - firstRobotAngle
+                      var absAngle = abs(angleCha)
+                      if (calulteAngle.direction == "向左") {
+                          // 更新图标方向
+                          UIView.animate(withDuration: 0.1) {
+                              /// 角度为弧度
+                              let hu = 2 * (M_PI) * absAngle / 360.0
+                              print("向左的方向\(absAngle)")
+                              self.canvas.robot.transform = CGAffineTransform(rotationAngle: -hu)
+                          }
+                      } else {
+                          // 更新图标方向
+                          UIView.animate(withDuration: 0.1) {
+                              /// 角度为弧度
+                              let hu = 2 * (M_PI) * absAngle / 360.0
+                              print("向右的方向\(absAngle)")
+                              self.canvas.robot.transform = CGAffineTransform(rotationAngle: hu)
+                          }
+                      }
+                      firstRobotAngle = calulteAngle.angle
+                  }
                   
               }
              
               lastRobotPosition = dstPoint ?? CGPoint(x: 0, y: 0)
              
               /// 更新机器人位置
-             // canvas.updateRobotLocation(x: Double(dstPoint!.x), y: Double(dstPoint!.y))
-              canvas.updateRobotLocation(x: 443, y: 138)
+              canvas.updateRobotLocation(x: Double(dstPoint!.x), y: Double(dstPoint!.y))
+              
+              /// 导航机器人到右下角的原点
+              let currentPoint = (x: 0.0, y: 0.0)
+              let currentDirection = (x: 1.0, y: 0.0)
+              let targetPoint = (x: 1.0, y: 1.0)
+              let result = ElectronicFence.calculateSteeringDirectionAndAngle(currentPoint: currentPoint, currentDirection: currentDirection, targetPoint: targetPoint)
+             // print("转向方向: \(result.direction), 夹角: \(result.angle) 度")
+              if (originNavigation) { // 开始原点导航
+                  commonNavigation()
+               }
+           
+              
 
             // Show the bounding box.
             boundingBoxViews[i].show(
               frame: rect,
               label: label,
-              color: isKeyPoints ? UIColor.red : UIColor.white,
+              color: isKeyPoints ? UIColor.white : UIColor.red,
               alpha: alpha)  // alpha 0 (transparent) to 1 (opaque) for conf threshold 0.2 to 1.0)
           } else {
             boundingBoxViews[i].hide()

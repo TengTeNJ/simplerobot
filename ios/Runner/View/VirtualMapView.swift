@@ -47,6 +47,9 @@ class VirtualMapView: UIView {
         rightImageview.isUserInteractionEnabled = true
         return rightImageview
     }()
+    
+    var innerImageView: UIImageView!
+
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -67,7 +70,7 @@ class VirtualMapView: UIView {
         
         self.addSubview(bgOuterImageView)
         
-        let innerImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 334, height: 214))
+        innerImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 334, height: 214))
         innerImageView.image = UIImage(named: "inner_court")
         innerImageView.center = bgOuterImageView.center
         bgOuterImageView.addSubview(innerImageView)
@@ -77,7 +80,7 @@ class VirtualMapView: UIView {
         cameraImageview.frame.origin.y = bgOuterImageView.frame.origin.y + 5
         
         bgOuterImageView.addSubview(rightImageview)
-        rightImageview.frame.origin.x = innerImageView.frame.origin.x + 334;
+        rightImageview.frame.origin.x = innerImageView.frame.origin.x + 334 - 21;
         rightImageview.frame.origin.y = bgOuterImageView.frame.origin.y + 5
         
         bgOuterImageView.addSubview(bottomleftImageview)

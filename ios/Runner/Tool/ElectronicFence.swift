@@ -58,7 +58,7 @@ class ElectronicFence: NSObject {
     static
     func calculateSteeringDirectionAndAngle(currentPoint: (x: Double, y: Double),
                                             currentDirection: (x: Double, y: Double),
-                                            targetPoint: (x: Double, y: Double)) -> (direction: String, angle: Double) {
+                                            targetPoint: (x: Double, y: Double)) -> (direction: String, angle: String) {
         // 计算目标向量
         let targetVector = (x: targetPoint.x - currentPoint.x,y: targetPoint.y - currentPoint.y)
         
@@ -78,15 +78,15 @@ class ElectronicFence: NSObject {
         // 确定转向方向
         let direction: String
         if crossProduct > 0 {
-            direction = "左"
+            direction = "1" // 左
         } else {
-            direction = "右"
+            direction = "2" // 右
         }
         
         // 将弧度转换为角度
         let angleDegrees = angle * 180.0 / Double.pi
         
-        return (direction, angleDegrees)
+        return (direction, "\(Int(angleDegrees))")
     }
 
     

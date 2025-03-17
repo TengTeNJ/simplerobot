@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -35,13 +37,34 @@ class NativeCommunication {
         }
       } else if(call.method == "beginNavigation") { /// 通知机器人开始导航
        /// final String mode = call.arguments;
-        /// （1个字节：电子围栏1，区域导航2，原点导航3+1个字节机器人转向：1向左，2向右+2个字节机器人转向角度）
-        final String mode = call.arguments;
+        /// （1个字节：电子围栏1，区域导航2，原点导航3  + 1个字节机器人转向：1向左，2向右+2个字节机器人转向角度）
+         final  params = call.arguments;
+        // 处理返回的 Dictionary 参数
+        if (params is Map) {
+          print('Received from Swift: $params');
+          try{
+            final String type = params['type'];
+            final String direction = params['direction'];
+            final String angle = params['angle'];
 
-        BleSendUtil.setRobotBeginNavigation(3,1, 130);
-        print('Received notification from Swift: 发送导航指令');
+            print('Key1: $type, Key2: $direction, Key3: ${angle}');
+
+            BleSendUtil.setRobotBeginNavigation(3,int.parse(direction), int.parse(angle));
+
+          }
+          catch(error){
+            print('error == $error');
+          }
+
+
+          // if (angle in double)  {
+          //
+          // }
+
+
+        }
       } else if(call.method == "endNavigation") { /// 到达位置结束导航
-       /// APP 发送导航结束指令*/ // 1 到达原点  2 区域位置到达
+       /// APP 发送导航结束指令*/ // 1 到达原点  2 区域位置到达  // 0x54
         BleSendUtil.setRobotNavigationEnd(1);
       }
     });
