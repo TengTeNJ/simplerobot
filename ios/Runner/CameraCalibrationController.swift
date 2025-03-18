@@ -87,6 +87,8 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     var currentElectronicFenceArea = CGRect(x: 0, y: 0, width: 0, height: 0)
     ///  是否开始原点导航（机器人捡满50球开始）
     var originNavigation: Bool = false
+    /// 拟合出来的前十次机器人的坐标
+    var averagePoint = CGPoint(x: 0, y: 0)
 
     
     var canvas: CameraPickCanvas!
@@ -133,6 +135,8 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
         setUpOrientationChangeNotification()
 
         setUpUi()
+        
+        
         loadModel()
         setModel()
         startVideo()
@@ -256,7 +260,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
         
     }
     
-    //  MARK: - 导航通用方法
+    //  MARK: - 导航通用方法  电子围栏1，区域导航2，原点导航3  
     func commonNavigation() {
         /// 模拟导航机器人到右下角的原点
         let currentPoint = (x: Double(curentRobotPosition.x), y: Double(curentRobotPosition.y))
@@ -718,42 +722,31 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
               if (self.queue.count == 10) {
                   let c = ElectronicFence.fitMotionTrend(coordinateQueue: queue as! [(Double, Double)])
                   print("融合出来的机器人的方向\(c.x)\(c.y)")
+                  averagePoint = CGPoint(x: c.x, y: c.y)
                   /// 清空queue 数据
                   self.queue.removeAllObjects()
                   /// 计算机器人角度
                   // 第一次计算 需要大角度旋转机器人，后边只需要计算角度的差值
                   let calulteAngle =  canvas.calculateAngleAndDirection(from: CGPoint(x: c.x, y: c.y), to: dstPoint ?? CGPoint(x: 0, y: 0))
-                  if (firstRobotAngle == 0) {
+//                  if (firstRobotAngle == 0) {
                       firstRobotAngle = Double(Int(calulteAngle.angle))
                       // 更新图标方向
-                      UIView.animate(withDuration: 0.1) {
+//                      UIView.animate(withDuration: 0.1) {
                           print("第一次的方向\(self.firstRobotAngle)")
                           /// 角度为弧度
                           let hu = 2 * (M_PI) * self.firstRobotAngle / 360.0
                           self.canvas.robot.transform = CGAffineTransform(rotationAngle:hu + M_PI)
-                      }
-                  } else {
-                      var angleCha = calulteAngle.angle - firstRobotAngle
-                      var absAngle = abs(angleCha)
-                      if (calulteAngle.direction == "向左") {
-                          // 更新图标方向
-                          UIView.animate(withDuration: 0.1) {
-                              /// 角度为弧度
-                              let hu = 2 * (M_PI) * absAngle / 360.0
-                              print("向左的方向\(absAngle)")
-                              self.canvas.robot.transform = CGAffineTransform(rotationAngle: -hu)
-                          }
-                      } else {
-                          // 更新图标方向
-                          UIView.animate(withDuration: 0.1) {
-                              /// 角度为弧度
-                              let hu = 2 * (M_PI) * absAngle / 360.0
-                              print("向右的方向\(absAngle)")
-                              self.canvas.robot.transform = CGAffineTransform(rotationAngle: hu)
-                          }
-                      }
-                      firstRobotAngle = calulteAngle.angle
-                  }
+//                      }
+//                  }
+                  
+
+                  
+                  /// 计算此时机器人的方向
+                 let result = ElectronicFence.calculateDirection(from: averagePoint, to: curentRobotPosition)
+                  print("此时机器人的方向\(result.angle)")
+                  if (originNavigation) { // 开始原点导航
+                      commonNavigation()
+                   }
                   
               }
              
@@ -763,14 +756,13 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
               canvas.updateRobotLocation(x: Double(dstPoint!.x), y: Double(dstPoint!.y))
               
               /// 导航机器人到右下角的原点
-              let currentPoint = (x: 0.0, y: 0.0)
-              let currentDirection = (x: 1.0, y: 0.0)
-              let targetPoint = (x: 1.0, y: 1.0)
+              let currentPoint = (x: 2.5, y: 2.0)
+              let currentDirection = (x: 2.5, y: 2.0)
+              let targetPoint = (x: 5.0, y: 4.0)
               let result = ElectronicFence.calculateSteeringDirectionAndAngle(currentPoint: currentPoint, currentDirection: currentDirection, targetPoint: targetPoint)
-             // print("转向方向: \(result.direction), 夹角: \(result.angle) 度")
-              if (originNavigation) { // 开始原点导航
-                  commonNavigation()
-               }
+              print("转向方向: \(result.direction), 夹角: \(result.angle) 度")
+              
+            
            
               
 
