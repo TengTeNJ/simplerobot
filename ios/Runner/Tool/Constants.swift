@@ -16,6 +16,12 @@ class Constants {
         case remote
     }
     
+    enum NavigationType {
+        case electronicFenceNavi /// 电子围栏导航
+        case regionalNavi /// 区域导航
+        case originNavi /// 原点导航
+    }
+    
     class ElectronicFence{ // 电子围栏
         static let infieldOutfieldHeight = 266 // 内外场矩形的高度
         static let infieldWidth = 78 // 内场矩形的宽度

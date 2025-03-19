@@ -8,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:tennis_robot/models/robot_data_model.dart';
 import 'package:tennis_robot/pickmode/robot_speed_adjust_view.dart';
 import 'package:tennis_robot/trainmode/mode_switch_view.dart';
+import 'package:tennis_robot/utils/NativeCommunication.dart';
 import 'package:tennis_robot/utils/ble_send_util.dart';
 import 'package:tennis_robot/utils/event_bus.dart';
 import 'package:tennis_robot/views/remote_control_view.dart';
@@ -46,6 +47,8 @@ class _PickModeControllerState extends State<PickModeController> {
   int todayCal = 0; // 今日消耗的卡路里
   var imageName = 'mode_start';
 
+  int currentBattery = 100; // 当前的电量
+
   bool lowBatteryAlertIsShow = false; // 低电量弹窗是否弹出过
   bool shutDownAlertIsShow = false; // 低电量关机弹窗是否弹出过
 
@@ -57,6 +60,9 @@ class _PickModeControllerState extends State<PickModeController> {
     'images/camerapick/a_court.apng', // 第二张动图的路径
     'images/camerapick/b_court.apng', // 第三张动图的路径
   ];
+
+  static const platfrom = MethodChannel('native_screen');
+
 
   void _startTimer() {
     _timer = Timer.periodic(Duration(seconds: 16), (timer) { // 假设每张 APNG 动图播放时长为 5 秒
@@ -120,31 +126,9 @@ class _PickModeControllerState extends State<PickModeController> {
     super.dispose();
   }
 
-  Future<void> getSwiftData() async {
-    MethodChannel _channel = const MethodChannel('start_pick');
-    final result = await _channel.invokeMethod('apple_two');
-    Map map = result as LinkedHashMap<Object?, Object?>;
-    print("result122: ${map["result"]}");
-    print("code33: ${map["code"]}");
-  }
-
-
   void initState() {
    // enableKeepScreenOn();
     _startTimer();
-    getSwiftData();
-    var channel = MethodChannel('com.flutter.guide.MethodChannel');
-    // channel.setMethodCallHandler((call) {
-    //   setState(() {
-    //    // _nativeData = call.arguments['count'];
-    //   });
-    // });
-
-    channel.setMethodCallHandler((call) {
-        var data = call.arguments['count'];
-        print('swift 返回的数据${data}');
-        return call.arguments['count'];
-    });
     // 断链退到连接界面
   BluetoothManager().disConnect = () {
     TTDialog.robotBleDisconnectDialog(context, () async {
@@ -191,9 +175,22 @@ class _PickModeControllerState extends State<PickModeController> {
       });
     };
 
+    void sendBatteryDataToSwift(int battery) async {
+      try {
+        await platfrom.invokeMethod('fLutterSendBattery', '${battery}');
+      } on PlatformException catch(e) {
+        print('Failed to open native screen: ${e.message}');
+      }
+    }
+
+
     // 监听捡球数变化
     RobotManager().dataChange = (TCPDataType type) {
       int power = RobotManager().dataModel.powerValue;
+      if (currentBattery != power) { /// 电量有变化时才发送通知，防止发送过于频繁
+        sendBatteryDataToSwift(power);
+      }
+      currentBattery = power;
       if (power < 20 && power > 5) {
         if (lowBatteryAlertIsShow == false) {
           lowBatteryAlertIsShow = true;
@@ -236,6 +233,13 @@ class _PickModeControllerState extends State<PickModeController> {
 
       } else if(type == TCPDataType.warnInfo) { // 告警信息
         print('robot warnInfo');
+      } else if(type == TCPDataType.robotBallIsFull) {
+        NativeCommunication().sendDataToNative('RobotBallFullSingle');
+      } else if(type == TCPDataType.robotResponseBeginNavigation) {
+        NativeCommunication().sendDataToNative('RobotBeginNaviSingle');
+      } else if(type == TCPDataType.robotResponseEndNavigation) {
+        NativeCommunication().sendDataToNative('RobotEndNaviSingle');
+
       }
     };
   }
@@ -330,6 +334,7 @@ class _PickModeControllerState extends State<PickModeController> {
   }
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Constants.darkControllerColor,
       appBar: CustomAppBar(),

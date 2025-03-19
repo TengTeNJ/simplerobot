@@ -125,8 +125,16 @@ class CommonTool: NSObject {
     static func applyTransform(_ transform: CGAffineTransform, to point: CGPoint) -> CGPoint {
         return point.applying(transform)
     }
+    
+    /// 计算两个时间的时间差
+    public
+    static
+    func calculateTimeStamp(lastDate:Date ,currentDate:Date) -> Int{
+       let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: lastDate, to: currentDate)
+        //print("时间差（秒）: \(components.second ?? 0)")
+        return components.second ?? 0
 
-   
-    
-    
+    }
+
 }

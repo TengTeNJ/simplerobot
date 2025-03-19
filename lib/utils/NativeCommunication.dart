@@ -46,26 +46,16 @@ class NativeCommunication {
             final String type = params['type'];
             final String direction = params['direction'];
             final String angle = params['angle'];
-
-            print('Key1: $type, Key2: $direction, Key3: ${angle}');
-
             BleSendUtil.setRobotBeginNavigation(3,int.parse(direction), int.parse(angle));
-
           }
           catch(error){
             print('error == $error');
           }
-
-
-          // if (angle in double)  {
-          //
-          // }
-
-
         }
       } else if(call.method == "endNavigation") { /// 到达位置结束导航
        /// APP 发送导航结束指令*/ // 1 到达原点  2 区域位置到达  // 0x54
-        BleSendUtil.setRobotNavigationEnd(1);
+        final String type = call.arguments;
+        BleSendUtil.setRobotNavigationEnd(int.parse(type));
       }
     });
   }
