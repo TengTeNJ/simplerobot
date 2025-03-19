@@ -120,12 +120,6 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
       request.imageCropAndScaleOption = .scaleFill  // .scaleFit, .scaleFill, .centerCrop
       return request
     }()
-       // demo 旋转 测试
-       var robotImageView: UIImageView!
-       var currentPoint: CGPoint = CGPoint(x: 100, y: 100) // 当前坐标
-       var nextPoint: CGPoint = CGPoint(x: 200, y: 200) // 下一个目标坐标
-       var currentAngle: Int = 10
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -133,9 +127,6 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
 
         let bridge = OpenCVBridgeFile()
         bridge.calculateHomegraphyMatsss()
-        ///未矫正的图像上（也就是相机原始拍到的图上）的点A
-        let srcpoint: CGPoint = CGPoint(x: 586, y: 146)
-        let dstPoint = try! MHPerspectiveTransform.perspectiveTransform(points: [srcpoint,])
         setUpBoundingBoxViews()
         setUpOrientationChangeNotification()
 
