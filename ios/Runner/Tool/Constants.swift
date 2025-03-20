@@ -39,6 +39,10 @@ class Constants {
     static let areaBgColor = UIColor(red: 27/255.0, green: 66/255.0, blue: 197/255.0, alpha: 0.75)
     static let areaBgSelectedColor = UIColor(red: 25/255.0, green: 243/255.0, blue: 134/255.0, alpha: 0.75)
     
+    static let hignBGColor = UIColor(red: 233/255.0, green: 100/255.0, blue: 21/255.0, alpha: 1.0)
+    static let disableBGColor = UIColor(red: 49/255.0, green: 52/255.0, blue: 67/255.0, alpha: 1.0)
+    static let disableTextColor = UIColor(red: 156/255.0, green: 156/255.0, blue: 156/255.0, alpha: 1.0)
+
     /// 电量通知
     static let Notification_Battery = "NotificationBattery"
     /// 机器人球满通知

@@ -7,8 +7,15 @@
 
 import UIKit
 
+protocol AreaChooseViewDelegate: AnyObject {
+    func AreaChooseViewDelegate(_ view: AreaChooseView, didSendData data: Int)
+}
+
 /// 区域选择view
 class AreaChooseView: UIView {
+    weak var delegate: AreaChooseViewDelegate?
+
+    
     let widgetWidthHorizontal = 119
     let widgetHeightHorizontal = 26
     
@@ -58,12 +65,17 @@ class AreaChooseView: UIView {
     
     // MARK: - 按钮点击事件处理
        @objc func btnAction(_ sender: UIButton) {
-           if (sender.tag == 10 && areaCBtn.backgroundColor != Constants.areaBgSelectedColor) {
+           delegate?.AreaChooseViewDelegate(self, didSendData: sender.tag)
+
+           
+           if (sender.tag == 10) {
                areaABtn.backgroundColor = Constants.areaBgSelectedColor
+               areaCBtn.backgroundColor = Constants.areaBgColor
            }
            
-           if (sender.tag == 12 && areaABtn.backgroundColor != Constants.areaBgSelectedColor) {
+           if (sender.tag == 12 ) {
                areaCBtn.backgroundColor = Constants.areaBgSelectedColor
-           }
+               areaABtn.backgroundColor = Constants.areaBgColor
+            }
        }
 }

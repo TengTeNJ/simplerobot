@@ -194,6 +194,9 @@ class Constants {
   static Color customSliderUnselectedColor = Color.fromRGBO(220, 220, 220, 1);
   static Color customSliderSelectedColor = Color.fromRGBO(233, 100, 21, 1);
 
+
+  static Color newPickBgColor = Color.fromRGBO(86, 45, 28, 1);
+
   static String connectRobotText =
       'Connect your phone to your bots Bluetooth.The Bluetooth name is';
 

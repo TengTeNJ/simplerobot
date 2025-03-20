@@ -423,44 +423,125 @@ class _PickModeControllerState extends State<PickModeController> {
           ) :
           Container(
             alignment: Alignment.center,
-            margin: EdgeInsets.only(top: 42),
+            margin: EdgeInsets.only(top: selectedMode == SelectedMode.pickMode ?  42 : 81),
             child: RemoteControlView(),
           ),
 
-          Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(top: 42),
-            child: Padding(
-             padding: EdgeInsets.only(bottom: 0),
-              child: ModeSwitchView(areaClick: (index){
-                setState(() {
-                  Vibration.vibrate(duration: 500); // 触发震动
-                  if(index == 0) {
-                    selectedMode = SelectedMode.pickMode;
-                    if (imageName == 'mode_start'){
-                      BleSendUtil.setRobotMode(RobotMode.training);
-                      print('捡球模式');
-                    } else {
-                      BleSendUtil.setRobotMode(RobotMode.rest);
-                      print('暂停模式');
-                    }
-                    print('123456${Constants.screenHeight(context)}');
-                    print('宽${Constants.screenWidth(context)}');
-                  } else {
-                    print('遥控模式');
-                    selectedMode = SelectedMode.controlMode;
-                    BleSendUtil.setRobotMode(RobotMode.remote);
+          // Container(
+          //   alignment: Alignment.center,
+          //   margin: EdgeInsets.only(top: 42),
+          //   child: Padding(
+          //    padding: EdgeInsets.only(bottom: 0),
+          //     child: ModeSwitchView(areaClick: (index){
+          //       setState(() {
+          //         Vibration.vibrate(duration: 500); // 触发震动
+          //         if(index == 0) {
+          //           selectedMode = SelectedMode.pickMode;
+          //           if (imageName == 'mode_start'){
+          //             BleSendUtil.setRobotMode(RobotMode.training);
+          //             print('捡球模式');
+          //           } else {
+          //             BleSendUtil.setRobotMode(RobotMode.rest);
+          //             print('暂停模式');
+          //           }
+          //           print('123456${Constants.screenHeight(context)}');
+          //           print('宽${Constants.screenWidth(context)}');
+          //         } else {
+          //           print('遥控模式');
+          //           selectedMode = SelectedMode.controlMode;
+          //           BleSendUtil.setRobotMode(RobotMode.remote);
+          //
+          //           // 500毫秒-> 设置控制角度为零，防止Fly那边报错
+          //           Future.delayed(Duration(milliseconds: 500), () {
+          //             print('设置角度为0');
+          //             BleSendUtil.setRobotAngle(0);
+          //           });
+          //         }
+          //       });
+          //     },),
+          //   ),
+          // ),
 
-                    // 500毫秒-> 设置控制角度为零，防止Fly那边报错
-                    Future.delayed(Duration(milliseconds: 500), () {
+          selectedMode == SelectedMode.pickMode ?
+          Container(
+            margin: EdgeInsets.only(top: 42,left: 78,right: 78),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                GestureDetector(onTap: (){
+                  NavigatorUtil.push(Routes.guidePage);
+                  },
+                  child: Container(
+                    // margin: EdgeInsets.only(top: 32,left: 32),
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: Constants.newPickBgColor,
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                    child: Center(
+                      child: Image(image: AssetImage('images/guide/auto.png'),width: 26,height: 28,),
+                    ),
+                  ),
+                ),
+
+               SizedBox(width: 54,),
+
+               GestureDetector(onTap: (){
+                 print('遥控模式');
+                 setState(() {
+                   selectedMode = SelectedMode.controlMode;
+                   BleSendUtil.setRobotMode(RobotMode.remote);
+
+                   // 500毫秒-> 设置控制角度为零，防止Fly那边报错
+                   Future.delayed(Duration(milliseconds: 500), () {
                       print('设置角度为0');
                       BleSendUtil.setRobotAngle(0);
                     });
-                  }
-                });
-              },),
+                 });
+
+                 },
+               child: Container(
+                 // margin: EdgeInsets.only(top: 32,left: 32),
+                 width: 80,
+                 height: 80,
+                 decoration: BoxDecoration(
+                   color: Constants.newPickBgColor,
+                   borderRadius: BorderRadius.circular(40),
+                 ),
+                 child: Center(
+                   child: Image(image: AssetImage('images/guide/remote.png'),width: 21,height: 23,),
+                 ),
+               ),
+               )
+              ],
+
             ),
-          ),
+          )
+
+
+          /// 遥控界面的返回按钮
+          :
+          Container(child: GestureDetector(onTap: (){
+             setState(() {
+               selectedMode = SelectedMode.pickMode;
+             });
+          },
+            child: Container(
+              margin: EdgeInsets.only(top: 67),
+              width: 167,
+              height: 66,
+              decoration: BoxDecoration(
+                color: Constants.newPickBgColor,
+                borderRadius: BorderRadius.circular(33),
+              ),
+              child: Center(
+                  child: Constants.regularWhiteTextWidget('Back', 20, Constants.selectedModelBgColor)
+              ),
+            ),
+          ),),
+
+
         ],
       ),
     ),onWillPop: (){

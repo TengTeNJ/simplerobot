@@ -130,11 +130,11 @@ class CommonTool: NSObject {
     public
     static
     func calculateTimeStamp(lastDate:Date ,currentDate:Date) -> Int{
-       let calendar = Calendar.current
+        let calendar = Calendar.current
         let components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: lastDate, to: currentDate)
         //print("时间差（秒）: \(components.second ?? 0)")
         return components.second ?? 0
-
+        
     }
 
 }

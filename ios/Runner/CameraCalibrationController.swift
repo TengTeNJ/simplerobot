@@ -79,16 +79,18 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     
     /// 当前机器人的模式（休息模式与训练模式）
     var currentRobotMode = Constants.CurrentRobotModel.rest// 默认休息模式
-    /// 当前原点的坐标（机器人捡满50球回到的地方）
+    /// 当前原点的坐标（原点导航用  机器人捡满50球回到的地方）
     var currebtOriginPoint: CGPoint = NavigationTool.getRightBottomOriginCoordinate()
+    // 电子围栏导航的终点的坐标（电子围栏导航用  机器人出电子围栏回到的地方） 默认休息模式下的中心点
+    var currebtElectronicfenceDesinationPoint: CGPoint = NavigationTool.getRestModelEletronicFenceCenterPoint()
    
     /// 当前原点的矩形框
     var currebtOriginRectangle: CGRect = NavigationTool.getRightBottomOriginRectangle()
     /// 当前机器人在虚拟地图上的位置
     var curentRobotPosition  = CGPoint(x: 0, y: 0)
-    /// 当前的电子围栏区域（休息默认下默认电子围栏为整个）
-    var currentElectronicFenceArea = CGRect(x: 0, y: 0, width: 0, height: 0)
-    ///  是否开始原点导航（机器人捡满50球开始）
+    /// 当前的电子围栏区域（休息默认下默认电子围栏为整个） 训练模式为选中的矩形框
+    var currentElectronicFenceArea = NavigationTool.getRestModelEletronicFenceRectangle()
+    /// 是否开始原点导航（机器人捡满50球开始）
     var originNavigation: Bool = false
     /// 拟合出来的前十次机器人的坐标
     var averagePoint = CGPoint(x: 0, y: 0)
@@ -96,7 +98,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     var lastNaviDate = Date()
 
     
-    var canvas: CameraPickCanvas!
+    //var canvas: CameraPickCanvas!
     
     /// 上次机器人的位置
     var lastRobotPosition  = CGPoint(x: 0, y: 0)
@@ -121,6 +123,17 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
       return request
     }()
     
+    /// 画布
+    lazy var canvas: CameraPickCanvas = {
+        canvas = CameraPickCanvas(frame: self.view.bounds)
+        canvas.alpha = 0.5
+        canvas.delegate = self
+        canvas.isUserInteractionEnabled = true
+        view.addSubview(canvas)
+        canvas.isHidden = true
+        return canvas
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -133,8 +146,12 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
         setUpUi()
         
         
-        loadModel()
+//        loadModel()
+//        setModel()
+        mlModel = try! robot(configuration: .init()).model
         setModel()
+        
+        
         startVideo()
         self.navigationController?.navigationBar.isHidden = true
         // 注册通知监听器
@@ -143,7 +160,29 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(handleEndNotification(_:)), name: Notification.Name(Constants.Notification_Robot_End_Navi), object: nil)
         ///  默认给机器人训练模式
         channel.invokeMethod("changeRobotMode", arguments: "training")
+        
+        createKeyPoint()
      }
+    
+    func createKeyPoint() {
+        /// 固定坐标写死四个点
+        let scale = 844.0/812.0;
+        point1 = CommonTool.createVIew(CGRect(x: 376 * scale, y: 86 * scale, width: 5, height: 5))
+        view.addSubview(point1)
+        point2 = CommonTool.createVIew(CGRect(x: 471 * scale, y: 82 * scale, width: 5, height: 5))
+        view.addSubview(point2)
+        point3 = CommonTool.createVIew(CGRect(x: 698 * scale, y: 112 * scale, width: 5, height: 5))
+        view.addSubview(point3)
+        point4 = CommonTool.createVIew(CGRect(x: 607 * scale, y: 133 * scale, width: 5, height: 5))
+        view.addSubview(point4)
+    }
+    
+    func removeKeyPoint() {
+        self.point1.removeFromSuperview()
+        self.point2.removeFromSuperview()
+        self.point3.removeFromSuperview()
+        self.point4.removeFromSuperview()
+    }
    
     
     // MARK: - 与FLutter 机器人指令交互的通知方法
@@ -164,8 +203,10 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     @objc func handleEndNotification(_ notification: Notification) {
         /// 机器人导航结束以后 ///
         print("机器人导航到指定地方了")
-       ///  需要app 告知机器人 start 指令
-      //  channel.invokeMethod("beginPickBall", arguments: true)
+        // 通知机器人stop
+        channel.invokeMethod("beginPickBall", arguments: false)
+       ///  app 修改按钮
+        self.canvas.actionBtn.setTitle("Start", for: .normal)
     }
         
     
@@ -228,7 +269,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
         
     }
     
-    // MARK: - CameraPickCanvasDelegate
+    // MARK: 返回到关键点校正的界面 - CameraPickCanvasDelegate
     func CameraPickCanvasDelegate(_ view: CameraPickCanvas, didSendData data: String) {
         self.dismiss(animated: false)
         self.canvas.robot.removeFromSuperview()
@@ -236,14 +277,31 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     }
     
     
+    // MARK: -  休息模式训练模式切换的代理方法
     func ModeSwitchDelegate(_ view: CameraPickCanvas, didSendData data: Int) {
         if data == 99 { // 训练模式
             channel.invokeMethod("changeRobotMode", arguments: "training")
             currentRobotMode = Constants.CurrentRobotModel.training
+            currentElectronicFenceArea = NavigationTool.getEletronicFenceInfieldRectangle()
+            currebtElectronicfenceDesinationPoint = NavigationTool.getEletronicFenceInfieldCenterPoint()
+            
          } else { // 休息模式
             channel.invokeMethod("changeRobotMode", arguments: "rest")
             currentRobotMode = Constants.CurrentRobotModel.rest
-          }
+            currentElectronicFenceArea = NavigationTool.getRestModelEletronicFenceRectangle()
+            currebtElectronicfenceDesinationPoint = NavigationTool.getRestModelEletronicFenceCenterPoint()
+         }
+    }
+    
+    // MARK: - trainingModeSwitchAreaDelegate 训练模式 内场外场区域切换的代理方法
+    func trainingModeSwitchAreaDelegate(_ view: CameraPickCanvas, didSendData data: Int) {
+        if data == 10 { // 内场
+            currentElectronicFenceArea = NavigationTool.getEletronicFenceInfieldRectangle()
+            currebtElectronicfenceDesinationPoint = NavigationTool.getEletronicFenceInfieldCenterPoint()
+        } else { // 外场
+            currentElectronicFenceArea = NavigationTool.getEletronicFenceOutfieldRectangle()
+            currebtElectronicfenceDesinationPoint = NavigationTool.getEletronicFenceOutfieldCenterPoint()
+        }
     }
     
     // MARK: - beginPickBallDelegate 点击开始捡球的代理方法
@@ -253,7 +311,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     
     //  MARK: - 导航通用方法  电子围栏1，区域导航2，原点导航3  
     func commonNavigation(directionVectorX: Double ,directionVectorY: Double) {
-        /// 模拟导航机器人到原点
+        /// 导航机器人到原点
         let currentPoint = (x: Double(curentRobotPosition.x), y: Double(curentRobotPosition.y))
         let currentDirection = (x: directionVectorX, y: directionVectorY)
         let targetPoint = (x: Double(currebtOriginPoint.x), y: Double(currebtOriginPoint.y))
@@ -277,6 +335,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
        @objc func back(_ sender: UIButton) {
            print("关键点检测界面返回了")
            self.dismiss(animated: true)
+           self.canvas.robot.removeFromSuperview()
        }
     
       @objc func nextAction(_ sender: UIButton) {
@@ -284,8 +343,8 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
          // videoCapture.startRecordVideo()
           
           /// 切换机器人位置模型检测
-          mlModel = try! robot(configuration: .init()).model
-          setModel()
+//          mlModel = try! robot(configuration: .init()).model
+//          setModel()
           
           
           // 移除上一个界面的按钮
@@ -293,12 +352,9 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
           self.readyBtn.removeFromSuperview()
           self.desLab.removeFromSuperview()
           
-          canvas = CameraPickCanvas(frame: self.view.bounds)
-          canvas.alpha = 0.5
-          canvas.delegate = self
-          canvas.isUserInteractionEnabled = true
-          view.addSubview(canvas)
+          canvas.isHidden = false
           
+          removeKeyPoint()
          /// 切换到另一个界面
          // self.present(CameraPickVC(binaryMessenger: self.binaryMessenger), animated: false)
           
@@ -316,7 +372,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
       detector = try! VNCoreMLModel(for: mlModel)
       detector.featureProvider = ThresholdProvider()
       /// 机器人的置信度修改为0.7，防止误识别
-        detector.featureProvider = ThresholdProvider(iouThreshold: 0.45, confidenceThreshold: 0.6)
+      detector.featureProvider = ThresholdProvider(iouThreshold: 0.45, confidenceThreshold: 0.6)
 
       /// VNCoreMLRequest
       let request = VNCoreMLRequest(
@@ -371,19 +427,19 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
      
 
         
-    DispatchQueue.main.async {
-        self.point1.removeFromSuperview()
-        self.point2.removeFromSuperview()
-        self.point3.removeFromSuperview()
-        self.point4.removeFromSuperview()
-        self.cavasView.removeFromSuperview()
-
-        if let keyPoints = request.results as? [VNCoreMLFeatureValueObservation] {
-            self.showKeyPoint(predictions: keyPoints)
-        }
- 
-    // Measure FPS
-    }
+//    DispatchQueue.main.async {
+//        self.point1.removeFromSuperview()
+//        self.point2.removeFromSuperview()
+//        self.point3.removeFromSuperview()
+//        self.point4.removeFromSuperview()
+//        self.cavasView.removeFromSuperview()
+//
+//        if let keyPoints = request.results as? [VNCoreMLFeatureValueObservation] {
+//            self.showKeyPoint(predictions: keyPoints)
+//        }
+// 
+//    // Measure FPS
+//    }
 }
       
     var colors: [String: UIColor] = [:]
@@ -436,19 +492,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
                 let y4 = values[7]
 
                 
-                /// 固定坐标写死四个点
-                ///   double scale = 844.0/812.0;
-                //std::vector<cv::Point2f> srcPoints = {cv::Point2f(376 * scale, 86 * scale), cv::Point2f(471* scale, 82*scale),
-                  //  cv::Point2f(698 * scale, 112 * scale), cv::Point2f(607 * scale, 133 * scale)};
-                let scale = 844.0/812.0;
-                point1 = CommonTool.createVIew(CGRect(x: 376 * scale, y: 86 * scale, width: 5, height: 5))
-                view.addSubview(point1)
-                point2 = CommonTool.createVIew(CGRect(x: 471 * scale, y: 82 * scale, width: 5, height: 5))
-                view.addSubview(point2)
-                point3 = CommonTool.createVIew(CGRect(x: 698 * scale, y: 112 * scale, width: 5, height: 5))
-                view.addSubview(point3)
-                point4 = CommonTool.createVIew(CGRect(x: 607 * scale, y: 133 * scale, width: 5, height: 5))
-                view.addSubview(point4)
+            
                 return
                 
                 // 根据需要处理其他值
@@ -702,24 +746,13 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
               
               curentRobotPosition = dstPoint ?? CGPoint(x: 0, y: 0)
 
-              /// 电子围栏内场区域,超出显示红色
-              var isKeyPoints = true
-              let rectangle = CGRect(x: 344, y: 66, width: 78, height: 266)
-              if (rectangle.contains(dstPoint ?? CGPoint(x: 0, y: 0))) {
-                  isKeyPoints  = true
-              } else {
-                  isKeyPoints  = false
-              }
-              
+             
               /// 到达原点（默认右下角）
               if (currebtOriginRectangle.contains(dstPoint ?? CGPoint(x: 0, y: 0)) && originNavigation) {
                   /// APP 发送导航结束指令*/ //0x54   1 到达原点  2 区域位置到达
                    print("导航到原点了")
                    channel.invokeMethod("endNavigation", arguments: "1")
               }
-
-
-              
               let doubleXValue: Double = Double(dstPoint?.x ?? 0) as Double
               let doubleYValue: Double = Double(dstPoint?.y ?? 0) as Double
 
@@ -756,14 +789,21 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
               /// 更新机器人位置
               canvas.updateRobotLocation(x: Double(dstPoint!.x), y: Double(dstPoint!.y))
 
-           
+            
+              /// 电子围栏区域,超出显示红色
+              var isInElectronicFence = true
+              let rectangle = currentElectronicFenceArea
+              if (rectangle.contains(dstPoint ?? CGPoint(x: 0, y: 0))) {
+                  isInElectronicFence  = true
+              } else {
+                  isInElectronicFence  = false
+              }
               
-
             // Show the bounding box.
             boundingBoxViews[i].show(
               frame: rect,
               label: label,
-              color: isKeyPoints ? UIColor.white : UIColor.red,
+              color: isInElectronicFence ? UIColor.white : UIColor.red,
               alpha: alpha)  // alpha 0 (transparent) to 1 (opaque) for conf threshold 0.2 to 1.0)
           } else {
             boundingBoxViews[i].hide()
