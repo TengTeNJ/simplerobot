@@ -42,9 +42,10 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
         super.init(nibName: nil, bundle: nil)
 
     }
-    
+  
     let screenWidth = UIScreen.main.bounds.width
     let screenHeight = UIScreen.main.bounds.height
+      
     
     var videoPreview: UIView!
 
@@ -92,6 +93,12 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     var currentElectronicFenceArea = NavigationTool.getRestModelEletronicFenceRectangle()
     /// 是否开始原点导航（机器人捡满50球开始）
     var originNavigation: Bool = false
+    /// 是否开始电子围栏导航（
+    var electronicFenceNavigation: Bool = false
+    
+    /// 内外场终点的小矩形框矩形框判断
+    var currentElectronicFenceDesinationSamllRectangle = NavigationTool.getRestModelEletronicFenceCenterRectangle()
+    
     /// 拟合出来的前十次机器人的坐标
     var averagePoint = CGPoint(x: 0, y: 0)
     /// 上次给机器人导航的时间
@@ -203,13 +210,15 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     @objc func handleEndNotification(_ notification: Notification) {
         /// 机器人导航结束以后 ///
         print("机器人导航到指定地方了")
-        // 通知机器人stop
-        channel.invokeMethod("beginPickBall", arguments: false)
-       ///  app 修改按钮
-        self.canvas.actionBtn.setTitle("Start", for: .normal)
+        
+        if originNavigation { // 原点导航需要给机器人发送stop
+            // 通知机器人stop
+            channel.invokeMethod("beginPickBall", arguments: false)
+           ///  app 修改按钮
+            self.canvas.actionBtn.setTitle("Start", for: .normal)
+        }
     }
         
-    
     /// 检测屏幕横竖屏
     private func setUpOrientationChangeNotification() {
       NotificationCenter.default.addObserver(
@@ -223,8 +232,8 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     }
     
     func setUpUi() {
+       // videoPreview = UIView(frame: CGRect(x: 0, y: 0, width: Constants.ScreenWidth, height: Constants.ScreenWidth))
         videoPreview = UIView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
-        
         
         view.addSubview(videoPreview)
         
@@ -240,7 +249,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
         view.addSubview(backbtn)
         
         let readybtn = UIButton(type: .custom)
-        readybtn.frame = CGRect(x: screenWidth - 32 - 52, y: 32, width: 52, height: 52)
+        readybtn.frame = CGRect(x: Constants.ScreenWidth - 32 - 52, y: 32, width: 52, height: 52)
         readybtn.setImage(UIImage(named: "ready_icon.png"), for: .normal)
               
         readybtn.backgroundColor = UIColor(red: 156/255.0, green: 156/255.0, blue: 156/255.0, alpha: 0.85)
@@ -256,7 +265,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
         
         
        
-        let desLabel = UILabel(frame: CGRect(x: 100, y: screenHeight - 120, width: screenWidth - 100*2, height: 46))
+        let desLabel = UILabel(frame: CGRect(x: 100, y: Constants.ScreenHeight - 120, width: Constants.ScreenWidth - 100*2, height: 46))
         desLabel.text = """
         Please position the key points of the court within the calibration
         circle to achieve field of view calibration.
@@ -284,12 +293,14 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
             currentRobotMode = Constants.CurrentRobotModel.training
             currentElectronicFenceArea = NavigationTool.getEletronicFenceInfieldRectangle()
             currebtElectronicfenceDesinationPoint = NavigationTool.getEletronicFenceInfieldCenterPoint()
+            currentElectronicFenceDesinationSamllRectangle = NavigationTool.getEletronicFenceInfieldCenterSmallRectangle()
             
          } else { // 休息模式
             channel.invokeMethod("changeRobotMode", arguments: "rest")
             currentRobotMode = Constants.CurrentRobotModel.rest
             currentElectronicFenceArea = NavigationTool.getRestModelEletronicFenceRectangle()
             currebtElectronicfenceDesinationPoint = NavigationTool.getRestModelEletronicFenceCenterPoint()
+             currentElectronicFenceDesinationSamllRectangle = NavigationTool.getRestModelEletronicFenceCenterRectangle()
          }
     }
     
@@ -298,9 +309,11 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
         if data == 10 { // 内场
             currentElectronicFenceArea = NavigationTool.getEletronicFenceInfieldRectangle()
             currebtElectronicfenceDesinationPoint = NavigationTool.getEletronicFenceInfieldCenterPoint()
+            currentElectronicFenceDesinationSamllRectangle = NavigationTool.getEletronicFenceInfieldCenterSmallRectangle()
         } else { // 外场
             currentElectronicFenceArea = NavigationTool.getEletronicFenceOutfieldRectangle()
             currebtElectronicfenceDesinationPoint = NavigationTool.getEletronicFenceOutfieldCenterPoint()
+            currentElectronicFenceDesinationSamllRectangle = NavigationTool.getEletronicFenceOutfieldCenterSmallRectangle()
         }
     }
     
@@ -310,7 +323,8 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     }
     
     //  MARK: - 导航通用方法  电子围栏1，区域导航2，原点导航3  
-    func commonNavigation(directionVectorX: Double ,directionVectorY: Double) {
+    func commonNavigation(
+        directionVectorX: Double ,directionVectorY: Double) {
         /// 导航机器人到原点
         let currentPoint = (x: Double(curentRobotPosition.x), y: Double(curentRobotPosition.y))
         let currentDirection = (x: directionVectorX, y: directionVectorY)
@@ -322,10 +336,31 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
         if (Int(realAngle) ?? 0 > 60) {
             realAngle =  "60"
         }
-        
         /// 通知机器人开始导航 // 0x52
         channel.invokeMethod("beginNavigation", arguments: [
           "type":"3",
+          "direction": "\(result.direction)",
+          "angle": "\(realAngle)"
+      ])
+    }
+    
+    // 电子围栏导航
+    func electronicFenceNavigation(
+        directionVectorX: Double ,directionVectorY: Double) {
+        /// 导航机器人到电子围栏中间
+        let currentPoint = (x: Double(curentRobotPosition.x), y: Double(curentRobotPosition.y))
+        let currentDirection = (x: directionVectorX, y: directionVectorY)
+        let targetPoint = (x: Double(currebtElectronicfenceDesinationPoint.x), y: Double(currebtElectronicfenceDesinationPoint.y))
+        let result = ElectronicFence.new1calculateSteeringDirectionAndAngle(currentPoint: currentPoint, currentDirection: currentDirection , targetPoint: targetPoint )
+              print("转向方向: \(result.direction), 夹角: \(result.angle) 度")
+        
+        var realAngle = result.angle
+        if (Int(realAngle) ?? 0 > 60) {
+            realAngle =  "60"
+        }
+        /// 通知机器人开始导航 // 0x52
+        channel.invokeMethod("beginNavigation", arguments: [
+          "type":"1",
           "direction": "\(result.direction)",
           "angle": "\(realAngle)"
       ])
@@ -750,9 +785,19 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
               /// 到达原点（默认右下角）
               if (currebtOriginRectangle.contains(dstPoint ?? CGPoint(x: 0, y: 0)) && originNavigation) {
                   /// APP 发送导航结束指令*/ //0x54   1 到达原点  2 区域位置到达
+                   originNavigation = false
                    print("导航到原点了")
                    channel.invokeMethod("endNavigation", arguments: "1")
               }
+              
+              /// 到达电子内场区域了
+              if (currentElectronicFenceDesinationSamllRectangle.contains(dstPoint ?? CGPoint(x: 0, y: 0)) && electronicFenceNavigation) {
+                  /// APP 发送导航结束指令*/ //0x54   1 到达原点  2 区域位置到达
+                  electronicFenceNavigation = false
+                   print("导航到内场的电子围栏里面了了")
+                   channel.invokeMethod("endNavigation", arguments: "2")
+            }
+              
               let doubleXValue: Double = Double(dstPoint?.x ?? 0) as Double
               let doubleYValue: Double = Double(dstPoint?.y ?? 0) as Double
 
@@ -776,11 +821,18 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
                       if(CommonTool.calculateTimeStamp(lastDate: lastNaviDate, currentDate: Date()) >= 1) {
                           commonNavigation(directionVectorX: directVector.x, directionVectorY: directVector.y)
                           lastNaviDate = Date()
-                          print("第一次的方向\(self.firstRobotAngle)")
-                          print("方向向量\(directVector)")
+                          print("")
                       }
                       
-                   }
+                  } else if (!currentElectronicFenceArea.contains(dstPoint ?? CGPoint(x: 0, y: 0))) {
+                      electronicFenceNavigation = true
+                      /// 开启电子围栏导航
+                      if(CommonTool.calculateTimeStamp(lastDate: lastNaviDate, currentDate: Date()) >= 1) {
+                          electronicFenceNavigation(directionVectorX: directVector.x, directionVectorY: directVector.y)
+                          lastNaviDate = Date()
+                        }
+                  }
+                 
                   
               }
              

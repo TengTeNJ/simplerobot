@@ -45,7 +45,7 @@ class NativeCommunication {
             final String type = params['type'];
             final String direction = params['direction'];
             final String angle = params['angle'];
-            BleSendUtil.setRobotBeginNavigation(3,int.parse(direction), int.parse(angle));
+            BleSendUtil.setRobotBeginNavigation(int.parse(type),int.parse(direction), int.parse(angle));
           }
           catch(error){
             print('error == $error');
