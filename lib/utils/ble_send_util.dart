@@ -39,6 +39,14 @@ class BleSendUtil {
 
   }
 
+  /// app 发送机器人重置指令
+  static setRobotReset() {
+    if (BluetoothManager().hasConnectedDeviceList.isEmpty) {
+      return;
+    }
+    BluetoothManager().writerDataToDevice(getWriterDevice(), setRobotResetData());
+  }
+
   /// 设置机器人开始捡球
   static setRobotStartPick(int state) {
     if (BluetoothManager().hasConnectedDeviceList.isEmpty) {

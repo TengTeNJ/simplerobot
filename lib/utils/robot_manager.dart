@@ -22,6 +22,7 @@ enum TCPDataType {
   robotBallIsFull,// 球满了
   robotResponseBeginNavigation, // 机器人收到开始导航的应答
   robotResponseEndNavigation, // 机器人收到结束导航的应答
+  robotObstacleAvoidance; // 机器人避障结束
 }
 
 class RobotManager {
@@ -204,7 +205,7 @@ handleData(List<int> element) {
       // print('开关机=======${switch_data}');
       // 电量
       RobotManager().dataModel.powerValue = power_data;
-      print('电量=======${power_data}');
+     // print('电量=======${power_data}');
       RobotManager()._triggerCallback(type: TCPDataType.deviceInfo);
       break;
     case ResponseCMDType.powerOffResponse:
@@ -248,6 +249,11 @@ handleData(List<int> element) {
       RobotManager()._triggerCallback(type: TCPDataType.robotBallIsFull);
       print('球满了开始导航=======');
       break;
+
+    case ResponseCMDType.robotObstacleAvoidanceEnd:
+      RobotManager()._triggerCallback(type: TCPDataType.robotObstacleAvoidance);
+
+
     case ResponseCMDType.speed:
       int speed_data = element[2];
       RobotManager().dataModel.speed = speed_data;

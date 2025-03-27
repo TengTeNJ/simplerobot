@@ -20,6 +20,7 @@ class ResponseCMDType {
   static const int robotResponseBeginNavigation = 0x53; // 机器人回复导航指令
   static const int robotResponseEndNavigation = 0x55; // 机器人回复导航结束指令
   static const int robotResponseBallIsFull = 0x57; // 机器人发送球满指令
+  static const int robotObstacleAvoidanceEnd = 0x58; //机器人发送避障结束指令
 
 
 }

@@ -61,6 +61,8 @@ class Constants {
     static let Notification_Robot_Begin_Navi = "RobotBeginNaviSingle"
     /// 机器人结束导航响应通知
     static let Notification_Robot_End_Navi = "RobotEndNaviSingle"
+    /// 机器人避障结束通知
+    static let Notification_Robot_Obstacle_Avoidance_End_Navi = "RobotObstacleAvoidanceEndSingle"
 
 
 

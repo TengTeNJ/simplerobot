@@ -96,7 +96,7 @@ List<int> setRobotWatiTimeData(RobotResetGap distance) {
   return [start, length, cmd, data, cs, end];
 }
 
-/*设置收球轮速度*/
+/*设置机器人关机*/
 List<int> setRobotPowerData() {
   int start = kDataFrameHeader;
   int length = 6;
@@ -190,6 +190,18 @@ List<int> setRobotStartPickData(int state) {
   int cs = start + length + cmd + data;
   int end = kDataFrameFoot;
   print('设置机器人开始 捡球:${[start, length, cmd, data, cs, end]}');
+  return [start, length, cmd, data, cs, end];
+}
+
+//发送重置指令（机器人退出导航等相关程序，app 退出鹰眼界面时调用））
+List<int> setRobotResetData() {
+  int start = kDataFrameHeader;
+  int length = 6;
+  int cmd = 0x59;
+  int data = 0;
+  int cs = start + length + cmd + data;
+  int end = kDataFrameFoot;
+  print('发送重置指令:${[start, length, cmd, data, cs, end]}');
   return [start, length, cmd, data, cs, end];
 }
 

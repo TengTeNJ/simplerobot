@@ -55,6 +55,9 @@ class NativeCommunication {
        /// APP 发送导航结束指令*/ // 1 到达原点  2 区域位置到达  // 0x54
         final String type = call.arguments;
         BleSendUtil.setRobotNavigationEnd(int.parse(type));
+      } else if(call.method == 'robotReset') { // APP 发送给蓝牙 重置指令
+        print('Received from Swift:  机器人重置');
+        BleSendUtil.setRobotReset();
       }
     });
   }
@@ -67,6 +70,8 @@ class NativeCommunication {
         await platfrom1.invokeMethod('${type}', '');
       } else if(type == 'RobotEndNaviSingle') {
         await platfrom1.invokeMethod('${type}', '');
+      } else if(type == 'RobotObstacleAvoidanceEnd') {
+        await platfrom1.invokeMethod('${type}','');
       }
 
       print('sendDataToNative6666');

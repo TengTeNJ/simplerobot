@@ -239,7 +239,8 @@ class _PickModeControllerState extends State<PickModeController> {
         NativeCommunication().sendDataToNative('RobotBeginNaviSingle');
       } else if(type == TCPDataType.robotResponseEndNavigation) {
         NativeCommunication().sendDataToNative('RobotEndNaviSingle');
-
+      } else if(type == TCPDataType.robotObstacleAvoidance) {
+        NativeCommunication().sendDataToNative('RobotObstacleAvoidanceEndSingle');
       }
     };
   }
