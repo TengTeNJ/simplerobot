@@ -15,15 +15,22 @@ class NavigationTool: NSObject {
     public
     static
     func getRightTopOriginCoordinate() -> CGPoint {
-        return CGPoint(x: 488, y: 75)
+        return CGPoint(x: 507, y: 90)
     }
+    
+    /// 获取右上角 导航原点的矩形框
+    public
+    static
+    func getRightTopOriginRectangle() -> CGRect {
+        return CGRect(x: getEletronicFenceOutfieldRectangle().origin.x - 21 - 5, y: 0, width: 80, height:110)
+    }
+    
     
     /// 获取右下角 导航原点的中心点
     public
     static
     func getRightBottomOriginCoordinate() -> CGPoint {
-        return CGPoint(x: 488, y: 322)
-//        return CGPoint(x: 500, y: 300)
+        return CGPoint(x: 507, y: 307)
 
     }
     
@@ -31,17 +38,21 @@ class NavigationTool: NSObject {
     public
     static
     func getRightBottomOriginRectangle() -> CGRect {
-       // return CGRect(x: 488, y: 322, width: 21, height:21)
-        return CGRect(x: 470, y: 290, width: 80, height:80)
+        return CGRect(x: getEletronicFenceOutfieldRectangle().origin.x - 21 - 5, y: Constants.ScreenHeight - 85, width: 80, height:80)
     }
     
-    /// 获取左下角 导航原点的中心点
+    /// 获取左上角 导航原点的中心点
     public
     static
-    func getLeftBottomOriginCoordinate() -> CGPoint {
-        
-        return CGPoint(x: 332 , y: 322)
-
+    func getLeftTopOriginCoordinate() -> CGPoint {
+        return CGPoint(x: 330 , y: 90)
+    }
+    
+    /// 获取左上角 导航原点的的矩形框
+    public
+    static
+    func getLeftTOpOriginCoordinate() -> CGRect {
+        return CGRect(x: 320, y: 0, width: 110, height:100)
     }
     
     //  MARK: - 导航常量 电子围栏1
@@ -50,14 +61,14 @@ class NavigationTool: NSObject {
     static
     func getEletronicFenceInfieldRectangle() -> CGRect {
         
-        return CGRect(x: 344, y: 66, width: Constants.ElectronicFence.infieldWidth, height: Constants.ElectronicFence.infieldOutfieldHeight)
+        return CGRect(x: 334, y: 62, width: Constants.ElectronicFence.infieldWidth, height: Constants.ElectronicFence.infieldOutfieldHeight)
     }
     
     /// 电子围栏内场的中心点
     public
     static
     func getEletronicFenceInfieldCenterPoint() -> CGPoint {
-        var centerPoint = CGPoint(x: getEletronicFenceInfieldRectangle().midX, y: getEletronicFenceInfieldRectangle().midY)
+        let centerPoint = CGPoint(x: getEletronicFenceInfieldRectangle().midX, y: getEletronicFenceInfieldRectangle().midY)
         return centerPoint
     }
     
@@ -72,14 +83,14 @@ class NavigationTool: NSObject {
     public
     static
     func getEletronicFenceOutfieldRectangle() -> CGRect {
-        return CGRect(x: 344 + 260 - 54, y: 66, width: Constants.ElectronicFence.outfieldWidth, height: Constants.ElectronicFence.infieldOutfieldHeight)
+        return CGRect(x: 524, y: 62, width: Constants.ElectronicFence.outfieldWidth + 80, height: Constants.ElectronicFence.infieldOutfieldHeight)
     }
     
     /// 电子围栏外场的中心点
     public
     static
     func getEletronicFenceOutfieldCenterPoint() -> CGPoint {
-        var centerPoint = CGPoint(x: getEletronicFenceOutfieldRectangle().midX, y: getEletronicFenceOutfieldRectangle().midY)
+        let centerPoint = CGPoint(x: getEletronicFenceOutfieldRectangle().midX, y: getEletronicFenceOutfieldRectangle().midY)
         return centerPoint
     }
     
@@ -94,14 +105,14 @@ class NavigationTool: NSObject {
     public
     static
     func getRestModelEletronicFenceRectangle() -> CGRect {
-        return CGRect(x: 300, y: 66, width: 250, height: 280)
+        return CGRect(x: 310, y: 110, width: 185 + 20, height: 180)
     }
     
     /// 休息模式电子围栏的中心点
     public
     static
     func getRestModelEletronicFenceCenterPoint() -> CGPoint {
-        let centerPoint = CGPoint(x: getRestModelEletronicFenceRectangle().midX, y: getRestModelEletronicFenceRectangle().midY)
+        let centerPoint = CGPoint(x: 400, y: 195)
         return centerPoint
     }
     
@@ -109,8 +120,8 @@ class NavigationTool: NSObject {
     public
     static
     func getRestModelEletronicFenceCenterRectangle() -> CGRect {
-        let RestModelCenterRectangle = CGRectMake(getRestModelEletronicFenceCenterPoint().x - 100, getRestModelEletronicFenceCenterPoint().y - 100, 100, 100)
-        return RestModelCenterRectangle
+//        let RestModelCenterRectangle = CGRectMake(getRestModelEletronicFenceCenterPoint().x - 100, getRestModelEletronicFenceCenterPoint().y - 100, 100, 100)
+          return CGRect(x: 310, y: 111, width: 185 + 20, height: 180)
     }
   
 }

@@ -13,32 +13,8 @@ class ElectronicFence: NSObject {
     
     /// 运动坐标合集
     var queue = NSMutableArray()
-   
-    ///  计算训练模式下电子围栏 内场四个点的坐标
-    public
-    static
-    func getInfieldRectangleCoordinate() -> [CGPoint]{
-        let cgPoints: [CGPoint] = [CGPoint(x: 344, y: 66), // 左上
-                                   CGPoint(x: 344 + Constants.ElectronicFence.infieldWidth, y: 66), // 右上
-                                   CGPoint(x: 344, y: 66 + 266), // 左下
-                                   CGPoint(x: 344 + Constants.ElectronicFence.infieldWidth, y: 66 + 266) // 右下
-        ]
 
-        return cgPoints
-    }
-    
-    ///  计算训练模式下电子围栏 外场四个点的坐标
-    public
-    static
-    func getOutfieldRectangleCoordinate() -> [CGPoint]{
-        let cgPoints: [CGPoint] = [CGPoint(x: 360 + 96 + Constants.ElectronicFence.infieldWidth, y: 72), // 左上
-                                   CGPoint(x: 360 + 96 + Constants.ElectronicFence.infieldWidth + Constants.ElectronicFence.outfieldWidth, y: 72), // 右上
-                                   CGPoint(x:  360 + 96 + Constants.ElectronicFence.infieldWidth, y: 72 + Constants.ElectronicFence.infieldOutfieldHeight), // 左下
-                                   CGPoint(x: 360 + 96 + Constants.ElectronicFence.infieldWidth + Constants.ElectronicFence.outfieldWidth, y: 72 + Constants.ElectronicFence.infieldOutfieldHeight) // 右下
-        ]
-
-        return cgPoints
-    }
+  
     
     /// 判定机器人有没有在电子围栏里面
     static func isPointInsideElectronicFence(point: CGPoint, quadrilateralPoints: [CGPoint]) -> Bool {

@@ -96,7 +96,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     /// 是否开始电子围栏导航（
     var electronicFenceNavigation: Bool = false
     
-    /// 内外场终点的小矩形框矩形框判断
+    /// 当前小矩形框矩形框判断
     var currentElectronicFenceDesinationSamllRectangle = NavigationTool.getRestModelEletronicFenceCenterRectangle()
     
     /// 拟合出来的前十次机器人的坐标
@@ -118,6 +118,14 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     
     /// 第一次计算出来的机器人的角度
     var firstRobotAngle: Double = 0
+    
+    lazy var realRobot : UIView = {
+        let real = CommonTool.createVIew(CGRect(x: 0, y: 0, width: 5, height: 5))
+        real.backgroundColor = .black
+        view.addSubview(real)
+
+        return real
+    }()
     
     lazy var visionRequest: VNCoreMLRequest = {
       let request = VNCoreMLRequest(
@@ -152,7 +160,9 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
 
         setUpUi()
         
-        
+        // 默认休息模式
+        currentElectronicFenceArea = NavigationTool.getRestModelEletronicFenceRectangle()
+        currentElectronicFenceDesinationSamllRectangle = NavigationTool.getRestModelEletronicFenceCenterRectangle()
 //        loadModel()
 //        setModel()
         mlModel = try! robot(configuration: .init()).model
@@ -280,10 +290,29 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
     
     // MARK: 返回到关键点校正的界面 - CameraPickCanvasDelegate
     func CameraPickCanvasDelegate(_ view: CameraPickCanvas, didSendData data: String) {
+        videoCapture.startRecordVideo()
+
+        
         self.dismiss(animated: false)
         self.canvas.robot.removeFromSuperview()
         
     }
+    
+    // MARK: 原点区域切换 - CameraPickCanvasDelegate
+   func originViewSwitch(_ view: CameraPickCanvas, didSendData data: Int) {
+       if data == 3 { // 右下
+           currebtOriginPoint = NavigationTool.getRightBottomOriginCoordinate()
+           currebtOriginRectangle = NavigationTool.getRightBottomOriginRectangle()
+       } else if (data == 1) { // 右上
+           currebtOriginPoint = NavigationTool.getRightTopOriginCoordinate()
+           currebtOriginRectangle = NavigationTool.getRightTopOriginRectangle()
+       } else { // 左上
+           currebtOriginPoint = NavigationTool.getLeftTopOriginCoordinate()
+           currebtOriginRectangle = NavigationTool.getLeftTOpOriginCoordinate()
+       }
+        print("原点区域切换\(data)")
+    }
+
     
     
     // MARK: -  休息模式训练模式切换的代理方法
@@ -309,11 +338,11 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
         if data == 10 { // 内场
             currentElectronicFenceArea = NavigationTool.getEletronicFenceInfieldRectangle()
             currebtElectronicfenceDesinationPoint = NavigationTool.getEletronicFenceInfieldCenterPoint()
-            currentElectronicFenceDesinationSamllRectangle = NavigationTool.getEletronicFenceInfieldCenterSmallRectangle()
+            currentElectronicFenceDesinationSamllRectangle = NavigationTool.getEletronicFenceInfieldRectangle()
         } else { // 外场
             currentElectronicFenceArea = NavigationTool.getEletronicFenceOutfieldRectangle()
             currebtElectronicfenceDesinationPoint = NavigationTool.getEletronicFenceOutfieldCenterPoint()
-            currentElectronicFenceDesinationSamllRectangle = NavigationTool.getEletronicFenceOutfieldCenterSmallRectangle()
+            currentElectronicFenceDesinationSamllRectangle = NavigationTool.getEletronicFenceOutfieldRectangle()
         }
     }
     
@@ -371,11 +400,15 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
            print("关键点检测界面返回了")
            self.dismiss(animated: true)
            self.canvas.robot.removeFromSuperview()
+           /// 退出界面告诉机器人导航结束
+           channel.invokeMethod("endNavigation", arguments: "2")
+
+           
        }
     
       @objc func nextAction(_ sender: UIButton) {
           /// 开始录制视频
-         // videoCapture.startRecordVideo()
+          videoCapture.startRecordVideo()
           
           /// 切换机器人位置模型检测
 //          mlModel = try! robot(configuration: .init()).model
@@ -454,7 +487,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
                     self.show(predictions: results)
                  }
                 
-               // print("监测的结果\(results)");
+                print("监测的结果\(results)");
             } else {
               self.show(predictions: [])
             }
@@ -495,6 +528,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
       guard let classLabels = mlRobotModel.modelDescription.classLabels as? [String] else {
         fatalError("Class labels are missing from the model description")
       }
+        
 
       // Assign random colors to the classes.
       var count = 0
@@ -616,6 +650,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
             try handler.perform([visionRequest])
             let frameWidth = CGFloat(CVPixelBufferGetWidth(pixelBuffer))
             let frameHeight = CGFloat(CVPixelBufferGetHeight(pixelBuffer))
+              print("视频流宽\(frameWidth) 高\(frameHeight)")
         
           } catch {
             print(error)
@@ -753,7 +788,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
 
             let bestClass = prediction.labels[0].identifier
             let confidence = prediction.labels[0].confidence
-          //  print("机器人的置信度\(confidence)")
+            print("机器人的置信度\(confidence)")
 
 
             let label = String(format: "%@ %.1f", bestClass, confidence * 100)
@@ -772,7 +807,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate {
               let real_point_y = center_y + half_y_distance * (1-center_percent)
               srcpoint.y = real_point_y
 //              
-              
+              realRobot.frame.origin = CGPoint(x: srcpoint.x, y: srcpoint.y)
             
 
 

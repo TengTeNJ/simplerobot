@@ -22,14 +22,24 @@ class Constants {
         case originNavi /// 原点导航
     }
     
+    /// 原点区域
+    enum OriginViewType {
+       case originViewLeftTop /// 左上角
+       case originViewRightTop /// 右上角
+       case originViewRightBottom /// 右下角
+    }
+    
     class ElectronicFence{ // 电子围栏
         static let infieldOutfieldHeight = 266 // 内外场矩形的高度
-        static let infieldWidth = 78 // 内场矩形的宽度
+        static let infieldWidth = 91 // 内场矩形的宽度
         static let outfieldWidth = 54 // 外场矩形的宽度
     }
     
+    // 小地图
     class VirvutalMap {
-        
+        static let smallWidth = 373
+        static let smallHeight = 179
+
     }
     
     static let ScreenWidth = UIScreen.main.bounds.size.width
