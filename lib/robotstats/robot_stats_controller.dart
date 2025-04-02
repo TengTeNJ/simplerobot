@@ -188,7 +188,7 @@ class _RobotStatsControllerState extends State<RobotStatsController> {
 
                   Expanded(child: Container(
                     margin: EdgeInsets.only(top: 40,left: 20),
-                    child: Image(image: AssetImage('images/connect/home_robot.png'),width: 224,),
+                    child: Image(image: AssetImage('images/connect/stats_robot.png'),width: 224,),
                   ),
                   ),
                 ],

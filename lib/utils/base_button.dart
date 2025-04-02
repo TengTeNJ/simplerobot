@@ -27,7 +27,7 @@ class BaseButton extends StatelessWidget {
       decoration: BoxDecoration(
         // gradient:  linearGradient,
         borderRadius:  borderRadius ?? BorderRadius.circular(10),
-        color: Constants.selectedModelOrangeBgColor,),
+        color: title == 'Close' ? Constants.powerOffBgColor : Constants.selectedModelOrangeBgColor,),
       child: Center(
         child: Constants.regularWhiteTextWidget(title, 16 ,Colors.white),
       ),

@@ -191,10 +191,11 @@ class TTDialog {
               padding: EdgeInsets.all(12.0),
               decoration: BoxDecoration(
                 // color: hexStringToColor('#3E3E55'),
-                color: Constants.powerOffDialogBgColor,
+                color: Constants.dialogBgColor,
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              child:RobotLowBatteryDialog(exchange: exchange, title: 'Power OFF',descTitle: 'The Bot will power off.',imgName: 'images/base/robot_poweroff.png',),
+
+              child:RobotPowerOffDialog(exchange: exchange, title: 'Power OFF',descTitle: 'The Bot will power off.',imgName: 'images/base/robot_poweroff.png',),
             ),
           );
         }
@@ -811,6 +812,67 @@ class RobotModelAlertDialog extends StatelessWidget {
     );
   }
 }
+
+class RobotPowerOffDialog extends StatelessWidget {
+  Function exchange;
+  String descTitle;
+  String title;
+  String imgName;
+
+
+  RobotPowerOffDialog({required this.exchange,required this.title,required this.descTitle,required this.imgName});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [Container()],
+          ),
+
+          SizedBox(
+            height: 33,
+          ),
+
+          Image(image: AssetImage('${this.imgName}'),
+            width: 32,
+            height: 32,
+          ),
+
+          SizedBox(
+            height: 11,
+          ),
+          Constants.mediumWhiteTextWidget('${this.title}', 19,Color.fromRGBO(194, 35, 38, 1.0)),
+
+          SizedBox(
+            height: 20,
+          ),
+
+          Constants.regularWhiteTextWidget('${this.descTitle}', 16,Constants.connectTextColor,height: 1.3),
+
+          SizedBox(
+            height: 46,
+          ),
+          Padding(padding: EdgeInsets.only(left: 24,right: 24),child: BaseButton(
+              borderRadius: BorderRadius.circular(20),
+              title: this.title == 'Power OFF' ? 'Close': 'Got It',
+              height: 40,
+              onTap: () {
+                this.exchange();
+              }),),
+          SizedBox(
+            height: 32,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 
 class RobotLowBatteryDialog extends StatelessWidget {
   Function exchange;

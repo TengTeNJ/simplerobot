@@ -38,10 +38,10 @@ class _SettingBalltypeDataListViewState extends State<SettingBalltypeDataListVie
            child: Column(
              mainAxisAlignment: MainAxisAlignment.center,
              children: [
-               Image(image: AssetImage(widget.currentIndex == 0 ? 'images/profile/balltype_red_icon.png' :
+               Image(image: AssetImage(widget.currentIndex == 0 ? 'images/profile/balltype_yellow_icon.png' :
                 'images/profile/balltype_gray_icon.png'),width: 62,height: 62,),
                SizedBox(height: 10,),
-               Constants.regularWhiteTextWidget('70 kPa', 15, widget.currentIndex == 0 ? Colors.white :Constants.grayTextColor),
+               Constants.regularWhiteTextWidget('65 kPa', 15, widget.currentIndex == 0 ? Colors.white :Constants.grayTextColor),
              ],
             ),
         ),
@@ -72,10 +72,10 @@ class _SettingBalltypeDataListViewState extends State<SettingBalltypeDataListVie
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image(image: AssetImage(widget.currentIndex == 1 ? 'images/profile/balltype_yellow_icon.png' :
+                  Image(image: AssetImage(widget.currentIndex == 1 ? 'images/profile/balltype_blue.png' :
                     'images/profile/balltype_gray_icon.png'),width: 62,height: 62,),
                   SizedBox(height: 10,),
-                  Constants.regularWhiteTextWidget('60 kPa', 15,widget.currentIndex == 1 ? Colors.white :Constants.grayTextColor),
+                  Constants.regularWhiteTextWidget('70 kPa', 15,widget.currentIndex == 1 ? Colors.white :Constants.grayTextColor),
                 ],
               ),
             ),

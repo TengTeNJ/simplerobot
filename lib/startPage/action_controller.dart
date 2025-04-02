@@ -334,7 +334,7 @@ class _ActionControllerState extends State<ActionController> {
               child: Image(
                 width: 277,
                 height: 215,
-                image: AssetImage('images/connect/home_robot.png'),
+                image: AssetImage('images/connect/home_robot_new.png'),
               ),
             ),
             Container(
