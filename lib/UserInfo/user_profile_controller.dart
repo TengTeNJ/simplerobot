@@ -124,7 +124,7 @@ class _UserProfileControllerState extends State<UserProfileController> {
                   width: 183 ,
                   height: 123 ,
                   child: Image(
-                    image: AssetImage('images/connect/robot.png'),
+                    image: AssetImage('images/connect/connect_success_robot.png'),
                     // fit: BoxFit.fill,
                   ),
                 ),

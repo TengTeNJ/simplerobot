@@ -49,7 +49,7 @@ List<int> clearCountData() {
 }
 
 /*设置收球轮速度*/
-List<int> setSpeedData(int speed) {
+List<int> setSpeedData(int speed) {  //1 2 3 三个档位
   int start = kDataFrameHeader;
   int length = 6;
   int cmd = 0x47;

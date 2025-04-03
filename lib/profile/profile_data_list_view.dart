@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_robot/fault/fault_info_controller.dart';
 import 'package:tennis_robot/profile/profile_list_view.dart';
+import 'package:tennis_robot/setting/new_setting_ball_type_controller.dart';
 
 import '../UserInfo/user_profile_controller.dart';
 import '../setting/setting_ball_type_controller.dart';
@@ -31,7 +32,8 @@ class _ProfileDataListViewState extends State<ProfileDataListView> {
             ),
 
             GestureDetector(onTap: (){
-              NavigatorUtil.present(SettingBallTypeController());
+              // NavigatorUtil.present(SettingBallTypeController());
+              NavigatorUtil.present(NewSettingBallTypeController());
               },
             child: ProfileListView(assetPath: 'images/profile/setting_ball_type.png',title: 'Ball Type'),
             ),

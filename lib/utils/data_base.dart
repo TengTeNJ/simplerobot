@@ -129,7 +129,7 @@ class DataBaseHelper {
 
    Future<int> fetchBallTypeData() async {
      final prefs = await SharedPreferences.getInstance();
-     return prefs.getInt('ballTypeData') ?? 1; // 默认Hard
+     return prefs.getInt('ballTypeData') ?? 2; // 默认第二档
    }
 
    /// 设置休息间隔
