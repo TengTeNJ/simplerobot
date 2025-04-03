@@ -43,6 +43,14 @@ android {
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
     }
+    signingConfigs {
+        release {
+            storeFile file("/Users/yangqingjie/Desktop/key/my-release-key.jks")
+            storePassword "android"
+            keyAlias "my-key-alias"
+            keyPassword "android"
+        }
+    }
 
     buildTypes {
         release {
