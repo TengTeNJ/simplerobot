@@ -16,7 +16,7 @@ class GuideCameraPlacementController extends StatefulWidget {
 class _GuideCameraPlacementControllerState extends State<GuideCameraPlacementController> {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]); // 设置横屏模式
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight]); // 设置横屏模式
     return Scaffold(
       backgroundColor: Constants.darkControllerColor,
       body: Column(

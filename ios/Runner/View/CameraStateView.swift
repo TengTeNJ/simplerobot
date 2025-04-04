@@ -26,7 +26,7 @@ class CameraStateView: UIView {
                
       
         
-        let img = UIImageView(image: UIImage(named: ""))
+        let img = UIImageView()
         img.frame = CGRect(x: 0, y: 0, width: 5, height: 5)
         img.backgroundColor = UIColor(red: 194/255.0, green: 35/255.0, blue: 38/255.0, alpha: 1.0)
         img.layer.cornerRadius = 2.5

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/models/setting_model.dart';
+import '../../../simplerobot1.0/lib/setting/new_setting_ball_type_controller.dart';
 import 'package:tennis_robot/setting/setting_avoid_distance_controller.dart';
 import 'package:tennis_robot/setting/setting_reset_gap_controller.dart';
 
@@ -25,7 +26,9 @@ class _SettingItemViewState extends State<SettingItemView> {
      // behavior: HitTestBehavior.opaque,
       onTap: (){
          if (widget.model.title == 'Ball Type') {
-           NavigatorUtil.present(SettingBallTypeController());
+          // NavigatorUtil.present(SettingBallTypeController());
+           NavigatorUtil.present(NewSettingBallTypeController());
+
          } else if (widget.model.title =='Roller Speed'){
            NavigatorUtil.present(SettingRollerSpeed());
          } else if (widget.model.title == 'Profile') {

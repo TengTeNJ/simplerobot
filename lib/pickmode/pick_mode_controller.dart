@@ -3,7 +3,6 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tennis_robot/models/robot_data_model.dart';
 import 'package:tennis_robot/pickmode/robot_speed_adjust_view.dart';
@@ -72,15 +71,7 @@ class _PickModeControllerState extends State<PickModeController> {
     });
   }
 
-  /// 使屏幕保持常亮的函数
-  Future<void> enableKeepScreenOn() async {
-    await FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_KEEP_SCREEN_ON);
-  }
 
-  /// 关闭屏幕常亮的函数
-  Future<void> clearScreenOn() async {
-    await FlutterWindowManager.clearFlags(FlutterWindowManager.FLAG_KEEP_SCREEN_ON);
-  }
 
   // 获取今日的捡球数
   void getTodayBallNumsByDB() async{
@@ -131,6 +122,7 @@ class _PickModeControllerState extends State<PickModeController> {
     _startTimer();
     // 断链退到连接界面
   BluetoothManager().disConnect = () {
+    NativeCommunication().sendDataToNative('bluetoothDisconnectSingle');
     TTDialog.robotBleDisconnectDialog(context, () async {
       // 发送通知到连接界面
       EventBus().sendEvent(kRobotConnectChange);
@@ -333,6 +325,7 @@ class _PickModeControllerState extends State<PickModeController> {
     var remoteControlHeight = Constants.screenWidth(context) - 120;
     return remoteControlHeight - fontHeight - 204.0-34.0;
   }
+
   @override
   Widget build(BuildContext context) {
 
@@ -552,8 +545,4 @@ class _PickModeControllerState extends State<PickModeController> {
     );
   }
 
-  // @override
-  // // void dispose() {
-  // //   super.dispose();
-  // // }
 }

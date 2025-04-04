@@ -43,7 +43,7 @@ class BatteryView: UIView {
         
         batteryLab = UILabel(frame: CGRect(x: 27, y: 0, width: 40, height: 36))
         batteryLab.textColor = .white
-        batteryLab.text = "50%"
+        batteryLab.text = "98%"
         addSubview(batteryLab)
 
     }

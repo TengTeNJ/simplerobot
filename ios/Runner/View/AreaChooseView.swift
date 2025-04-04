@@ -14,19 +14,12 @@ protocol AreaChooseViewDelegate: AnyObject {
 /// 区域选择view
 class AreaChooseView: UIView {
     weak var delegate: AreaChooseViewDelegate?
-
-    
-    let widgetWidthHorizontal = 119
-    let widgetHeightHorizontal = 26
-    
-    let widgetWidthVertical = 54
-    let widgetHeightVertical = 266
     
     let margin = 4
    
     lazy var areaABtn: UIButton = {
           let trainbtn = UIButton(type: .custom)
-          trainbtn.frame = CGRect(x: 0, y: 0, width: Constants.ElectronicFence.infieldWidth, height: widgetHeightVertical)
+          trainbtn.frame = CGRect(x: 0, y: 0, width: Constants.ElectronicFence.infieldWidth, height: Constants.ElectronicFence.infieldOutfieldHeight)
           trainbtn.backgroundColor = Constants.areaBgColor
           trainbtn.layer.cornerRadius = 4;
           trainbtn.tag = 10
@@ -37,7 +30,7 @@ class AreaChooseView: UIView {
           
     lazy var areaCBtn: UIButton = {
           let trainbtn = UIButton(type: .custom)
-        trainbtn.frame = CGRect(x: widgetWidthHorizontal + widgetWidthVertical + 2 * margin, y: 0, width: widgetWidthVertical, height: widgetHeightVertical)
+        trainbtn.frame = CGRect(x: Constants.ElectronicFence.infieldWidth + 99, y: 0, width: Constants.ElectronicFence.outfieldWidth, height: Constants.ElectronicFence.infieldOutfieldHeight)
         trainbtn.backgroundColor = Constants.areaBgColor
         trainbtn.layer.cornerRadius = 4;
         trainbtn.tag = 12
@@ -57,7 +50,7 @@ class AreaChooseView: UIView {
     }
     
     private func setupView() {
-        self.frame = CGRect(x: 344, y: 66 , width: widgetWidthVertical*2 + 2*margin + widgetWidthHorizontal +  25, height: widgetHeightVertical)
+        self.frame = CGRect(x: 334, y: 66 , width: Constants.ElectronicFence.infieldWidth +  Constants.ElectronicFence.outfieldWidth + 99, height: Constants.ElectronicFence.infieldOutfieldHeight)
         self.addSubview(areaABtn)
         self.addSubview(areaCBtn)
 
@@ -66,9 +59,7 @@ class AreaChooseView: UIView {
     // MARK: - 按钮点击事件处理
        @objc func btnAction(_ sender: UIButton) {
            delegate?.AreaChooseViewDelegate(self, didSendData: sender.tag)
-
-           
-           if (sender.tag == 10) {
+          if (sender.tag == 10) {
                areaABtn.backgroundColor = Constants.areaBgSelectedColor
                areaCBtn.backgroundColor = Constants.areaBgColor
            }

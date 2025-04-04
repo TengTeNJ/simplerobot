@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -42,9 +43,14 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
 
   @override
   void initState() {
-
     // TODO: implement initState
     super.initState();
+
+    // 设置应用的首选方向为竖屏
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp, // 允许竖屏向上
+      DeviceOrientation.portraitDown // 允许竖屏向下
+    ]);
 
     BluetoothManager();
     // 扫描蓝牙设备
@@ -186,11 +192,10 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      if (checkBluIsOpen() == false) {
-                        EasyLoading.showToast('please open bluetooth');
-                        return;
-                      }
-
+                      // if (checkBluIsOpen() == false) {
+                      //   EasyLoading.showToast('please open bluetooth');
+                      //   return;
+                      // }
                       if (currentWifiName != kBLEDevice_NewName) {
                         // 扫描连接失败弹窗
                         TTDialog.robotRobotConnectFailDialog(context,() async {
@@ -209,6 +214,8 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
 
                         NavigatorUtil.push(Routes.connectSuccess);
                       }
+                  NavigatorUtil.push(Routes.connectSuccess);
+
 
                     },
                     child: Container(
