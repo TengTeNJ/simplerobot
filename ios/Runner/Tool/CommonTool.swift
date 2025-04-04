@@ -19,7 +19,8 @@ class CommonTool: NSObject {
 //        trainbtn.addTarget(self, action: #selector(btnAction(_:)), for: .touchUpInside)
         trainbtn.contentEdgeInsets = UIEdgeInsets(top: 20, left: 17, bottom: 17, right: 14)
 
-        trainbtn.titleLabel?.font = UIFont.systemFont(ofSize: 18)
+        trainbtn.titleLabel?.font = UIFont(name: "San Francisco Display-Regular", size: 18)
+        
         trainbtn.clipsToBounds = true
         trainbtn.layer.cornerRadius = frame.size.width / 2
         return trainbtn

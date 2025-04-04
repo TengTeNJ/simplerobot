@@ -140,11 +140,21 @@
 // 获取单应性矩阵
 - (cv::Mat)calculateHomegraphyMat {
     // 将 CGPoint 转换为 OpenCV 的 Mat 格式
+    // Tommy 高保真  812**375  的关键点坐标
+   // std::vector<cv::Point2f> srcPoints = {cv::Point2f(376, 86), cv::Point2f(471, 82),
+//                                          cv::Point2f(698, 112), cv::Point2f(607, 133)};
     
-    std::vector<cv::Point2f> srcPoints = {cv::Point2f(320, 116), cv::Point2f(430, 105),
-                                          cv::Point2f(670, 124), cv::Point2f(586, 146)};
-    std::vector<cv::Point2f> dstPoints = {cv::Point2f(420, 126), cv::Point2f(515, 126),
-                                          cv::Point2f(515, 285), cv::Point2f(420, 285)};
+    // 13 pro 12 等 844**390.0 的关键点坐标
+    double scale = 844.0/812.0;
+    std::vector<cv::Point2f> srcPoints = {cv::Point2f(376 * scale, 86 * scale), cv::Point2f(471* scale, 82*scale),
+        cv::Point2f(698 * scale, 112 * scale), cv::Point2f(607 * scale, 133 * scale)};
+    
+  
+   // std::vector<cv::Point2f> dstPoints = {cv::Point2f(430, 132), cv::Point2f(516, 132),
+                                        //  cv::Point2f(516, 267), cv::Point2f(430, 267)};
+    // 13 pro 12 等 844**390.0 的手机屏幕上的四个点
+    std::vector<cv::Point2f> dstPoints = {cv::Point2f(430, 132), cv::Point2f(516, 132),
+                                          cv::Point2f(498, 280), cv::Point2f(430, 280)};
   
     cv::Mat homographyMatrix = cv::findHomography(srcPoints, dstPoints);
     

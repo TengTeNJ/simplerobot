@@ -51,7 +51,7 @@ class BoundingBoxView {
   func show(frame: CGRect, label: String, color: UIColor, alpha: CGFloat) {
     CATransaction.setDisableActions(true)  // Disable implicit animations
 
-      print("机器人的位置坐标\(frame)---\(UIScreen.main.bounds.size.width)---\(UIScreen.main.bounds.size.height)")
+     // print("机器人的位置坐标\(frame)---\(UIScreen.main.bounds.size.width)---\(UIScreen.main.bounds.size.height)")
     let path = UIBezierPath(roundedRect: frame, cornerRadius: 6.0)  // Rounded rectangle for the bounding box
     shapeLayer.path = path.cgPath
     shapeLayer.strokeColor = color.withAlphaComponent(alpha).cgColor  // Apply color and alpha to the stroke

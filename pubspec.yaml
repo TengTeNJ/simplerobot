@@ -68,7 +68,7 @@ dependencies:
   # 屏幕管理器（设置屏幕常亮）
   flutter_windowmanager: ^0.2.0
 
-  camera: ^0.11.1
+  #camera: ^0.11.1
 
 
 
@@ -110,6 +110,7 @@ flutter:
     - images/fault/
     - images/guide/
     - images/camerapick/
+    - images/setting/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

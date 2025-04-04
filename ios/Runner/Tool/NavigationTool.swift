@@ -38,7 +38,9 @@ class NavigationTool: NSObject {
     public
     static
     func getRightBottomOriginRectangle() -> CGRect {
-        return CGRect(x: getEletronicFenceOutfieldRectangle().origin.x - 21 - 5, y: Constants.ScreenHeight - 85, width: 80, height:80)
+//        return CGRect(x: getEletronicFenceOutfieldRectangle().origin.x - 21 - 5, y: Constants.ScreenHeight - 85, width: 80, height:80)
+        return CGRect(x: 490, y:286, width: 90, height:90)
+        
     }
     
     /// 获取左上角 导航原点的中心点
@@ -61,7 +63,7 @@ class NavigationTool: NSObject {
     static
     func getEletronicFenceInfieldRectangle() -> CGRect {
         
-        return CGRect(x: 334, y: 62, width: Constants.ElectronicFence.infieldWidth, height: Constants.ElectronicFence.infieldOutfieldHeight)
+        return CGRect(x: 334 - 20, y: 62, width: Constants.ElectronicFence.infieldWidth + 20, height: Constants.ElectronicFence.infieldOutfieldHeight)
     }
     
     /// 电子围栏内场的中心点

@@ -151,7 +151,11 @@ public class VideoCapture: NSObject,AVCaptureFileOutputRecordingDelegate {
     }
 
     if let connection = videoOutput.connection(with: .video) {
+      //self.previewLayer?.connection?.videoOrientation = connection.videoOrientation
+      /// 强制横屏
+        connection.videoOrientation = .landscapeRight
       self.previewLayer?.connection?.videoOrientation = connection.videoOrientation
+
     }
     do {
       try captureDevice.lockForConfiguration()
@@ -253,6 +257,8 @@ public class VideoCapture: NSObject,AVCaptureFileOutputRecordingDelegate {
     } else {
       connection.isVideoMirrored = false
     }
+
+    connection.videoOrientation = .landscapeRight
 
     self.previewLayer?.connection?.videoOrientation = connection.videoOrientation
   }

@@ -58,6 +58,12 @@ class NativeCommunication {
       } else if(call.method == 'robotReset') { // APP 发送给蓝牙 重置指令
         print('Received from Swift:  机器人重置');
         BleSendUtil.setRobotReset();
+        /// 机器人重置以后发送stop
+        Future.delayed(Duration(milliseconds: 500), () {
+          /// 0x56 发送stop
+          BleSendUtil.setRobotStartPick(0);
+
+        });
       }
     });
   }
@@ -72,6 +78,9 @@ class NativeCommunication {
         await platfrom1.invokeMethod('${type}', '');
       } else if(type == 'RobotObstacleAvoidanceEnd') {
         await platfrom1.invokeMethod('${type}','');
+      } else if (type == 'bluetoothDisconnectSingle') {
+        await platfrom1.invokeMethod('${type}','');
+
       }
 
       print('sendDataToNative6666');

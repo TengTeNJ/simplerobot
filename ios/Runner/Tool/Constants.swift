@@ -52,6 +52,11 @@ class Constants {
     static let hignBGColor = UIColor(red: 233/255.0, green: 100/255.0, blue: 21/255.0, alpha: 1.0)
     static let disableBGColor = UIColor(red: 49/255.0, green: 52/255.0, blue: 67/255.0, alpha: 1.0)
     static let disableTextColor = UIColor(red: 156/255.0, green: 156/255.0, blue: 156/255.0, alpha: 1.0)
+    
+    static let maskColor = UIColor(red: 28/255.0, green: 29/255.0, blue: 32/255.0, alpha: 0.85)
+    
+    static let alertBGColor = UIColor(red: 25/255.0, green: 25/255.0, blue: 25/255.0, alpha: 0.8)
+    static let alertCanvasBGColor = UIColor(red: 49/255.0, green: 52/255.0, blue: 67/255.0, alpha: 1.0)
 
     /// 电量通知
     static let Notification_Battery = "NotificationBattery"
@@ -63,6 +68,9 @@ class Constants {
     static let Notification_Robot_End_Navi = "RobotEndNaviSingle"
     /// 机器人避障结束通知
     static let Notification_Robot_Obstacle_Avoidance_End_Navi = "RobotObstacleAvoidanceEndSingle"
+    
+    /// 机器人蓝牙断连通知
+    static let Notification_Robot_Bluetooth_Disconnect = "bluetoothDisconnectSingle"
 
 
 
