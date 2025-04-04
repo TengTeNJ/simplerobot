@@ -54,12 +54,23 @@ import UIKit
               result(nil)
           } else if call.method == Constants.Notification_Robot_End_Navi {
               if let battery = call.arguments as? String {
-                  print("Received battery from Flutter: \(battery)")
                   let userInfo = ["message": "\(battery)"]
                   NotificationCenter.default.post(name: Notification.Name(Constants.Notification_Robot_End_Navi), object: nil, userInfo: userInfo)
 
               }
               result(nil)
+          } else if call.method == Constants.Notification_Robot_Obstacle_Avoidance_End_Navi {
+              if let battery = call.arguments as? String {
+                  let userInfo = ["message": "\(battery)"]
+                  NotificationCenter.default.post(name: Notification.Name(Constants.Notification_Robot_Obstacle_Avoidance_End_Navi), object: nil, userInfo: userInfo)
+
+              }
+              result(nil)
+              
+              
+          } else if call.method == Constants.Notification_Robot_Bluetooth_Disconnect {
+              NotificationCenter.default.post(name: Notification.Name(Constants.Notification_Robot_Bluetooth_Disconnect), object: nil, userInfo: nil)
+              
           }
           
           
