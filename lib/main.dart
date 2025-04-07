@@ -7,17 +7,9 @@ import 'package:tennis_robot/route/routes.dart';
 import 'package:tennis_robot/utils/global.dart';
 import 'package:tennis_robot/startPage/action_controller.dart';
 import 'package:tennis_robot/utils/navigator_util.dart';
-import 'package:shopify_flutter/shopify_flutter.dart';
 
 void main() {
-  ShopifyConfig.setConfig(
-    storefrontAccessToken: 'e49948d9b677f9bf54e9e73bc7922aac',
-    storeUrl:'http://www.baidu.com',
-    adminAccessToken: 'a1d13b7d828641d00a18fbf94c0c95b0',
-    storefrontApiVersion:'2023-07',
-    cachePolicy: CachePolicy.noCache,
-    language: 'en',
-  );
+
   GetIt.I.registerSingleton<GameUtil>(GameUtil()); // 注册GameUtil实例
 
   runApp(const MyApp());

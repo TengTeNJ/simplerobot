@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:tennis_robot/constant/constants.dart';
 
 /**
@@ -14,16 +13,7 @@ class RobotRouteView extends StatefulWidget {
 
 class _RobotRouteViewState extends State<RobotRouteView> {
   Widget get rectBorderWidget {
-    return DottedBorder(
-      dashPattern: [8, 8],
-      strokeWidth: 2,
-      color: Constants.selectedModelBgColor,
-      child: Container(
-        width: 354,
-        height: 60,
-        color: Color.fromRGBO(77, 35, 10, 0.3),
-      ),
-    );
+    return Container();
   }
 
 

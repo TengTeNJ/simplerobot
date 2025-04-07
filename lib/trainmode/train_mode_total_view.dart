@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/trainmode/robot_camera_rotate_view.dart';
 import 'package:tennis_robot/trainmode/robot_rotate_view.dart';
@@ -24,16 +23,7 @@ class _TrainModeTotalViewState extends State<TrainModeTotalView> {
   // double _topMargin = 181;
 
   Widget get rectBorderWidget {
-    return DottedBorder(
-      dashPattern: [8, 8],
-      strokeWidth: 2,
-      color: Constants.selectedModelBgColor,
-      child: Container(
-        width: Constants.screenWidth(context) - 32,
-        height: Constants.screenWidth(context) - 32,
-        color: Color.fromRGBO(77, 35, 10, 0.3),
-      ),
-    );
+   return Container();
   }
 
   /// 生成随机位置的网球

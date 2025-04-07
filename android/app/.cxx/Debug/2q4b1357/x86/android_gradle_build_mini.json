@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/mengheng/Downloads/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/mengheng/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/mengheng/Documents/GitHub/simplerobot1.0/android/app/.cxx/Debug/2q4b1357/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/mengheng/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/mengheng/Documents/GitHub/simplerobot1.0/android/app/.cxx/Debug/2q4b1357/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

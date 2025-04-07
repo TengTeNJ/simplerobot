@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shopify_flutter/shopify_flutter.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/robotstats/game_model.dart';
