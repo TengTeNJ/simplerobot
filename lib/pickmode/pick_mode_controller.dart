@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tennis_robot/models/robot_data_model.dart';
@@ -369,34 +370,65 @@ class _PickModeControllerState extends State<PickModeController> {
             alignment: Alignment.center,
             margin: EdgeInsets.only(top:  selectedMode == SelectedMode.pickMode ? getMargin() + 75 : 75),
             child: Padding(
-              padding: EdgeInsets.only(bottom: 64),
-              child: ModeSwitchView(areaClick: (index){
-                setState(() {
-                  Vibration.vibrate(duration: 500); // 触发震动
-                  if(index == 0) {
-                    selectedMode = SelectedMode.pickMode;
-                    if (imageName == 'mode_start'){
-                      BleSendUtil.setRobotMode(RobotMode.training);
-                      print('捡球模式');
-                    } else {
-                      BleSendUtil.setRobotMode(RobotMode.rest);
-                      print('暂停模式');
-                    }
-                    print('123456${Constants.screenHeight(context)}');
-                    print('宽${Constants.screenWidth(context)}');
-                  } else {
-                    print('遥控模式');
-                    selectedMode = SelectedMode.controlMode;
-                    BleSendUtil.setRobotMode(RobotMode.remote);
+              padding: EdgeInsets.only(bottom: 2),
 
-                    // 500毫秒-> 设置控制角度为零，防止Fly那边报错
-                    Future.delayed(Duration(milliseconds: 500), () {
-                      print('设置角度为0');
-                      BleSendUtil.setRobotAngle(0);
-                    });
-                  }
-                });
-              },),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 49),
+                    child: ModeSwitchView(areaClick: (index){
+                      setState(() {
+                        Vibration.vibrate(duration: 500); // 触发震动
+                        if(index == 0) {
+                          selectedMode = SelectedMode.pickMode;
+                          if (imageName == 'mode_start'){
+                            BleSendUtil.setRobotMode(RobotMode.training);
+                            print('捡球模式');
+                          } else {
+                            BleSendUtil.setRobotMode(RobotMode.rest);
+                            print('暂停模式');
+                          }
+                          print('123456${Constants.screenHeight(context)}');
+                          print('宽${Constants.screenWidth(context)}');
+                        } else {
+                          print('遥控模式');
+                          selectedMode = SelectedMode.controlMode;
+                          BleSendUtil.setRobotMode(RobotMode.remote);
+
+                          // 500毫秒-> 设置控制角度为零，防止Fly那边报错
+                          Future.delayed(Duration(milliseconds: 500), () {
+                            print('设置角度为0');
+                            BleSendUtil.setRobotAngle(0);
+                          });
+                        }
+                      });
+                    },),
+                  ),
+
+                  SizedBox(width: 16,),
+
+                  GestureDetector(onTap: (){
+
+                    TTDialog.robotParameterSetting(context);
+
+                 },
+                 child: Container(
+                   margin: EdgeInsets.only(right: 49),
+                   width: 55,
+                   height: 55,
+                   decoration: BoxDecoration(
+                     color: Constants.dialogBgColor,
+                     borderRadius: BorderRadius.circular(55 / 1),
+                   ),
+                   child:Center(
+                     child: Image(image: AssetImage('images/control/setting_icon.png'),width: 23,),
+                   ),
+                 ),
+                  )
+                ],
+
+              ),
             ),
           ),
         ],

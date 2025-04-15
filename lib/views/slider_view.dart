@@ -1,17 +1,16 @@
-// import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:vibration/vibration.dart';
 
 import '../constant/constants.dart';
-import 'asserts_image_builder.dart';
-import 'image_slider_thumb.dart';
+import '../setting/asserts_image_builder.dart';
+import '../setting/image_slider_thumb.dart';
 
 
 /// 滑竿view
 class SliderView extends StatefulWidget {
   double defaultValue;
   Function? chooseValue;
+
 
 
   SliderView({this.chooseValue,required this.defaultValue});
@@ -22,27 +21,17 @@ class SliderView extends StatefulWidget {
 }
 
 class _SliderViewState extends State<SliderView> {
-  late ImageProvider imageProvider = AssetImage('images/base/slider_shape.png');
+  late ImageProvider imageProvider = AssetImage('images/base/slider_new_shape.png');
 
-  double _sliderValue = 70;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _sliderValue = widget.defaultValue;
-    setState(() {
-
-    });
-  }
+  double _sliderValue = 2.0;
 
   @override
   Widget buildSliderWidget() {
     return Slider(
       //Slider的当前的值
       value: _sliderValue,
-      min: 65,
-      max: 75,
+      min: 1,
+      max: 3,
       //平均分成的等分
       divisions: 2,
       //滚动时会回调
@@ -61,7 +50,7 @@ class _SliderViewState extends State<SliderView> {
         }
       },
       //气泡
-      label: "${widget.defaultValue}",
+      label: "${widget.defaultValue.toStringAsFixed(1)}",
     );
   }
 
@@ -76,7 +65,7 @@ class _SliderViewState extends State<SliderView> {
               thumbColor: Constants.selectedModelBgColor,
               //滑块的大小
               //  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 18),
-              thumbShape: ImageSliderThumb(image: imageInfo?.image),
+              thumbShape: ImageSliderThumb(image: imageInfo?.image,size: Size(30, 30)),
               //点击滑块边缘的颜色
               // overlayColor: Colors.deepPurpleAccent.withOpacity(0.2),
               // overlayColor: Colors.white,
@@ -92,12 +81,7 @@ class _SliderViewState extends State<SliderView> {
               activeTickMarkColor: Constants.connectTextColor,
               // 不活跃的分段点的颜色
               inactiveTickMarkColor: Constants.connectTextColor,
-              //   disabledActiveTickMarkColor: Colors.red,
-              //   disabledInactiveTickMarkColor: Colors.red,
-              //气泡的文字样式
-              //   valueIndicatorTextStyle: TextStyle(color: Colors.white),
-              //气泡的背景
-              //  valueIndicatorColor: Colors.redAccent
+
             )
         ),
         child: buildSliderWidget(),
@@ -108,8 +92,8 @@ class _SliderViewState extends State<SliderView> {
 
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 60,right: 60),
-      height: 56,
+      width: Constants.screenWidth(context) -88 ,
+      height: 30,
       child: buildThem(),
     );
   }

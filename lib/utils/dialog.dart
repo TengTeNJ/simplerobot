@@ -5,6 +5,7 @@ import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/utils/base_button.dart';
 import 'package:flutter/material.dart';
 import 'package:tennis_robot/utils/toast.dart';
+import 'package:tennis_robot/views/parameter_setting_view.dart';
 import 'string_util.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'navigator_util.dart';
@@ -246,7 +247,21 @@ class TTDialog {
     );
   }
 
+ // 机器人参数设置面板
+  static robotParameterSetting(BuildContext context) {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true, // 设置为false话 弹窗的高度就会固定
+      context: context,
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.5,
+          child: RobotParameterSettingDialog(),
+        );
+      },
+    );
 
+  }
   // 日期选择器
   static timeSelect(BuildContext context, Function confirm,
       {int index = 0, String? start, String? end}) {
@@ -725,6 +740,64 @@ class _TimeSelectDialogState extends State<TimeSelectDialog> {
 }
 
 
+/*机器人参数设置*/
+class RobotParameterSettingDialog extends StatefulWidget {
+  const RobotParameterSettingDialog({super.key});
+
+  @override
+  State<RobotParameterSettingDialog> createState() => RobotParameterSettingDialogState();
+
+}
+
+class RobotParameterSettingDialogState extends State<RobotParameterSettingDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(26),
+          color: Constants.dialogBgColor),
+      child: Stack(
+        children: [
+          Positioned(
+              top: 8,
+              left:  121,
+              child: Container(
+                  width: (Constants.screenWidth(context) - 121*2),
+                  height: 5,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: Color.fromRGBO(89, 105, 138, 1.0),
+                  ))),
+          Positioned(
+            child: ParameterSettingView(),
+            top: 45,
+            bottom: 99,
+          ),
+          Positioned(
+            child: GestureDetector(
+              onTap: () {
+                NavigatorUtil.pop();
+              },
+              child: Container(
+                child: Center(
+                  child: Constants.regularWhiteTextWidget('Save', 16, Colors.white),
+                ),
+                decoration: BoxDecoration(
+                    color: Constants.selectedModelOrangeBgColor,
+                    borderRadius: BorderRadius.circular(20)),
+              ),
+            ),
+            left: 83,
+            right: 83,
+            bottom: 42,
+            height: 40,
+          )
+        ],
+      ),
+    );
+  }
+}
+
 
 
 /*机器人模式提示弹窗*/
@@ -1100,3 +1173,4 @@ class RobotEndTaskDialog extends StatelessWidget {
     );
   }
 }
+

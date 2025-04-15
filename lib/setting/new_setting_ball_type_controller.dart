@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:tennis_robot/setting/slider_view.dart';
 import 'package:vibration/vibration.dart';
 
 import '../constant/constants.dart';
