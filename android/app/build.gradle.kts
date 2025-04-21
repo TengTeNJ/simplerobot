@@ -31,6 +31,16 @@ android {
         versionName = flutter.versionName
     }
 
+    // 配置签名信息
+    signingConfigs {
+        create("release") {
+            storeFile = file("/Users/mengheng/Desktop/my-release-key.jks")
+            storePassword = "android"
+            keyAlias = "my-key-alias"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
