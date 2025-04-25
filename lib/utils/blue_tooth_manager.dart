@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -9,6 +10,7 @@ import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tennis_robot/utils/data_base.dart';
 import 'package:tennis_robot/utils/string_util.dart';
+import 'package:tennis_robot/utils/toast.dart';
 
 import '../constant/constants.dart';
 import '../models/ble_model.dart';
@@ -16,6 +18,7 @@ import '../models/pickupBall_time.dart';
 import 'ble_data_service.dart';
 import 'package:tennis_robot/utils/robot_send_data.dart';
 
+import 'control_time_out_util.dart';
 import 'dialog.dart';
 import 'global.dart';
 import 'navigator_util.dart';
@@ -233,6 +236,8 @@ class BluetoothManager {
       return;
     }
     print('999${model}');
+    // 多个命令同时发时 增加10ms的时间间隔
+    sleep(Duration(milliseconds: 10));
     // Future.delayed(Duration(milliseconds: 50),() async{
     _ble.writeCharacteristicWithResponse(model.writerCharacteristic!,
          value: data);
@@ -247,6 +252,37 @@ class BluetoothManager {
     // }
 
     // });
+  }
+
+
+  /*增加超时机制的控制*/
+  Future<bool> asyncWriterDataToDevice(BLEModel model,List<int> data) async {
+    //  数据校验
+    if (data == null || data.length == 0) {
+      ControlTimeOutUtil().completer.complete(true);
+      ControlTimeOutUtil().reset();
+    }
+    // 确认蓝牙设备已连接 并保存对应的特征值
+    if (model == null ||
+        model.hasConected == null ||
+        model.writerCharacteristic == null) {
+      TTToast.showErrorInfo('Please connect your device first');
+      ControlTimeOutUtil().completer.complete(true);
+      ControlTimeOutUtil().reset();
+    }
+    ControlTimeOutUtil().controling.value = true;
+    ControlTimeOutUtil().controlBoard = data[2];
+    print(
+        " 发数据data = ${data.map((toElement) => toElement.toRadixString(16)).toList()}");
+    _ble.writeCharacteristicWithoutResponse(model.writerCharacteristic!,
+        value: data);
+    // 解析270
+    // 记录缓存发送的数据
+    ControlTimeOutUtil().ongoingData = data;
+    // 超时重发逻辑
+    ControlTimeOutUtil().begainTimer();
+    return ControlTimeOutUtil().completer.future;
+
   }
 
   /*判断是否已经被添加设备列表*/

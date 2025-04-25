@@ -177,7 +177,7 @@ List<int> setRobotNavigationEndData(int type) {
   int data = type;
   int cs = start + length + cmd + data;
   int end = kDataFrameFoot;
-  print('设置关机:${[start, length, cmd, data, cs, end]}');
+  print('APP 发送导航结束指令:${[start, length, cmd, data, cs, end]}');
   return [start, length, cmd, data, cs, end];
 }
 
@@ -189,7 +189,7 @@ List<int> setRobotStartPickData(int state) {
   int data = state;
   int cs = start + length + cmd + data;
   int end = kDataFrameFoot;
-  print('设置机器人开始 捡球:${[start, length, cmd, data, cs, end]}');
+  //print('设置机器人开始 捡球:${[start, length, cmd, data, cs, end]}');
   return [start, length, cmd, data, cs, end];
 }
 

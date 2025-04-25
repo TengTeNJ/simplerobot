@@ -122,7 +122,7 @@ class _PickModeControllerState extends State<PickModeController> {
     _startTimer();
     // 断链退到连接界面
   BluetoothManager().disConnect = () {
-    NativeCommunication().sendDataToNative('bluetoothDisconnectSingle');
+    NativeCommunication().sendDataToNative('bluetoothDisconnectSingle',0);
     TTDialog.robotBleDisconnectDialog(context, () async {
       // 发送通知到连接界面
       EventBus().sendEvent(kRobotConnectChange);
@@ -175,13 +175,23 @@ class _PickModeControllerState extends State<PickModeController> {
       }
     }
 
+    void sendNaviEndResponseDataToSwift(int naviType) async {
+      print('导航类型666${naviType}');
+      try {
+        await platfrom.invokeMethod('RobotEndNaviSingle', '${naviType}');
+      } on PlatformException catch(e) {
+        print('Failed to sendNaviEndResponseDataToSwift: ${e.message}');
+      }
+    }
+
+
 
     // 监听捡球数变化
     RobotManager().dataChange = (TCPDataType type) {
       int power = RobotManager().dataModel.powerValue;
-      if (currentBattery != power) { /// 电量有变化时才发送通知，防止发送过于频繁
+     // if (currentBattery != power) { /// 电量有变化时才发送通知，防止发送过于频繁
         sendBatteryDataToSwift(power);
-      }
+     // }
       currentBattery = power;
       if (power < 20 && power > 5) {
         if (lowBatteryAlertIsShow == false) {
@@ -226,13 +236,17 @@ class _PickModeControllerState extends State<PickModeController> {
       } else if(type == TCPDataType.warnInfo) { // 告警信息
         print('robot warnInfo');
       } else if(type == TCPDataType.robotBallIsFull) {
-        NativeCommunication().sendDataToNative('RobotBallFullSingle');
+        NativeCommunication().sendDataToNative('RobotBallFullSingle',0);
       } else if(type == TCPDataType.robotResponseBeginNavigation) {
-        NativeCommunication().sendDataToNative('RobotBeginNaviSingle');
+        NativeCommunication().sendDataToNative('RobotBeginNaviSingle',0);
       } else if(type == TCPDataType.robotResponseEndNavigation) {
-        NativeCommunication().sendDataToNative('RobotEndNaviSingle');
+        sendNaviEndResponseDataToSwift(RobotManager().dataModel.navigationEndType);
+       // NativeCommunication().sendDataToNative('RobotEndNaviSingle',RobotManager().dataModel.navigationEndType);
       } else if(type == TCPDataType.robotObstacleAvoidance) {
-        NativeCommunication().sendDataToNative('RobotObstacleAvoidanceEndSingle');
+        NativeCommunication().sendDataToNative('RobotObstacleAvoidanceEndSingle',0);
+      } else if(type == TCPDataType.robotResponseReceiveStartOrStop) {
+        NativeCommunication().sendDataToNative('RobotReceiveStartOrStopSingle',RobotManager().dataModel.responseStartStopType);
+
       }
     };
   }

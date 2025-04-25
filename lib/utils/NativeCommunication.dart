@@ -18,9 +18,11 @@ class NativeCommunication {
         final bool pickState = call.arguments;
         if (pickState == true) {
           BleSendUtil.setRobotStartPick(1);
+
           print('Received notification from Swift: 开启捡球');
         } else {
           BleSendUtil.setRobotStartPick(0);
+
           print('Received notification from Swift: 暂停捡球');
         }
         // 在这里处理通知
@@ -68,19 +70,20 @@ class NativeCommunication {
     });
   }
 
-  Future<void> sendDataToNative(String type) async {
+  Future<void> sendDataToNative(String type,int navigationType) async {
     try {
       if (type =="RobotBallFullSingle") {
         await platfrom1.invokeMethod('${type}', '');
       } else if(type == 'RobotBeginNaviSingle') {
         await platfrom1.invokeMethod('${type}', '');
       } else if(type == 'RobotEndNaviSingle') {
-        await platfrom1.invokeMethod('${type}', '');
+        await platfrom1.invokeMethod('${type}', '${navigationType}');
       } else if(type == 'RobotObstacleAvoidanceEnd') {
         await platfrom1.invokeMethod('${type}','');
       } else if (type == 'bluetoothDisconnectSingle') {
         await platfrom1.invokeMethod('${type}','');
-
+      } else if (type == 'RobotReceiveStartOrStopSingle') {
+        await platfrom1.invokeMethod('${type}','${navigationType}');
       }
 
       print('sendDataToNative6666');

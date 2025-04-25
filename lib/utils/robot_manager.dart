@@ -22,7 +22,11 @@ enum TCPDataType {
   robotBallIsFull,// 球满了
   robotResponseBeginNavigation, // 机器人收到开始导航的应答
   robotResponseEndNavigation, // 机器人收到结束导航的应答
-  robotObstacleAvoidance; // 机器人避障结束
+  robotObstacleAvoidance, // 机器人避障结束
+  robotResponseReceiveAngle,// 应答收到角度0
+  robotResponseReceiveStartOrStop,//应答收到start stop
+  robotResponseReceiveResetSingle;// 应答收到start stop
+
 }
 
 class RobotManager {
@@ -205,7 +209,7 @@ handleData(List<int> element) {
       // print('开关机=======${switch_data}');
       // 电量
       RobotManager().dataModel.powerValue = power_data;
-     // print('电量=======${power_data}');
+    // print('电量=======${power_data}');
       RobotManager()._triggerCallback(type: TCPDataType.deviceInfo);
       break;
     case ResponseCMDType.powerOffResponse:
@@ -239,9 +243,11 @@ handleData(List<int> element) {
       RobotManager()._triggerCallback(type: TCPDataType.robotResponseBeginNavigation);
       break;
 
-    case ResponseCMDType.robotResponseEndNavigation:
+    case ResponseCMDType.robotResponseEndNavigation: /// 响应导航结束
+      int end_navi_type = element[2]; //  响应导航结束的类型
+      print('导航结束的响应0x55=======${end_navi_type}');
+      RobotManager().dataModel.navigationEndType = end_navi_type;
       RobotManager()._triggerCallback(type: TCPDataType.robotResponseEndNavigation);
-      print('导航结束=======');
       break;
 
 
@@ -272,5 +278,21 @@ handleData(List<int> element) {
       print('故障信息=======${error_data}');
       RobotManager()._triggerCallback(type: TCPDataType.errorInfo);
       break;
+
+    case ResponseCMDType.robotResponseReceiveAngleZero:
+      RobotManager()._triggerCallback(type: TCPDataType.robotResponseReceiveAngle);
+      break;
+    case ResponseCMDType.robotResponseReceiveStartOrStop:
+      int type = element[2]; //  机器人应答start,stop成功
+      print('机器人应答start,stop成功0x62=======${type}');
+      RobotManager().dataModel.responseStartStopType = type;
+      RobotManager()._triggerCallback(type: TCPDataType.robotResponseReceiveStartOrStop);
+      break;
+
+    case ResponseCMDType.robotResponseReceiveResetSingle:
+      RobotManager()._triggerCallback(type: TCPDataType.robotResponseReceiveResetSingle);
+      break;
+
+
   }
 }
