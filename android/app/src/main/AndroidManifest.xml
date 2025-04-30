@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:label="simple_tennis_robot"
+        android:label="SeekerBot 2.0"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
