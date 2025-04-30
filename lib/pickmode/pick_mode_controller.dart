@@ -293,12 +293,13 @@ class _PickModeControllerState extends State<PickModeController> {
       }
 
       Future.delayed(Duration(milliseconds: 200),(){
-        if (currentBallType == 0) {
-          print('收球轮速度慢速${currentBallType}');
+        print('收球轮速度${currentBallType}');
+        if (currentBallType == 1) {
             BleSendUtil.setRobotCollectingWheelSpeed(1);
-        } else {
-          print('收球轮速度快速${currentBallType}');
+        } else if (currentBallType == 2){
             BleSendUtil.setRobotCollectingWheelSpeed(2);
+        } else {
+           BleSendUtil.setRobotCollectingWheelSpeed(3);
         }
 
         Future.delayed(Duration(milliseconds: 200),(){

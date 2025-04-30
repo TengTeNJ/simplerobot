@@ -1,8 +1,13 @@
+
 import 'package:flutter/material.dart';
-import 'package:tennis_robot/setting/slider_view.dart';
+import 'package:vibration/vibration.dart';
 
 import '../constant/constants.dart';
+import '../utils/ble_send_util.dart';
+import '../utils/data_base.dart';
 import '../utils/navigator_util.dart';
+import 'asserts_image_builder.dart';
+import 'image_slider_thumb.dart';
 
 
 /// 新的界面 设置ball Type
@@ -14,7 +19,113 @@ class NewSettingBallTypeController extends StatefulWidget {
 }
 
 class _NewSettingBallTypeControllerState extends State<NewSettingBallTypeController> {
-  String chooseValue = "60";
+  String chooseValue = "70";
+  double sliderDefault = 70;
+
+  late ImageProvider imageProvider = AssetImage('images/base/slider_shape.png');
+
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getDBBallTYpeData();
+  }
+
+  Future<void> getDBBallTYpeData () async {
+    var  currentBallType = await DataBaseHelper().fetchBallTypeData();
+    if (currentBallType == 1) {
+      chooseValue = '65';
+      sliderDefault = 65;
+    } else if (currentBallType == 2) {
+      chooseValue = '70';
+      sliderDefault = 70;
+
+    } else {
+      chooseValue = '75';
+      sliderDefault = 75;
+    }
+
+    setState(() {});
+  }
+
+  Widget buildSliderWidget() {
+    return Slider(
+      //Slider的当前的值  0.0 ~ 1.0
+      value: sliderDefault,
+      min: 65,
+      max: 75,
+      //平均分成的等分
+      divisions: 2,
+      //滚动时会回调
+      onChanged: (double value) {
+        Vibration.vibrate(duration: 500); // 触发震动
+        chooseValue = value.toInt().toString();
+        sliderDefault = value;
+        if (value == 65) {
+          BleSendUtil.setRobotCollectingWheelSpeed(1);
+          DataBaseHelper().saveBallTypeData(1);
+        } else if (value == 70) {
+          BleSendUtil.setRobotCollectingWheelSpeed(2);
+          DataBaseHelper().saveBallTypeData(2);
+        } else {
+          BleSendUtil.setRobotCollectingWheelSpeed(3);
+          DataBaseHelper().saveBallTypeData(3);
+        }
+        setState(() {});
+      },
+      onChangeStart: (double startValue) {
+        print("开始滚动");
+      },
+      onChangeEnd: (double endValue) {
+        print("停止 滚动");
+      },
+      //气泡
+      label: "${sliderDefault}",
+    );
+  }
+
+  Widget buildThem() {
+    return AssertsImageBuilder(imageProvider, builder: (context ,imageInfo){
+      return Theme(
+        data: ThemeData(
+            sliderTheme: SliderThemeData(
+              trackHeight: 16,
+              //滑块的颜色
+              //thumbColor: Colors.deepOrange,
+              thumbColor: Constants.selectedModelBgColor,
+              //滑块的大小
+              //  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 18),
+              thumbShape: ImageSliderThumb(image: imageInfo?.image),
+              //点击滑块边缘的颜色
+              // overlayColor: Colors.deepPurpleAccent.withOpacity(0.2),
+              // overlayColor: Colors.white,
+              //点击滑块边缘的显示半径
+              overlayShape: RoundSliderOverlayShape(overlayRadius: 20),
+              //滑动左侧滚动条的颜色
+              activeTrackColor:  Constants.connectTextColor,
+              //滚动条右侧的颜色
+              inactiveTrackColor:Constants.connectTextColor,
+              //任何情况都显示气泡
+              showValueIndicator: ShowValueIndicator.never,
+              // 活跃的分段点的颜色
+              activeTickMarkColor: Constants.connectTextColor,
+              // 不活跃的分段点的颜色
+              inactiveTickMarkColor: Constants.connectTextColor,
+              //   disabledActiveTickMarkColor: Colors.red,
+              //   disabledInactiveTickMarkColor: Colors.red,
+              //气泡的文字样式
+              //   valueIndicatorTextStyle: TextStyle(color: Colors.white),
+              //气泡的背景
+              //  valueIndicatorColor: Colors.redAccent
+            )
+        ),
+        child: buildSliderWidget(),
+      );
+    }
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,34 +182,59 @@ class _NewSettingBallTypeControllerState extends State<NewSettingBallTypeControl
 
               Container(
                 margin: EdgeInsets.only(top: 60),
-                height: 97,
-                width: 97,
+                height: 31 * 3,
+                width: 84 * 3,
                 child: Image(
-                  image: AssetImage('images/setting/ball.png'),
+                  image: AssetImage('images/profile/setting_balltype.png'),
                   fit: BoxFit.fill,
                 ),
               ),
 
               Container(
+                margin: EdgeInsets.only(top: 37),
+                width: Constants.screenWidth(context)- 100,
+                child: Constants.mediumWhiteTextWidget('You can adjust the ball collection speed of the robot.', 17, Colors.white,maxLines: 3),
+              ),
+
+
+
+
+              Container(
                 width: Constants.screenWidth(context)- 84,
                 height: 32,
-                margin: EdgeInsets.only(top: 34),
+                margin: EdgeInsets.only(top: 40),
                 child: Center(
-                  child:
+                    child:
                     Constants.mediumWhiteTextWidget("${chooseValue}kpa", 18, Constants.selectedModelBgColor)
                 ),
               ),
 
 
               Container(
-                margin: EdgeInsets.only(top: 8),
-                width: Constants.screenWidth(context) ,
+                margin: EdgeInsets.only(top: 4 ),
+                width: Constants.screenWidth(context) -120 ,
                 height: 50,
-                child: SliderView(defaultValue: 65.0,chooseValue: (value){
-                    setState(() {
-                      chooseValue = value.toInt().toString();
-                    });
-                },),
+                child: buildThem(),
+                // child: SliderView(defaultValue: sliderDefault,chooseValue: (value){
+                //     setState(() {
+                //       chooseValue = value.toInt().toString();
+                //       if (chooseValue == '65') {
+                //         BleSendUtil.setRobotCollectingWheelSpeed(1);
+                //         DataBaseHelper().saveBallTypeData(1);
+                //         print('1档位');
+                //       } else if(chooseValue == '70') {
+                //         BleSendUtil.setRobotCollectingWheelSpeed(2);
+                //         DataBaseHelper().saveBallTypeData(2);
+                //         print('2档位');
+                //
+                //       } else {
+                //         BleSendUtil.setRobotCollectingWheelSpeed(3);
+                //         DataBaseHelper().saveBallTypeData(3);
+                //         print('3档位');
+                //
+                //       }
+                //     });
+                // },),
               ),
 
               Container(
@@ -108,8 +244,9 @@ class _NewSettingBallTypeControllerState extends State<NewSettingBallTypeControl
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Constants.mediumWhiteTextWidget('Soft', 18, Constants.connectTextColor),
-                    Constants.mediumWhiteTextWidget('Hard', 18, Constants.connectTextColor ),
+                    Constants.mediumWhiteTextWidget('1', 18, Constants.connectTextColor),
+                    Constants.mediumWhiteTextWidget('2', 18, Constants.connectTextColor ),
+                    Constants.mediumWhiteTextWidget('3', 18, Constants.connectTextColor ),
                   ],
                 ),
               ),

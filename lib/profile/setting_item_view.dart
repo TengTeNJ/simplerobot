@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/models/setting_model.dart';
-import '../../../simplerobot1.0/lib/setting/new_setting_ball_type_controller.dart';
 import 'package:tennis_robot/setting/setting_avoid_distance_controller.dart';
 import 'package:tennis_robot/setting/setting_reset_gap_controller.dart';
 
 import '../UserInfo/user_profile_controller.dart';
 import '../fault/fault_info_controller.dart';
+import '../setting/new_setting_ball_type_controller.dart';
 import '../setting/setting_ball_type_controller.dart';
 import '../setting/setting_roller_speed.dart';
 import '../utils/navigator_util.dart';
@@ -27,7 +27,7 @@ class _SettingItemViewState extends State<SettingItemView> {
       onTap: (){
          if (widget.model.title == 'Ball Type') {
           // NavigatorUtil.present(SettingBallTypeController());
-           NavigatorUtil.present(NewSettingBallTypeController());
+         NavigatorUtil.present(NewSettingBallTypeController());
 
          } else if (widget.model.title =='Roller Speed'){
            NavigatorUtil.present(SettingRollerSpeed());
