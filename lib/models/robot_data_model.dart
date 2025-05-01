@@ -47,7 +47,10 @@ class RobotDataModel {
   int yPoint = 0; // 机器Y坐标
   int angle = 0; // 机器人角度
   int speed = 0; // 机器人速度
-  List<BallModel> inViewBallList = []; // 视野中看到的所有的球
+  List<BallModel> inViewBallList = [];// 视野中看到的所有的球
+  int navigationEndType = 0 ; // 导航结束的类型 1 原点已停止  2 区域位置到达
+  int responseStartStopType = 2 ; // 机器人应答start,stop成功  0 stop  1 start
+
 }
 //   int warnStatu = 0; // 机器人告警信息 0 无告警,1 卡停告警,2 手环信号丢失告警,3 电池电量低告警  暂无
 //   int errorStatu = 0;  1 收球轮异常故障,2 行走轮异常故障, 3 摄像头异常故障 4 雷达异常故障

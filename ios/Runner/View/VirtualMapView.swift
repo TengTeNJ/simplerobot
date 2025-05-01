@@ -63,7 +63,7 @@ class VirtualMapView: UIView {
     }
     
     private func setupView() {
-        self.backgroundColor = UIColor(red: 28/255.0, green: 29/255.0, blue: 32/255.0, alpha: 0.85)
+       // self.backgroundColor = UIColor(red: 28/255.0, green: 29/255.0, blue: 32/255.0, alpha: 0.85)
         self.isUserInteractionEnabled = true
         
         let keyWindow = UIApplication.shared.connectedScenes

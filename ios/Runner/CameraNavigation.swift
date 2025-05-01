@@ -62,7 +62,7 @@ extension CameraCalibrationController {
         /// 到达原点（默认右下角）
          if (currebtOriginRectangle.contains(dstPoint) && originNavigation) {
              /// APP 发送导航结束指令*/ //0x54   1 到达原点  2 区域位置到达
-              originNavigation = false
+             // originNavigation = false
               print("导航到原点了")
               channel.invokeMethod("endNavigation", arguments: "1")
          }
@@ -70,7 +70,7 @@ extension CameraCalibrationController {
          /// 到达电子内场区域了
          if (currentElectronicFenceDesinationSamllRectangle.contains(dstPoint) && electronicFenceNavigation) {
              /// APP 发送导航结束指令*/ //0x54   1 到达原点  2 区域位置到达
-             electronicFenceNavigation = false
+             // electronicFenceNavigation = false
               print("导航到内场的电子围栏里面了了")
               channel.invokeMethod("endNavigation", arguments: "2")
        }

@@ -33,12 +33,12 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
     func ModeSwitchViewDelegate(_ view: ModeSwitchView, didSendData data: Int) {
         delegate?.ModeSwitchDelegate(self, didSendData: data)
         /// 模式切换的时候需要暂停机器人
-        actionBtn.setTitle("Pause", for: .normal)
-        /// 加延时不然机器人第二个指令收不到
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.beginPick(self.actionBtn)
-        }
-        
+//        actionBtn.setTitle("Pause", for: .normal)
+//        /// 加延时不然机器人第二个指令收不到
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+//            self.beginPick(self.actionBtn)
+//        }
+//        
         // 训练模式如果没有选择区域，捡球按钮置灰，不可点击
         if (areaChoose.areaABtn.backgroundColor == Constants.areaBgColor && areaChoose.areaCBtn.backgroundColor == Constants.areaBgColor) {
             highlightStartBtn(isHighlight: false)
@@ -267,6 +267,7 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
     }
     
     @objc func beginPick(_ sender: UIButton) {
+        sender.isUserInteractionEnabled = false
         // 震动效果
           let impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
           impactFeedbackGenerator.prepare()
@@ -280,14 +281,15 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
             virtualView.rightImageview.isHidden = false
             virtualView.topleftImageview.isHidden = false
             virtualView.bottomRightImageview.isHidden = false
-
-            
         } else {
             /// 暂停捡球
             print("暂停捡球")
             sender.setTitle("Start", for: .normal)
             delegate?.beginPickBallDelegate(self, didSendData: false)
         }
+           DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+               sender.isUserInteractionEnabled = true
+           }
     }
     
     func ModeSwitchDelegate(_ view: CameraPickCanvas, didSendData data: Int) {

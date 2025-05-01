@@ -145,9 +145,9 @@
 //                                          cv::Point2f(698, 112), cv::Point2f(607, 133)};
     
     // 13 pro 12 等 844**390.0 的关键点坐标
-    double scale = 844.0/812.0;
-    std::vector<cv::Point2f> srcPoints = {cv::Point2f(376 * scale, 86 * scale), cv::Point2f(471* scale, 82*scale),
-        cv::Point2f(698 * scale, 112 * scale), cv::Point2f(607 * scale, 133 * scale)};
+    double scale = 1.0;
+    std::vector<cv::Point2f> srcPoints = {cv::Point2f(323 * scale, 112 * scale), cv::Point2f(424* scale, 110*scale),
+        cv::Point2f(618 * scale, 143 * scale), cv::Point2f(548 * scale, 168 * scale)};
     
   
    // std::vector<cv::Point2f> dstPoints = {cv::Point2f(430, 132), cv::Point2f(516, 132),

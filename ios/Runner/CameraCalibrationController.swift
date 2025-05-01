@@ -14,8 +14,10 @@ import Vision
 import CoreMedia
 import Flutter
 
+import MBProgressHUD
 
-var mlModel = try!key_point(configuration: mlmodelConfig).model
+
+var mlModel = try!robot(configuration: mlmodelConfig).model
 var mlmodelConfig: MLModelConfiguration = {
   let config = MLModelConfiguration()
 
@@ -32,7 +34,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate, Cu
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    var channel: FlutterMethodChannel
+var channel: FlutterMethodChannel
     var binaryMessenger: FlutterBinaryMessenger
 
     init(binaryMessenger: FlutterBinaryMessenger) {
@@ -61,7 +63,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate, Cu
     var boundingBoxViews = [BoundingBoxView]()
 
     
-    /// 校准界面的元素
+    /* 校准界面的元素  */
     var readyBtn: UIButton!
     var backBtn: UIButton!
     var desLab: UILabel!
@@ -70,6 +72,8 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate, Cu
     var point2 = UIView()
     var point3 = UIView()
     var point4 = UIView()
+    /* 校准界面的元素  */
+
     
     var cavasView = UIView()
     var keyPointSize = 15.0
@@ -116,10 +120,15 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate, Cu
     /// 第一次计算出来的机器人的角度
     var firstRobotAngle: Double = 0
     
+    /// 是否应答过start stop
+    var isResponseStartOrStop = false
+    
+    var timer = Timer()
+    
     lazy var realRobot : UIView = {
         let real = CommonTool.createVIew(CGRect(x: 0, y: 0, width: 5, height: 5))
         real.backgroundColor = .black
-        view.addSubview(real)
+       // view.addSubview(real)
 
         return real
     }()
@@ -147,31 +156,58 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate, Cu
        // canvas.alpha = 0.5
         canvas.delegate = self
         canvas.isUserInteractionEnabled = true
-        view.addSubview(canvas)
         canvas.isHidden = true
         return canvas
     }()
     
+    func calculateTime(index :Int) {
+        let now = Date()
+        let dateFormatter = DateFormatter()
+
+        // 设置时间格式
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
+        let formattedDate = dateFormatter.string(from: now)
+
+        print("当前时间\(index): \(formattedDate)")
+        
+    }
+    
+    func showLoading() {
+        let hud = MBProgressHUD.showAdded(to: self.view, animated: true)
+        hud.label.text = "Loading..." // 设置加载提示文本
+    }
+    
+    func hideLoading() {
+        MBProgressHUD.hide(for: self.view, animated: true) //
+    }
+  
     override func viewDidLoad() {
         super.viewDidLoad()
+        calculateTime(index: 1)
+        showLoading()
+        self.channel.invokeMethod("beginPickBallDemo", arguments: true)
+
         let bridge = OpenCVBridgeFile()
         bridge.calculateHomegraphyMatsss()
-        setUpBoundingBoxViews()
         setUpOrientationChangeNotification()
 
-        setUpUi()
-      
-        mlModel = try! robot(configuration: .init()).model
-        setModel()
+        setUpKeyPointUi()
+     
+//        setUpBoundingBoxViews()
+//
+//        mlModel = try! robot(configuration: .init()).model
+//        setModel()
         startVideo()
-        
+        view.addSubview(canvas)
+
+        calculateTime(index: 2)
+
         ///  默认给机器人训练模式
-        channel.invokeMethod("changeRobotMode", arguments: "training")
+       // channel.invokeMethod("changeRobotMode", arguments: "training")
         // 默认休息模式
         currentElectronicFenceArea = NavigationTool.getRestModelEletronicFenceRectangle()
         currentElectronicFenceDesinationSamllRectangle = NavigationTool.getRestModelEletronicFenceCenterRectangle()
 
-        createKeyPoint()
         self.navigationController?.navigationBar.isHidden = true
         // 注册通知监听器
         NotificationCenter.default.addObserver(self, selector: #selector(handleFullNotification(_:)), name: Notification.Name(Constants.Notification_Robot_Ball_Full), object: nil)
@@ -179,7 +215,12 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate, Cu
         NotificationCenter.default.addObserver(self, selector: #selector(handleEndNotification(_:)), name: Notification.Name(Constants.Notification_Robot_End_Navi), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleAvoEndNotification(_:)), name: Notification.Name(Constants.Notification_Robot_Obstacle_Avoidance_End_Navi), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleDisconnectNotification(_:)), name: Notification.Name(Constants.Notification_Robot_Bluetooth_Disconnect), object: nil)
-      
+        NotificationCenter.default.addObserver(self, selector: #selector(handleStartOrStopNotification(_:)), name: Notification.Name(Constants.Notification_Robot_Receive_StartOrStopSingle), object: nil)
+
+        
+        
+        
+        hideLoading()
      }
 
     /// 检测屏幕横竖屏
@@ -196,14 +237,22 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate, Cu
         
     // MARK: 鹰眼捡球界面返回按钮点击 - CameraPickCanvasDelegate
     func CameraPickCanvasDelegate(_ view: CameraPickCanvas, didSendData data: String) {
-        if (data == "cali") {
+        if (data == "cali") { /// 关键点校验
             channel.invokeMethod("robotReset", arguments: "2")// 机器人重置
-            self.dismiss(animated: false)
-            self.canvas.robot.removeFromSuperview()
+            self.canvas.actionBtn.setTitle("Start", for: .normal)
+
+            
+            /// 关键点界面的显示
+            keyPointElementIsHidden(false)
+            canvas.isHidden = true /// 鹰眼捡球界面隐藏
+            self.canvas.robot.isHidden = true // 机器人图标隐藏
+
+
+            
         } else {
             let alertVC = CustomAlertViewController(title: "Confirm Exit", message: "Are you sure You want to exit")
             alertVC.delegate  = self
-            alertVC.modalPresentationStyle = .overFullScreen
+//            alertVC.modalPresentationStyle = .overFullScreen
             present(alertVC, animated: false, completion: nil)
         }
      }
@@ -212,7 +261,8 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate, Cu
         print("鹰眼捡球界面点击返回按钮")
         channel.invokeMethod("robotReset", arguments: "2") // 机器人重置
         self.dismiss(animated: false)
-        self.canvas.robot.removeFromSuperview()
+        self.canvas.robot.isHidden = true
+        timer.invalidate()
                 
     }
     
@@ -220,32 +270,33 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate, Cu
        @objc func back(_ sender: UIButton) {
            print("关键点检测界面点击返回按钮")
            self.dismiss(animated: true)
-           self.canvas.robot.removeFromSuperview()
+           self.canvas.robot.isHidden = true
            /// 退出界面告诉机器人导航结束
            channel.invokeMethod("endNavigation", arguments: "2")
+           timer.invalidate()
+
     }
     
       @objc func nextAction(_ sender: UIButton) {
+        
           /// 开始录制视频
          // videoCapture.startRecordVideo()
-          // 移除上一个界面的按钮
-          self.backBtn.removeFromSuperview()
-          self.readyBtn.removeFromSuperview()
-          self.desLab.removeFromSuperview()
-          
+
+         
           canvas.isHidden = false
-          removeKeyPoint()
-         /// 切换到另一个界面
-         // self.present(CameraPickVC(binaryMessenger: self.binaryMessenger), animated: false)
+          self.canvas.robot.isHidden = false
+
+          /// 关键点界面的隐藏
+          keyPointElementIsHidden(true)
+          
+          setUpBoundingBoxViews()
+  
+         // mlModel = try! robot(configuration: .init()).model
+          setModel()
+
     }
-    
-    // MARK: - 加载关键点mlmodel
-    func loadModel() {
-        // 加载关键点mlmodel
-        mlModel = try! key_point(configuration: .init()).model
-    }
-    
-    func setModel() {
+   
+  func setModel() {
        /// VNCoreMLModel
       detector = try! VNCoreMLModel(for: mlModel)
       detector.featureProvider = ThresholdProvider()
@@ -408,7 +459,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate, Cu
 
             let bestClass = prediction.labels[0].identifier
             let confidence = prediction.labels[0].confidence
-           // print("机器人的置信度\(confidence)")
+            //print("机器人的置信度\(confidence)")
 
 
             let label = String(format: "%@ %.1f", bestClass, confidence * 100)
@@ -428,7 +479,7 @@ class CameraCalibrationController: UIViewController,CameraPickCanvasDelegate, Cu
               srcpoint.y = real_point_y
 //              
               realRobot.frame.origin = CGPoint(x: srcpoint.x, y: srcpoint.y)
-              print("位置为\(realRobot.frame)")
+            //  print("位置为\(realRobot.frame)")
              
               let dstPoints = try! MHPerspectiveTransform.perspectiveTransform(points: [srcpoint,])
               let dstPoint = dstPoints.first

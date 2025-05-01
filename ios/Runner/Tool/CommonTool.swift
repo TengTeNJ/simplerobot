@@ -59,7 +59,7 @@ class CommonTool: NSObject {
     static func createVIew(_ frame: CGRect) -> UIView {
         let point2 = UIView(frame: frame)
         point2.backgroundColor = UIColor(red: 91/255.0, green: 204/255.0, blue: 106/255.0, alpha: 1.0)
-        point2.layer.cornerRadius = 5 / 2
+        point2.layer.cornerRadius = 15 / 2
 
         return point2
     }

@@ -71,6 +71,9 @@ class Constants {
     
     /// 机器人蓝牙断连通知
     static let Notification_Robot_Bluetooth_Disconnect = "bluetoothDisconnectSingle"
+    
+    /// 0x62机器人应答start,stop成功
+    static let Notification_Robot_Receive_StartOrStopSingle = "RobotReceiveStartOrStopSingle"
 
 
 

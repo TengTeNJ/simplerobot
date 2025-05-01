@@ -214,7 +214,7 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
 
                         NavigatorUtil.push(Routes.connectSuccess);
                       }
-                  NavigatorUtil.push(Routes.connectSuccess);
+                    // NavigatorUtil.push(Routes.connectSuccess);
 
 
                     },

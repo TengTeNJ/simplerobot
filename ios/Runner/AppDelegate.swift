@@ -7,7 +7,10 @@ import UIKit
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    GeneratedPluginRegistrant.register(with: self)
+      // 启动页延时 2 秒
+      Thread.sleep(forTimeInterval: 2)
+      
+      GeneratedPluginRegistrant.register(with: self)
       let controller1: FlutterViewController = window?.rootViewController as! FlutterViewController
       let channe = FlutterMethodChannel(name: "com.example/native",
                                                 binaryMessenger: controller1.binaryMessenger)
@@ -52,7 +55,8 @@ import UIKit
 
               }
               result(nil)
-          } else if call.method == Constants.Notification_Robot_End_Navi {
+              
+          } else if call.method == Constants.Notification_Robot_End_Navi { // 导航结束响应
               if let battery = call.arguments as? String {
                   let userInfo = ["message": "\(battery)"]
                   NotificationCenter.default.post(name: Notification.Name(Constants.Notification_Robot_End_Navi), object: nil, userInfo: userInfo)
@@ -71,12 +75,13 @@ import UIKit
           } else if call.method == Constants.Notification_Robot_Bluetooth_Disconnect {
               NotificationCenter.default.post(name: Notification.Name(Constants.Notification_Robot_Bluetooth_Disconnect), object: nil, userInfo: nil)
               
-          }
-          
-          
-          
-          
-          else if call.method == "fLutterSendMessage" {
+          } else if call.method == Constants.Notification_Robot_Receive_StartOrStopSingle {
+              if let type = call.arguments as? String {
+                  let userInfo = ["message": "\(type)"]
+                  NotificationCenter.default.post(name: Notification.Name(Constants.Notification_Robot_Receive_StartOrStopSingle), object: nil, userInfo: userInfo)
+              }
+              result(nil)
+          } else if call.method == "fLutterSendMessage" {
               if let args = call.arguments as? String {
                   print("Received data from Flutter: \(args)")
               }
@@ -88,9 +93,7 @@ import UIKit
           }
           
     }
-      
-      
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+      return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
     
     func openNativeScreen(message :FlutterBinaryMessenger) {

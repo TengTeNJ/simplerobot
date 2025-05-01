@@ -60,7 +60,12 @@ extension CameraCalibrationController {
     
     // MARK: - beginPickBallDelegate 点击开始捡球的代理方法
     func beginPickBallDelegate(_ view: CameraPickCanvas, didSendData data: Bool) {
-        channel.invokeMethod("beginPickBall", arguments: data)
+//            channel.invokeMethod("beginPickBall", arguments: data)
+        print("开始重复发送\(data)")
+//        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
+                 self.channel.invokeMethod("beginPickBall", arguments: data)
+//                print("开始重复发送start命令")
+//            }
     }
     
 }

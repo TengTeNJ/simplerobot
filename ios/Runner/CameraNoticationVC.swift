@@ -25,15 +25,27 @@ extension CameraCalibrationController {
    }
     
     @objc func handleEndNotification(_ notification: Notification) {
-        /// 机器人导航结束以后 ///
-        print("机器人导航到指定地方了")
-        
-        if originNavigation { // 原点导航需要给机器人发送stop
+      if originNavigation { // 原点导航需要给机器人发送stop
             // 通知机器人stop
-            channel.invokeMethod("beginPickBall", arguments: false)
+            // channel.invokeMethod("beginPickBall", arguments: false)
            ///  app 修改按钮
             self.canvas.actionBtn.setTitle("Start", for: .normal)
         }
+        
+        /// 机器人导航结束以后 ///
+        // 获取通知中传递的数据
+        if let userInfo = notification.userInfo,
+           let message = userInfo["message"] as? String {
+            if message == "2" { // 区域导航
+                electronicFenceNavigation = false
+                print("机器人区域导航结束")
+            } else if message == "1" { // 原点导航
+                originNavigation = false
+                print("机器人原点导航结束")
+
+            }
+        }
+      
     }
     
     /// 机器人避障结束了
@@ -44,9 +56,23 @@ extension CameraCalibrationController {
     
     @objc func handleDisconnectNotification(_ notification: Notification) {
         print("机器人连接断开")
+        self.canvas.robot.isHidden = true
         self.dismiss(animated: false)
     }
     
+    /// 0x62（机器人应答start,stop成功)
+    @objc func handleStartOrStopNotification(_ notification: Notification) {
+        timer.invalidate()
+        if let userInfo = notification.userInfo,
+           let message = userInfo["message"] as? String {
+            if message == "0" { //  stop
+                print("机器人应答stop成功")
+
+            } else if message == "1" { // start
+                print("机器人应答start成功")
+            }
+        }
+    }
 }
 
 class CameraNoticationVC: UIViewController {

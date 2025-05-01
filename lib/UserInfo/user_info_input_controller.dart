@@ -41,7 +41,7 @@ class _UserInfoInputControllerState extends State<UserInfoInputController> {
                             width: 257,
                             margin: EdgeInsets.only(top: 167),
                             child: Image(
-                              image: AssetImage('images/connect/robot.png'),
+                              image: AssetImage('images/connect/connect_success_robot.png'),
                               fit: BoxFit.fill,
                             ),
                           ),
