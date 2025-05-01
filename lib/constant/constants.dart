@@ -212,7 +212,7 @@ const kDataFrameFoot = 0xAA; // 数据帧尾
 const kTCPDataListen = 'tcp_data_listen'; //  TCP数据监听
 
 // 蓝牙设置名字
-const kBLEDevice_NewName = 'seekbot1.0';
+const kBLEDevice_NewName = 'seekbot2.0';
 // 新版本的digital shoots和270的蓝牙模块保持一致
 const kBLE_270_SERVICE_UUID = "181A";
 const kBLE_270_CHARACTERISTIC_NOTIFY_UUID = "2A6E";

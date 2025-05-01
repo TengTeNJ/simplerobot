@@ -37,7 +37,7 @@ class ControlTimeOutUtil{
     }else{
       final model = BluetoothManager()
           .hasConnectedDeviceList
-          .firstWhere((element) => element.device.name == 'seekbot1.0');
+          .firstWhere((element) => element.device.name == 'seekbot2.0');
       BluetoothManager().writerDataToDevice(model, ControlTimeOutUtil().ongoingData);
 
       begainTimer();
