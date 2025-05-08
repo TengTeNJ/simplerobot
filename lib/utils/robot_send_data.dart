@@ -108,6 +108,18 @@ List<int> setRobotPowerData() {
   return [start, length, cmd, data, cs, end];
 }
 
+//发送重置指令（机器人退出等待等相关程序，app 退出等待时间时调用））
+List<int> setRobotResetData() {
+  int start = kDataFrameHeader;
+  int length = 6;
+  int cmd = 0x59;
+  int data = 0;
+  int cs = start + length + cmd + data;
+  int end = kDataFrameFoot;
+  print('发送重置指令:${[start, length, cmd, data, cs, end]}');
+  return [start, length, cmd, data, cs, end];
+}
+
 
 /*设置区域*/
 List<int> setAreaData(int area) {

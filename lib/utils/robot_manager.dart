@@ -18,7 +18,12 @@ enum TCPDataType {
   area,
   speed,
   coordinate,
-  ballsInView
+  ballsInView,
+  robotBallIsFull,// 球满了
+  robotResponseReset,// 应答重置
+  robotResponseReceiveAngle,// 应答收到角度0
+
+
 }
 
 class RobotManager {
@@ -248,5 +253,19 @@ handleData(List<int> element) {
       print('故障信息=======${error_data}');
       RobotManager()._triggerCallback(type: TCPDataType.errorInfo);
       break;
+
+    case ResponseCMDType.robotResponseBallIsFull:
+      RobotManager()._triggerCallback(type: TCPDataType.robotBallIsFull);
+      print('球满了=======');
+      break;
+
+    case ResponseCMDType.robotResponseReset:
+      RobotManager()._triggerCallback(type: TCPDataType.robotResponseReset);
+      break;
+
+    case ResponseCMDType.robotResponseReceiveAngleZero:
+      RobotManager()._triggerCallback(type: TCPDataType.robotResponseReceiveAngle);
+      break;
+
   }
 }

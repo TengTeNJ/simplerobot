@@ -17,6 +17,11 @@ class ResponseCMDType {
   static const int coordinate = 0x43; // 机器人坐标
   static const int ballsInView = 0x44; // 机器人视野的所有数据
   static const int powerOffResponse = 0x51; // 机器人关机响应
+  static const int robotResponseBallIsFull = 0x57; // 机器人发送球满指令
+  static const int robotResponseReset = 0x60; // 机器人应答重置
+  static const int robotResponseReceiveAngleZero = 0x61; // 机器人应答收到角度0
+
+
 }
 class TcpUtil {
   Socket? socket;

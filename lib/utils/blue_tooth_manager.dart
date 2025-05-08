@@ -232,6 +232,8 @@ class BluetoothManager {
       // TTToast.showErrorInfo('Please connect your device first');
       return;
     }
+    // 多个命令同时发时 增加10ms的时间间隔
+    sleep(Duration(milliseconds: 10));
     print('999${model}');
     // Future.delayed(Duration(milliseconds: 50),() async{
     _ble.writeCharacteristicWithResponse(model.writerCharacteristic!,
