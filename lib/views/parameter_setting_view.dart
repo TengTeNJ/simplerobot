@@ -8,28 +8,48 @@ import '../utils/data_base.dart';
 
 /// 参数设置view
 class ParameterSettingView extends StatefulWidget {
-  const ParameterSettingView({super.key});
+  //const ParameterSettingView({super.key});
+
+  double outRollerSpeedValue;
+
+  ParameterSettingView({required this.outRollerSpeedValue});
+
 
   @override
   State<ParameterSettingView> createState() => _ParameterSettingViewState();
 }
 
 class _ParameterSettingViewState extends State<ParameterSettingView> {
- String rollerSpeed = '0.45m/s';
+ String rollerSpeed = '0.42m/s';
  String ballType = '70kpa';
- double rollerSpeedDefaultValue = 2.0;
+ double rollerSpeedDefaultValue = 1.0;
  double ballTypeDefaultValue = 2.0;
+
+ late Future<int> speedCount;
+ late Future<int> ballTypeCount;
 
 
  @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getDBSpeedData();
+   // speedCount = fetchSpeedCount();
+   Future.delayed(Duration(milliseconds: 10),(){
+      getDBSpeedData();
 
+      speedCount.then((int value){
+        rollerSpeedDefaultValue = value.toDouble();
+      });
+
+      ballTypeCount.then((int value){
+        ballTypeDefaultValue = value.toDouble();
+      });
+
+   });
   }
 
  Future<void> getDBSpeedData () async {
+   speedCount = DataBaseHelper().fetchRobotSpeedData();
    var currentRobotSpeed = await DataBaseHelper().fetchRobotSpeedData();
    if (currentRobotSpeed == 0) {
      currentRobotSpeed = 1;
@@ -40,26 +60,29 @@ class _ParameterSettingViewState extends State<ParameterSettingView> {
       rollerSpeed = '0.4m/s';
     } else if (currentRobotSpeed == 2) {
       rollerSpeedDefaultValue = 2.0;
-      rollerSpeed = '0.45m/s';
+      rollerSpeed = '0.42m/s';
+
     } else {
       rollerSpeedDefaultValue = 3.0;
-      rollerSpeed = '0.5m/s';
+      rollerSpeed = '0.45m/s';
     }
 
+    ballTypeCount = DataBaseHelper().fetchBallTypeData();
    var currentBallType = await DataBaseHelper().fetchBallTypeData();
    print('222${currentBallType}');
-   if (currentBallType == 1) {
-     ballTypeDefaultValue = 1.0;
-     ballType = '65kpa';
-   } else if (currentBallType == 2) {
-     ballTypeDefaultValue = 2.0;
-     ballType = '70kpa';
-   } else {
-     ballTypeDefaultValue = 3.0;
-     ballType = '75kpa';
-   }
 
-   setState(() {});
+   setState(() {
+     if (currentBallType == 1) {
+       ballTypeDefaultValue = 1.0;
+       ballType = '65kpa';
+     } else if (currentBallType == 2) {
+       ballTypeDefaultValue = 2.0;
+       ballType = '70kpa';
+     } else {
+       ballTypeDefaultValue = 3.0;
+       ballType = '75kpa';
+     }
+   });
  }
 
 
@@ -85,23 +108,27 @@ class _ParameterSettingViewState extends State<ParameterSettingView> {
           decoration: BoxDecoration( color: Color.fromRGBO(39, 41, 51, 1),
           borderRadius: BorderRadius.circular(21.0),
        ),
-        child: SliderView(defaultValue: rollerSpeedDefaultValue,chooseValue:(value){
-             if (value == 1.0) {
-               BleSendUtil.setSpeed(RobotSpeed.slow); //低速
-               DataBaseHelper().saveRobotSpeedData(1);
-               rollerSpeed = '0.4m/s';
-             } else if(value == 2.0) {
-               BleSendUtil.setSpeed(RobotSpeed.fast); //高速
-               DataBaseHelper().saveRobotSpeedData(2);
-               rollerSpeed = '0.45m/s';
+        child: FutureBuilder<int>(
+            future: speedCount,
+            builder: (BuildContext context,AsyncSnapshot<int> snapshot){
+                   return SliderView(defaultValue: rollerSpeedDefaultValue,chooseValue: (value){
+                           if (value == 1.0) {
+                            BleSendUtil.setSpeed(RobotSpeed.slow); //低速
+                            DataBaseHelper().saveRobotSpeedData(1);
+                            rollerSpeed = '0.4m/s';
+                        } else if(value == 2.0) {
+                           BleSendUtil.setSpeed(RobotSpeed.fast); //高速
+                           DataBaseHelper().saveRobotSpeedData(2);
+                           rollerSpeed = '0.42m/s';
 
-             } else {
-               BleSendUtil.setSpeed(RobotSpeed.faster); //超高速
-               DataBaseHelper().saveRobotSpeedData(3);
-               rollerSpeed = '0.5m/s';
-             }
-             setState(() {});
-          },),
+                     } else {
+                           BleSendUtil.setSpeed(RobotSpeed.faster); //超高速
+                           DataBaseHelper().saveRobotSpeedData(3);
+                           rollerSpeed = '0.45m/s';
+                          }
+                         setState(() {});
+                           },);
+            }),
         ),
         Container(
           width: Constants.screenWidth(context) - 140,
@@ -135,23 +162,28 @@ class _ParameterSettingViewState extends State<ParameterSettingView> {
           decoration: BoxDecoration( color: Color.fromRGBO(39, 41, 51, 1),
             borderRadius: BorderRadius.circular(21.0),
           ),
-          child: SliderView(defaultValue: ballTypeDefaultValue,chooseValue:(value){
-            if (value == 1.0) {
-              BleSendUtil.setRobotCollectingWheelSpeed(1);
-              DataBaseHelper().saveBallTypeData(1);
-              ballType = '65kpa';
-            } else if(value == 2.0) {
-              BleSendUtil.setRobotCollectingWheelSpeed(2);
-              DataBaseHelper().saveBallTypeData(2);
-              ballType = '70kpa';
+          child: FutureBuilder<int>(
+              future: ballTypeCount,
+              builder: (BuildContext context,AsyncSnapshot<int> value){
+              return  SliderView(defaultValue: ballTypeDefaultValue,chooseValue:(value){
+                  if (value == 1.0) {
+                    BleSendUtil.setRobotCollectingWheelSpeed(1);
+                    DataBaseHelper().saveBallTypeData(1);
+                    ballType = '65kpa';
+                  } else if(value == 2.0) {
+                    BleSendUtil.setRobotCollectingWheelSpeed(2);
+                    DataBaseHelper().saveBallTypeData(2);
+                    ballType = '70kpa';
 
-            } else {
-              BleSendUtil.setRobotCollectingWheelSpeed(3);
-              DataBaseHelper().saveBallTypeData(3);
-              ballType = '75kpa';
-            }
-            setState(() {});
-          } ,),
+                  } else {
+                    BleSendUtil.setRobotCollectingWheelSpeed(3);
+                    DataBaseHelper().saveBallTypeData(3);
+                    ballType = '75kpa';
+                  }
+                  setState(() {});
+                } ,);
+
+              }),
         ),
         Container(
           width: Constants.screenWidth(context) - 140,

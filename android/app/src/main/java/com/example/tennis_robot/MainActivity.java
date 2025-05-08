@@ -1,4 +1,4 @@
-package com.example.untitled7;
+package com.potent.tennis_robot;
 
 import io.flutter.embedding.android.FlutterActivity;
 

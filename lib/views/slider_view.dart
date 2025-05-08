@@ -11,8 +11,6 @@ class SliderView extends StatefulWidget {
   double defaultValue;
   Function? chooseValue;
 
-
-
   SliderView({this.chooseValue,required this.defaultValue});
 
   @override
@@ -24,6 +22,20 @@ class _SliderViewState extends State<SliderView> {
   late ImageProvider imageProvider = AssetImage('images/base/slider_new_shape.png');
 
   double _sliderValue = 2.0;
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+
+    _sliderValue = widget.defaultValue;
+    //_sliderValue = defaultValue;
+    print('默认值${_sliderValue}');
+    print('默认值222${widget.defaultValue}');
+
+  }
 
   @override
   Widget buildSliderWidget() {
@@ -45,6 +57,9 @@ class _SliderViewState extends State<SliderView> {
       },
       onChangeEnd: (double endValue) {
         print("停止 滚动${endValue}");
+        print('8888${widget.defaultValue}');
+
+
         if (widget.chooseValue != null) {
           widget.chooseValue!(endValue);
         }

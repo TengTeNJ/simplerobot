@@ -28,7 +28,7 @@ class _ModeSwitchViewState extends State<ModeSwitchView> {
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(55/2),
-              color: Constants.selectModelBgColor,
+              color: Constants.dialogBgColor,
             ),
             height: 55, width: 206,
           ),
@@ -42,7 +42,7 @@ class _ModeSwitchViewState extends State<ModeSwitchView> {
               _actionClick(0);
             },  child: Container(
                 decoration: BoxDecoration(
-                  color: _currentIndex == 0 ? Constants.selectedModelOrangeBgColor : Constants.selectModelBgColor,
+                  color: _currentIndex == 0 ? Constants.selectedModelOrangeBgColor : Constants.dialogBgColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 height: 40,
@@ -65,7 +65,7 @@ class _ModeSwitchViewState extends State<ModeSwitchView> {
 
               }, child: Container(
                 decoration: BoxDecoration(
-                  color: _currentIndex == 0 ? Constants.selectModelBgColor : Constants.selectedModelOrangeBgColor,
+                  color: _currentIndex == 0 ? Constants.dialogBgColor : Constants.selectedModelOrangeBgColor,
                   borderRadius: BorderRadius.circular(20),
                 ),              height: 40, width: 90,
 

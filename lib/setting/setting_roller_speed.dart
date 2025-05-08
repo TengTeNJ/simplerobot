@@ -40,9 +40,9 @@ class _SettingRollerSpeedState extends State<SettingRollerSpeed> {
     if (_sliderValue == 1) {
       _currentSpeed = 0.4;
     } else if (_sliderValue == 2) {
-      _currentSpeed = 0.45;
+      _currentSpeed = 0.42;
     } else {
-      _currentSpeed = 0.5;
+      _currentSpeed = 0.45;
     }
     setState(() {});
   }
@@ -63,10 +63,10 @@ class _SettingRollerSpeedState extends State<SettingRollerSpeed> {
         print("Value $_sliderValue");
         if (value == 2.0) {
           BleSendUtil.setSpeed(RobotSpeed.fast); //高速
-          _currentSpeed = 0.45;
+          _currentSpeed = 0.42;
         } else if (value == 3.0) {
           BleSendUtil.setSpeed(RobotSpeed.faster); //超高速
-          _currentSpeed = 0.5;
+          _currentSpeed = 0.45;
         } else {
           BleSendUtil.setSpeed(RobotSpeed.slow); //低速
           _currentSpeed = 0.4;
@@ -149,6 +149,7 @@ class _SettingRollerSpeedState extends State<SettingRollerSpeed> {
                   children: [
                     GestureDetector(onTap: (){
                       NavigatorUtil.pop();
+                      print("666${_sliderValue.toInt()}");
                       DataBaseHelper().saveRobotSpeedData(_sliderValue.toInt());
                     },
                       child: Container(
@@ -191,7 +192,7 @@ class _SettingRollerSpeedState extends State<SettingRollerSpeed> {
 
               Container(
                 width: Constants.screenWidth(context)- 84,
-                height: 32,
+                // height: 32,
                 margin: EdgeInsets.only(top: 36),
                 child: Center(
                   child:

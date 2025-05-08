@@ -56,6 +56,24 @@ class _RemoteControlViewState extends State<RemoteControlView> {
   int interval = 500; //长按发送时间间隔
   Timer? rightMoveTimer;
 
+  Timer? angleZeroTimer;
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    // 监听捡球数变化
+    RobotManager().dataChange = (TCPDataType type) {
+      if (type == TCPDataType.robotResponseReceiveAngle) {
+        print('机器人收到角度零了');
+        angleZeroTimer?.cancel();
+      }
+
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -282,7 +300,13 @@ class _RemoteControlViewState extends State<RemoteControlView> {
 
                     Future.delayed(Duration(milliseconds: 200), () {
                       BleSendUtil.setRobotAngle(0);
-                      print('松手发送角度0');
+                      print('${getCurrentTime()}松手发送角度0');
+                      angleZeroTimer = Timer.periodic(Duration(milliseconds: 500), (timer){
+                         BleSendUtil.setRobotAngle(0);
+                         print('定时器${getCurrentTime()}松手发送角度0');
+
+                      });
+
                     });
 
                   });

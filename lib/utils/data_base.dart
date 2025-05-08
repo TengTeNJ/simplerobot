@@ -140,7 +140,7 @@ class DataBaseHelper {
 
    Future<int> fetchResetGapData() async {
      final prefs = await SharedPreferences.getInstance();
-     return prefs.getInt('ResetGapData') ?? 2; // 默认是2 间隔为3min
+     return prefs.getInt('ResetGapData') ?? 1; // 默认是1 间隔1min
    }
 
 

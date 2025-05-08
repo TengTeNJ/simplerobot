@@ -17,7 +17,7 @@ class SettingResetGapController extends StatefulWidget {
 }
 
 class _SettingResetGapControllerState extends State<SettingResetGapController> {
-  double _currentResetGap = 3;
+  double _currentResetGap = 1;
 
   double _sliderValue = 2.0;
   late ImageProvider imageProvider = AssetImage('images/base/slider_shape.png');
@@ -36,9 +36,9 @@ class _SettingResetGapControllerState extends State<SettingResetGapController> {
 
     _sliderValue = currentResetGap.toDouble();
     if (_sliderValue == 3) {
-      _currentResetGap = 6;
-    } else if (_sliderValue == 2) {
       _currentResetGap = 3;
+    } else if (_sliderValue == 2) {
+      _currentResetGap = 1;
     } else {
       _currentResetGap = 0;
     }
@@ -61,12 +61,12 @@ class _SettingResetGapControllerState extends State<SettingResetGapController> {
         print("Value $_sliderValue");
         if (value == 2.0) {
           BleSendUtil.setRobotWaitTime(RobotResetGap.three); // 3分钟
-          _currentResetGap = 3;
+          _currentResetGap = 1;
         } else if (value == 3.0) {
-          BleSendUtil.setRobotWaitTime(RobotResetGap.six); //6分钟
-          _currentResetGap = 6;
+          BleSendUtil.setRobotWaitTime(RobotResetGap.five); //5分钟
+          _currentResetGap = 3;
         } else {
-          BleSendUtil.setRobotWaitTime(RobotResetGap.zero); //0 分钟
+          BleSendUtil.setRobotWaitTime(RobotResetGap.one); //1 分钟
           _currentResetGap = 0;
         }
         setState(() {});
@@ -191,7 +191,7 @@ class _SettingResetGapControllerState extends State<SettingResetGapController> {
 
               Container(
                 width: Constants.screenWidth(context)- 84,
-                height: 32,
+               // height: 32,
                 margin: EdgeInsets.only(top: 36),
                 child: Center(
                   child:

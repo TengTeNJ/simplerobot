@@ -6,6 +6,7 @@ import 'package:tennis_robot/utils/base_button.dart';
 import 'package:flutter/material.dart';
 import 'package:tennis_robot/utils/toast.dart';
 import 'package:tennis_robot/views/parameter_setting_view.dart';
+import 'data_base.dart';
 import 'string_util.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'navigator_util.dart';
@@ -260,8 +261,30 @@ class TTDialog {
         );
       },
     );
-
   }
+  /// 重置二次确认弹窗
+  static robotResetConfirmPrompt(BuildContext context,Function confirm,Function cancle) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            child: Container(
+              padding: EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+                // color: hexStringToColor('#3E3E55'),
+                color: Constants.dialogBgColor,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: RobotResetConfirmyDialog(cancle: cancle,confirm: confirm, title: 'Start Now ?', descTitle: 'Are you sure you want to terminate the reset process', imgName: ''),
+            ),
+          );
+        }
+    );
+  }
+
+
   // 日期选择器
   static timeSelect(BuildContext context, Function confirm,
       {int index = 0, String? start, String? end}) {
@@ -750,6 +773,33 @@ class RobotParameterSettingDialog extends StatefulWidget {
 }
 
 class RobotParameterSettingDialogState extends State<RobotParameterSettingDialog> {
+  double rollerSpeedDefaultValue = 1.0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getDBSpeedData();
+  }
+
+  Future<void> getDBSpeedData () async {
+    var currentRobotSpeed = await DataBaseHelper().fetchRobotSpeedData();
+    if (currentRobotSpeed == 0) {
+      currentRobotSpeed = 1;
+    }
+    print('111${currentRobotSpeed}');
+    if (currentRobotSpeed == 1) {
+      rollerSpeedDefaultValue = 1.0;
+    } else if (currentRobotSpeed == 2) {
+      rollerSpeedDefaultValue = 2.0;
+    } else {
+      rollerSpeedDefaultValue = 3.0;
+    }
+    setState(() {
+
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -769,7 +819,7 @@ class RobotParameterSettingDialogState extends State<RobotParameterSettingDialog
                     color: Color.fromRGBO(89, 105, 138, 1.0),
                   ))),
           Positioned(
-            child: ParameterSettingView(),
+            child: ParameterSettingView(outRollerSpeedValue: rollerSpeedDefaultValue,),
             top: 45,
             bottom: 99,
           ),
@@ -777,6 +827,7 @@ class RobotParameterSettingDialogState extends State<RobotParameterSettingDialog
             child: GestureDetector(
               onTap: () {
                 NavigatorUtil.pop();
+                print('点击save了');
               },
               child: Container(
                 child: Center(
@@ -939,6 +990,91 @@ class RobotPowerOffDialog extends StatelessWidget {
               }),),
           SizedBox(
             height: 32,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class RobotResetConfirmyDialog extends StatelessWidget {
+  Function cancle;
+  Function confirm;
+
+  String descTitle;
+  String title;
+  String imgName;
+
+
+  RobotResetConfirmyDialog({required this.cancle,required this.confirm,required this.title,required this.descTitle,required this.imgName});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(
+            height: 71,
+          ),
+          Constants.mediumWhiteTextWidget('${this.title}', 19,Colors.white),
+          SizedBox(
+            height: 12,
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 38,right: 38),
+            child: Constants.regularWhiteTextWidget('${this.descTitle}', 16,Constants.connectTextColor,height: 1.3),
+          ),
+
+          SizedBox(
+            height: 58,
+          ),
+
+          Container(
+             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+               children: [
+                 GestureDetector(onTap: (){
+                   NavigatorUtil.pop();
+                   this.cancle();
+                 },
+                 child: Padding(padding: EdgeInsets.only(left: 24,right: 24),child:
+                 Container(
+                   child: Center(
+                     child: Constants.regularWhiteTextWidget('No', 16, Colors.white),
+                   ),
+                   width: 94,
+                   height: 40,
+                   decoration: BoxDecoration(
+                     borderRadius: BorderRadius.circular(20),
+                     color: Constants.connectTextColor,
+                   ),
+                 ),),),
+
+               GestureDetector(onTap: (){
+                 NavigatorUtil.pop();
+                    this.confirm();
+                 },
+               child: Padding(padding: EdgeInsets.only(left: 24,right: 24),child:
+               Container(
+                 child: Center(
+                   child: Constants.regularWhiteTextWidget('Yes', 16, Colors.white),
+                 ),
+                 height: 40,
+                 width: 94,
+                 decoration: BoxDecoration(
+                   borderRadius: BorderRadius.circular(20),
+                   color: Constants.selectedModelBgColor,
+                 ),
+               ),),)
+               ],
+             ),
+          ),
+
+          SizedBox(
+            height: 39,
           ),
         ],
       ),
