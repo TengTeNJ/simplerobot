@@ -180,11 +180,12 @@ var channel: FlutterMethodChannel
     func hideLoading() {
         MBProgressHUD.hide(for: self.view, animated: true) //
     }
-  
+   
     override func viewDidLoad() {
         super.viewDidLoad()
         calculateTime(index: 1)
         showLoading()
+        
         self.channel.invokeMethod("beginPickBallDemo", arguments: true)
 
         let bridge = OpenCVBridgeFile()
@@ -207,6 +208,7 @@ var channel: FlutterMethodChannel
         // 默认休息模式
         currentElectronicFenceArea = NavigationTool.getRestModelEletronicFenceRectangle()
         currentElectronicFenceDesinationSamllRectangle = NavigationTool.getRestModelEletronicFenceCenterRectangle()
+
 
         self.navigationController?.navigationBar.isHidden = true
         // 注册通知监听器
@@ -473,7 +475,9 @@ var channel: FlutterMethodChannel
              // srcpoint.y = rect.origin.y + rect.size.height / 2
               /// 对位置进行校正
               let center_y = rect.origin.y + rect.size.height / 2
-              let center_percent = center_y / screenHeight
+              let center_percent = center_y / 1080
+              
+
               let half_y_distance =  rect.size.height / 2
               let real_point_y = center_y + half_y_distance * (1-center_percent)
               srcpoint.y = real_point_y
