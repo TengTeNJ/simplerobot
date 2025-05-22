@@ -23,6 +23,12 @@ class BatteryView: UIView {
             if let userInfo = notification.userInfo,
                let message = userInfo["message"] as? String {
                 batteryLab.text = "\(message)%"
+                if (batteryLab.text == "100%") {
+                    /// 电量100时 刷新宽高
+                    self.frame = CGRect(x: 658, y: 304 , width: 85 , height: 36)
+                    batteryLab.frame.size.width = 65
+                }
+                
             }
         }
     
@@ -44,6 +50,7 @@ class BatteryView: UIView {
         batteryLab = UILabel(frame: CGRect(x: 27, y: 0, width: 40, height: 36))
         batteryLab.textColor = .white
         batteryLab.text = "90%"
+       
         addSubview(batteryLab)
 
     }
