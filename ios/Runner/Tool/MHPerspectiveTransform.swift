@@ -7,6 +7,7 @@
 
 import Foundation
 import opencv2
+import DeviceKit
 
 ///未矫正的图像上（也就是相机原始拍到的图上）的点A，我们可以利用这个函数，求出在被校正过的图像（会显示在panel上）上的点B,坐标转换类
 @objc(MHPerspectiveTransform)
@@ -32,9 +33,9 @@ class MHPerspectiveTransform: NSObject {
     //也就是我们知道未矫正的图像上（也就是相机原始拍到的图上）的点A，我们可以利用这个函数，求出在被校正过的图像（会显示在panel上）上的点B
     public
     static
-    func perspectiveTransform(points:[CGPoint]) throws -> [CGPoint] {
+    func perspectiveTransform(points:[CGPoint] ,perspectiveMatrix:Mat) throws -> [CGPoint] {
         /// 获取单应性矩阵
-        let perspectiveMatrix = getIdentityPerspectiveTransformMatrix()
+       // let perspectiveMatrix = getIdentityPerspectiveTransformMatrix()
         
         //即使只有一个点，也要转换为这种形式
         let srcMat:Mat = try cgPointsToMat(points)
@@ -74,24 +75,46 @@ class MHPerspectiveTransform: NSObject {
     public
     static
     func getIdentityPerspectiveTransformMatrix() -> Mat {
-        // 构造单位透视变换矩阵
+        // 获取 UserDefaults 实例
+        let defaults = UserDefaults.standard
+        // 读取浮点数
+        let firstValue = defaults.float(forKey: "0,0")
+        let secondValue = defaults.float(forKey: "0,1")
+        let thirdValue = defaults.float(forKey: "0,2")
+        let fourValue = defaults.float(forKey: "1,0")
+        let fivetValue = defaults.float(forKey: "1,1")
+        let sixtValue = defaults.float(forKey: "1,2")
+        let sevenValue = defaults.float(forKey: "2,0")
+        let eightValue = defaults.float(forKey: "2,1")
+        let nineValue = defaults.float(forKey: "2,2")
+
+       // 构造单位透视变换矩阵
         let identityMatrix = Mat(rows: 3, cols: 3, type: CvType.CV_32F)
+         // 原来的
+//        var matrix = [
+//            0.0914144, -5.61273, 394.194,
+//            0.0583937, -4.90964, 468.117,
+//            0.000868258, -0.0156872, 1
+//        ]
+        
+         var matrix = [
+            firstValue, secondValue, thirdValue,
+            fourValue, fivetValue, sixtValue,
+            sevenValue, eightValue, nineValue
+         ]
+        
+        let device = Device.current
+//        if (device == .iPhone15){
+//            matrix = [
+//                0.239392, -7.40737, 361.754,
+//                0.179448, -6.59698, 555.561,
+//                0.00180642, -0.0222475, 1
+//            ]
+//        }
 
+        
         // 设置矩阵元素为单位矩阵
-        try! identityMatrix.put(row: 0, col: 0, data: [
-//            1.0, 0.0, 0.0, // 第一行
-//            0.0, 1.0, 0.0, // 第二行
-//            0.0, 0.0, 1.0  // 第三行
-             
-//             -0.230052, -6.28901, 414.084,
-//             -0.117509, -5.93065, 503.002,
-//             0.000227851, -0.0183749, 1
-              
-              0.0914144, -5.61273, 394.194,
-              0.0583937, -4.90964, 468.117,
-              0.000868258, -0.0156872, 1
-        ] as [Float])
-
+        try! identityMatrix.put(row: 0, col: 0, data: matrix)
         return identityMatrix
     }
     

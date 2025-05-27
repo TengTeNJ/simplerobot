@@ -41,6 +41,8 @@ class Constants {
         static let smallHeight = 179
 
     }
+    /// 校准点的宽高
+    static let calibrationPointWidthHeight = 16
     
     static let ScreenWidth = UIScreen.main.bounds.size.width
     static let ScreenHeight = UIScreen.main.bounds.size.height

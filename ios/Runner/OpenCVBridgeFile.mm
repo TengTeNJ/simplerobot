@@ -12,7 +12,6 @@
 #import <opencv2/imgproc/imgproc.hpp>
 #import <opencv2/highgui/highgui.hpp>
 
-
 @implementation OpenCVBridgeFile
 
 - (void)callCppFunction:(NSString *)imageName {
@@ -134,39 +133,93 @@
 
 - (void)calculateHomegraphyMatsss {
     cv::Mat homographyMatrix = [self calculateHomegraphyMat];
-    
+//    cv::Mat homographyMatrix = [self calculateIPhone15HomegraphyMat];
+}
+
+- (void)calculateDynamicHomegraphyMatrix:(NSArray *)points {
+    cv::Mat matrix = [self calculateDynamicHomegraphyMatrixss:points];
 }
 
 // 获取单应性矩阵
 - (cv::Mat)calculateHomegraphyMat {
     // 将 CGPoint 转换为 OpenCV 的 Mat 格式
-    // Tommy 高保真  812**375  的关键点坐标
-   // std::vector<cv::Point2f> srcPoints = {cv::Point2f(376, 86), cv::Point2f(471, 82),
-//                                          cv::Point2f(698, 112), cv::Point2f(607, 133)};
-    
     // 13 pro 12 等 844**390.0 的关键点坐标
     double scale = 1.0;
     std::vector<cv::Point2f> srcPoints = {cv::Point2f(323 * scale, 112 * scale), cv::Point2f(424* scale, 110*scale),
         cv::Point2f(618 * scale, 143 * scale), cv::Point2f(548 * scale, 168 * scale)};
     
-  
-   // std::vector<cv::Point2f> dstPoints = {cv::Point2f(430, 132), cv::Point2f(516, 132),
-                                        //  cv::Point2f(516, 267), cv::Point2f(430, 267)};
-    // 13 pro 12 等 844**390.0 的手机屏幕上的四个点
-    std::vector<cv::Point2f> dstPoints = {cv::Point2f(430, 132), cv::Point2f(516, 132),
+    // 13 pro 12 等 844**390.0 虚拟小地图上的四个点
+    std::vector<cv::Point2f> dstPoints = {cv::Point2f(430, 138), cv::Point2f(516, 138),
                                           cv::Point2f(498, 280), cv::Point2f(430, 280)};
   
     cv::Mat homographyMatrix = cv::findHomography(srcPoints, dstPoints);
-    
     // 逐元素访问并打印
-        for (int i = 0; i < homographyMatrix.rows; i++) {
-            for (int j = 0; j < homographyMatrix.cols; j++) {
-                std::cout << homographyMatrix.at<double>(i, j) << " ";
-
-            }
-            std::cout << std::endl;
-
+    for (int i = 0; i < homographyMatrix.rows; i++) {
+        for (int j = 0; j < homographyMatrix.cols; j++) {
+            std::cout << homographyMatrix.at<double>(i, j) << " ";
         }
+        std::cout << std::endl;
+    }
+    return homographyMatrix;
+}
+
+// 获取单应性矩阵
+- (cv::Mat)calculateIPhone15HomegraphyMat {
+    // 将 CGPoint 转换为 OpenCV 的 Mat 格式
+    // 13 pro 12 等 844**390.0 的关键点坐标
+    double scale = 1.0;
+    std::vector<cv::Point2f> srcPoints = {cv::Point2f(323 * scale, 112 * scale), cv::Point2f(424* scale, 110*scale),
+        cv::Point2f(618 * scale, 143 * scale), cv::Point2f(548 * scale, 168 * scale)};
+    
+    // 13 pro 12 等 844**390.0 的手机屏幕上的四个点
+    std::vector<cv::Point2f> dstPoints = {cv::Point2f(430, 138), cv::Point2f(516, 138),
+                                          cv::Point2f(516, 260), cv::Point2f(430, 260)};
+  
+    cv::Mat homographyMatrix = cv::findHomography(srcPoints, dstPoints);
+    // 逐元素访问并打印
+    for (int i = 0; i < homographyMatrix.rows; i++) {
+        for (int j = 0; j < homographyMatrix.cols; j++) {
+            std::cout << homographyMatrix.at<double>(i, j) << " ";
+        }
+        std::cout << std::endl;
+    }
+    return homographyMatrix;
+}
+
+- (cv::Mat)calculateDynamicHomegraphyMatrixss:(NSArray *)points {
+       for (NSValue *value in points) {
+           CGPoint point = [value CGPointValue];
+       }
+    CGPoint leftTopPoint = [points[0] CGPointValue];
+    CGPoint rightTopPoint = [points[1] CGPointValue];
+    CGPoint bottomLeftPoint = [points[2] CGPointValue];
+    CGPoint bottomRightPoint = [points[3] CGPointValue];
+
+    // 将 CGPoint 转换为 OpenCV 的 Mat 格式
+    // 13 pro 12 等 844**390.0 的关键点坐标
+    double scale = 1.0;
+    std::vector<cv::Point2f> srcPoints = {cv::Point2f(leftTopPoint.x * scale, leftTopPoint.y * scale), cv::Point2f(rightTopPoint.x* scale, rightTopPoint.y*scale),
+        cv::Point2f(bottomRightPoint.x * scale, bottomRightPoint.y * scale), cv::Point2f(bottomLeftPoint.x * scale, bottomLeftPoint.y * scale)};
+    
+    // 手机虚拟小地图对应的四个点
+    std::vector<cv::Point2f> dstPoints = {cv::Point2f(430, 138), cv::Point2f(516, 138),
+                                          cv::Point2f(516, 260), cv::Point2f(430, 260)};
+  
+    
+    NSMutableArray *matrixs = [NSMutableArray new];
+    cv::Mat homographyMatrix = cv::findHomography(srcPoints, dstPoints);
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+    // 逐元素访问并打印
+    for (int i = 0; i < homographyMatrix.rows; i++) {
+        for (int j = 0; j < homographyMatrix.cols; j++) {
+            std::cout << homographyMatrix.at<double>(i, j) << " ";
+            
+            NSString *message = [NSString stringWithFormat:@"%d,%d", i, j];
+            [defaults setFloat:homographyMatrix.at<double>(i, j) forKey:message];
+        }
+        std::cout << std::endl;
+    }
     return homographyMatrix;
 }
 

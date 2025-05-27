@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import DeviceKit
+
 
 /// 相机捡球VC
 import AVFoundation
@@ -95,13 +97,33 @@ extension CameraCalibrationController {
          //   cv::Point2f(618 * scale, 143 * scale), cv::Point2f(548 * scale, 168 * scale)};
         /// 固定坐标写死四个点
         let scale = 1.0;
-        point1 = CommonTool.createVIew(CGRect(x: 323 * scale, y: 112 * scale, width: 15, height: 15))
+        point1 = DraggableView(frame: CGRect(x: 323, y: 112, width: Constants.calibrationPointWidthHeight, height: Constants.calibrationPointWidthHeight))
+        point1.didMoveView = { [weak self] newPosition in
+            print("\(newPosition)")
+            self?.leftTopPoint = newPosition
+        }
+
         view.addSubview(point1)
-        point2 = CommonTool.createVIew(CGRect(x: 424 * scale, y: 110 * scale, width: 15, height: 15))
+        point2 = DraggableView(frame: CGRect(x: 424, y: 110, width: Constants.calibrationPointWidthHeight, height: Constants.calibrationPointWidthHeight))
+        point2.didMoveView = { [weak self] newPosition in
+            print("\(newPosition)")
+            self?.rightTopPoint = newPosition
+        }
+
+        
         view.addSubview(point2)
-        point3 = CommonTool.createVIew(CGRect(x: 618 * scale, y: 143 * scale, width: 15, height: 15))
+        point3 = DraggableView(frame: CGRect(x: 618, y: 143, width: Constants.calibrationPointWidthHeight, height: Constants.calibrationPointWidthHeight))
+        point3.didMoveView = { [weak self] newPosition in
+            print("\(newPosition)")
+            self?.rightBottomPoint = newPosition
+        }
         view.addSubview(point3)
-        point4 = CommonTool.createVIew(CGRect(x: 548 * scale, y: 168 * scale, width: 15, height: 15))
+       
+        point4 = DraggableView(frame: CGRect(x: 548, y: 168, width: Constants.calibrationPointWidthHeight, height: Constants.calibrationPointWidthHeight))
+        point4.didMoveView = { [weak self] newPosition in
+            print("\(newPosition)")
+            self?.leftBottomPoint = newPosition
+        }
         view.addSubview(point4)
     }
    

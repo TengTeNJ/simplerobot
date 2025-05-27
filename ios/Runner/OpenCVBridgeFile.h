@@ -21,6 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 获取单应性矩阵
 - (void)calculateHomegraphyMatsss;
+/// 动态的计算单应性矩阵
+///
+ - (void)calculateDynamicHomegraphyMatrix:(NSArray *)points;
 @end
 
 NS_ASSUME_NONNULL_END
