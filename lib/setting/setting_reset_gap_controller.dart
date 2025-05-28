@@ -17,7 +17,7 @@ class SettingResetGapController extends StatefulWidget {
 }
 
 class _SettingResetGapControllerState extends State<SettingResetGapController> {
-  double _currentResetGap = 3;
+  double _currentResetGap = 1;
 
   double _sliderValue = 2.0;
   late ImageProvider imageProvider = AssetImage('images/base/slider_shape.png');
@@ -31,17 +31,15 @@ class _SettingResetGapControllerState extends State<SettingResetGapController> {
 
   Future<void> getDBResetGapData () async {
     var currentResetGap = await DataBaseHelper().fetchResetGapData();
-
-
-
     _sliderValue = currentResetGap.toDouble();
-    if (_sliderValue == 3) {
-      _currentResetGap = 6;
-    } else if (_sliderValue == 2) {
+    if (_sliderValue == 2) {
       _currentResetGap = 3;
-    } else {
-      _currentResetGap = 0;
+    } else if (_sliderValue == 1) {
+      _currentResetGap = 1;
     }
+    // else {
+    //   _currentResetGap = 0;
+    // }
     setState(() {});
   }
 
@@ -50,9 +48,9 @@ class _SettingResetGapControllerState extends State<SettingResetGapController> {
       //Slider的当前的值  0.0 ~ 1.0
       value: _sliderValue,
       min: 1,
-      max: 3,
+      max: 2,
       //平均分成的等分
-      divisions: 2,
+      divisions: 1,
       //滚动时会回调
       onChanged: (double value) {
         Vibration.vibrate(duration: 500); // 触发震动
@@ -62,13 +60,14 @@ class _SettingResetGapControllerState extends State<SettingResetGapController> {
         if (value == 2.0) {
           BleSendUtil.setRobotWaitTime(RobotResetGap.three); // 3分钟
           _currentResetGap = 3;
-        } else if (value == 3.0) {
-          BleSendUtil.setRobotWaitTime(RobotResetGap.six); //6分钟
-          _currentResetGap = 6;
-        } else {
-          BleSendUtil.setRobotWaitTime(RobotResetGap.zero); //0 分钟
-          _currentResetGap = 0;
+        } else if (value == 1.0) {
+          BleSendUtil.setRobotWaitTime(RobotResetGap.one); //1分钟
+          _currentResetGap = 1;
         }
+        // else {
+        //   BleSendUtil.setRobotWaitTime(RobotResetGap.zero); //0 分钟
+        //   _currentResetGap = 0;
+        // }
         setState(() {});
       },
       onChangeStart: (double startValue) {
@@ -195,7 +194,7 @@ class _SettingResetGapControllerState extends State<SettingResetGapController> {
                 margin: EdgeInsets.only(top: 36),
                 child: Center(
                   child:
-                  Constants.boldWhiteTextWidget('When you have picked up 50 balls, you can adjust different times to wake up the robot.', 16),
+                  Constants.boldWhiteTextWidget('When you have picked up 50 balls, you can adjust different times to wake up the robot.', 16,maxLines: 3),
                 ),
               ),
 
@@ -225,19 +224,19 @@ class _SettingResetGapControllerState extends State<SettingResetGapController> {
                   children: [
                     Constants.mediumWhiteTextWidget('1', 18, _sliderValue == 1 ? Constants.customSliderSelectedColor : Constants.customSliderUnselectedColor),
                     Constants.mediumWhiteTextWidget('2', 18, _sliderValue == 2 ? Constants.customSliderSelectedColor : Constants.customSliderUnselectedColor),
-                    Constants.mediumWhiteTextWidget('3', 18, _sliderValue == 3 ? Constants.customSliderSelectedColor : Constants.customSliderUnselectedColor),
+                    // Constants.mediumWhiteTextWidget('3', 18, _sliderValue == 3 ? Constants.customSliderSelectedColor : Constants.customSliderUnselectedColor),
                   ],
                 ),
               ),
 
               SizedBox(height: 28,),
-              _sliderValue == 1.0 ?
-              Container(
-                child: Center(
-                  child:
-                  Constants.mediumWhiteTextWidget('The robot will not stop.', 16, Color.fromRGBO(248, 98, 21, 1.0)),
-                ),
-              ) : Container()
+              // _sliderValue == 1.0 ?
+              // Container(
+              //   child: Center(
+              //     child:
+              //     Constants.mediumWhiteTextWidget('The robot will not stop.', 16, Color.fromRGBO(248, 98, 21, 1.0)),
+              //   ),
+              // ) : Container()
             ],
           ),
         ),

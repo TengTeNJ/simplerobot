@@ -19,7 +19,7 @@ class SettingRollerSpeed extends StatefulWidget {
 }
 
 class _SettingRollerSpeedState extends State<SettingRollerSpeed> {
-  double _currentSpeed = 0.4;
+  double _currentSpeed = 0.42;
 
   double _sliderValue = 1.0;
   late ImageProvider imageProvider = AssetImage('images/base/slider_shape.png');
@@ -38,12 +38,13 @@ class _SettingRollerSpeedState extends State<SettingRollerSpeed> {
     }
     _sliderValue = currentRobotSpeed.toDouble();
     if (_sliderValue == 1) {
-      _currentSpeed = 0.4;
-    } else if (_sliderValue == 2) {
       _currentSpeed = 0.42;
-    } else {
+    } else if (_sliderValue == 2) {
       _currentSpeed = 0.45;
     }
+    // else {
+    //   _currentSpeed = 0.45;
+    // }
     setState(() {});
   }
 
@@ -52,23 +53,23 @@ class _SettingRollerSpeedState extends State<SettingRollerSpeed> {
       //Slider的当前的值  0.0 ~ 1.0
       value: _sliderValue,
       min: 1,
-      max: 3,
+      max: 2,
       //平均分成的等分
-      divisions: 2,
+      divisions: 1,
       //滚动时会回调
       onChanged: (double value) {
         Vibration.vibrate(duration: 500); // 触发震动
 
         _sliderValue = value;
         print("Value $_sliderValue");
-        if (value == 2.0) {
+        if (value == 1.0) {
           BleSendUtil.setSpeed(RobotSpeed.fast); //高速
           _currentSpeed = 0.42;
-        } else if (value == 3.0) {
+        } else if (value == 2.0) {
           BleSendUtil.setSpeed(RobotSpeed.faster); //超高速
           _currentSpeed = 0.45;
-        } else {
-          BleSendUtil.setSpeed(RobotSpeed.slow); //低速
+        } else { // 兼容老版本
+          BleSendUtil.setSpeed(RobotSpeed.faster); //低速
           _currentSpeed = 0.4;
         }
         setState(() {});
@@ -225,7 +226,7 @@ class _SettingRollerSpeedState extends State<SettingRollerSpeed> {
                   children: [
                     Constants.mediumWhiteTextWidget('1', 18, _sliderValue == 1 ? Constants.customSliderSelectedColor : Constants.customSliderUnselectedColor),
                     Constants.mediumWhiteTextWidget('2', 18, _sliderValue == 2 ? Constants.customSliderSelectedColor : Constants.customSliderUnselectedColor),
-                    Constants.mediumWhiteTextWidget('3', 18, _sliderValue == 3 ? Constants.customSliderSelectedColor : Constants.customSliderUnselectedColor),
+                    // Constants.mediumWhiteTextWidget('3', 18, _sliderValue == 3 ? Constants.customSliderSelectedColor : Constants.customSliderUnselectedColor),
                   ],
                 ),
               ),

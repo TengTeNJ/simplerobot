@@ -281,16 +281,16 @@ class _PickModeControllerState extends State<PickModeController> {
     /// 设置机器人捡球时间间隔
     var currentGap = await DataBaseHelper().fetchResetGapData();
     Future.delayed(Duration(milliseconds: 200),(){
-      if (currentRobotSpeed == 2) {
+      if (currentRobotSpeed == 1) {
         BleSendUtil.setSpeed(RobotSpeed.fast); //高速
         print('默认机器人速度为高速');
-      } else if (currentRobotSpeed == 3) {
+      } else if (currentRobotSpeed == 2) {
         BleSendUtil.setSpeed(RobotSpeed.faster); //超高速
         print('默认机器人速度为超高速');
       } else {
-        BleSendUtil.setSpeed(RobotSpeed.slow); //低速
-        print('默认机器人速度为低速');
+        BleSendUtil.setSpeed(RobotSpeed.fast); //高速度
       }
+      /// 0.4m/s的速度取消，只保持0.42和0.45两个选项
 
       Future.delayed(Duration(milliseconds: 200),(){
         print('收球轮速度${currentBallType}');
@@ -304,15 +304,16 @@ class _PickModeControllerState extends State<PickModeController> {
 
         Future.delayed(Duration(milliseconds: 200),(){
           if (currentGap == 3) {
-            BleSendUtil.setRobotWaitTime(RobotResetGap.six);
-            print('机器人休息间隔${currentGap}');
-          } else if (currentGap == 2) {
             BleSendUtil.setRobotWaitTime(RobotResetGap.three);
-            print('机器人休息间隔111${currentGap}');
-          } else {
-            BleSendUtil.setRobotWaitTime(RobotResetGap.zero);
+            print('机器人休息间隔${currentGap}');
+          } else if (currentGap == 1) {
+            BleSendUtil.setRobotWaitTime(RobotResetGap.one);
             print('机器人休息间隔${currentGap}');
           }
+          // else {
+          //   BleSendUtil.setRobotWaitTime(RobotResetGap.zero);
+          //   print('机器人休息间隔${currentGap}');
+          // }
         });
       });
     });
