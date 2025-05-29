@@ -68,10 +68,23 @@ var channel: FlutterMethodChannel
     var backBtn: UIButton!
     var desLab: UILabel!
 
-    var point1 = UIView()
-    var point2 = UIView()
-    var point3 = UIView()
-    var point4 = UIView()
+    var point1 = DraggableView()
+    var point2 = DraggableView()
+    var point3 = DraggableView()
+    var point4 = DraggableView()
+    
+    /// 左上角 点的坐标
+    var leftTopPoint = CGPoint(x: 323 + Constants.calibrationPointWidthHeight/2, y: 112 + Constants.calibrationPointWidthHeight / 2)
+    
+    /// 右上角 点的坐标
+    var rightTopPoint = CGPoint(x: 424 + Constants.calibrationPointWidthHeight/2, y: 110 + Constants.calibrationPointWidthHeight / 2)
+    
+    /// 左下角 点的坐标
+    var leftBottomPoint = CGPoint(x: 548 + Constants.calibrationPointWidthHeight/2, y: 168 + Constants.calibrationPointWidthHeight / 2)
+    
+    /// 右下角 点的坐标
+    var rightBottomPoint = CGPoint(x: 618 + Constants.calibrationPointWidthHeight/2, y: 143 + Constants.calibrationPointWidthHeight / 2)
+
     /* 校准界面的元素  */
 
     
@@ -125,6 +138,8 @@ var channel: FlutterMethodChannel
     
     var timer = Timer()
     
+    var mat = Mat()
+    
     lazy var realRobot : UIView = {
         let real = CommonTool.createVIew(CGRect(x: 0, y: 0, width: 5, height: 5))
         real.backgroundColor = .black
@@ -153,7 +168,7 @@ var channel: FlutterMethodChannel
     /// 画布
     lazy var canvas: CameraPickCanvas = {
         canvas = CameraPickCanvas(frame: self.view.bounds)
-       // canvas.alpha = 0.5
+//        canvas.alpha = 0.5
         canvas.delegate = self
         canvas.isUserInteractionEnabled = true
         canvas.isHidden = true
@@ -181,10 +196,21 @@ var channel: FlutterMethodChannel
         MBProgressHUD.hide(for: self.view, animated: true) //
     }
    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        print("界面退出了")
+        // 恢复屏幕自动熄灭
+        UIApplication.shared.isIdleTimerDisabled = false
+      }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // 防止屏幕自动熄灭
+        UIApplication.shared.isIdleTimerDisabled = true
         calculateTime(index: 1)
         showLoading()
+//        view.backgroundColor = .black
         
         self.channel.invokeMethod("beginPickBallDemo", arguments: true)
 
@@ -295,6 +321,12 @@ var channel: FlutterMethodChannel
   
          // mlModel = try! robot(configuration: .init()).model
           setModel()
+          // calculate martrix
+          let bridge = OpenCVBridgeFile()
+          bridge.calculateDynamicHomegraphyMatrix([NSValue(cgPoint: leftTopPoint),NSValue(cgPoint: rightTopPoint),NSValue(cgPoint: leftBottomPoint),NSValue(cgPoint: rightBottomPoint)])
+
+          mat = MHPerspectiveTransform.getIdentityPerspectiveTransformMatrix()
+          
 
     }
    
@@ -475,7 +507,7 @@ var channel: FlutterMethodChannel
              // srcpoint.y = rect.origin.y + rect.size.height / 2
               /// 对位置进行校正
               let center_y = rect.origin.y + rect.size.height / 2
-              let center_percent = center_y / 1080
+              let center_percent = center_y / 390
               
 
               let half_y_distance =  rect.size.height / 2
@@ -485,7 +517,7 @@ var channel: FlutterMethodChannel
               realRobot.frame.origin = CGPoint(x: srcpoint.x, y: srcpoint.y)
             //  print("位置为\(realRobot.frame)")
              
-              let dstPoints = try! MHPerspectiveTransform.perspectiveTransform(points: [srcpoint,])
+              let dstPoints = try! MHPerspectiveTransform.perspectiveTransform(points: [srcpoint,],perspectiveMatrix: mat)
               let dstPoint = dstPoints.first
               
               // 显示虚拟地图机器人的位置
