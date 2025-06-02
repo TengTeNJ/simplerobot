@@ -80,7 +80,7 @@ extension CameraCalibrationController {
 //                print("开始重复发送start命令")
 //            }
         
-        self.present(ParameterAdjustVC(), animated: true)
+      //  self.present(ParameterAdjustVC(), animated: true)
         
     }
 }
