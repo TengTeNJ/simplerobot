@@ -184,6 +184,7 @@ class Constants {
   static Color selectedModelOrangeBgColor = Color.fromRGBO(233, 100, 21, 1.0);
   static Color dialogBgColor = Color.fromRGBO(49, 52, 67, 1);
   static Color powerOffDialogBgColor = Color.fromRGBO(61, 19, 18, 1);
+  static Color remindIndicatorColor = Color.fromRGBO(248, 98, 21, 1);
 
 
   static Color cameraPickBgColor = Color.fromRGBO(19 , 19, 20, 1);

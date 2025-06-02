@@ -45,6 +45,12 @@ class _GuideCameraPlacementControllerState extends State<GuideCameraPlacementCon
                 ),
               ),
 
+              Container(
+                margin: EdgeInsets.only(top: 36),
+                child: Constants.mediumWhiteTextWidget('Camera Placement', 36, Colors.white),
+              ),
+
+
               GestureDetector(onTap: (){
                 NavigatorUtil.push(Routes.guideThreePage);
                 },
@@ -64,8 +70,8 @@ class _GuideCameraPlacementControllerState extends State<GuideCameraPlacementCon
             ],
           ),
 
-          Constants.mediumWhiteTextWidget('Camera Placement', 36, Colors.white),
-          SizedBox(height: 25,),
+          // Constants.mediumWhiteTextWidget('Camera Placement', 36, Colors.white),
+          SizedBox(height: 45,),
           Center(
             child: Image(
                 width: 233,
