@@ -29,20 +29,33 @@ extension CameraCalibrationController {
     
     // MARK: -  休息模式训练模式切换的代理方法
     func ModeSwitchDelegate(_ view: CameraPickCanvas, didSendData data: Int) {
-        if data == 99 { // 训练模式
+        if data == 100 || data == 101 { // 训练模式
             channel.invokeMethod("changeRobotMode", arguments: "training")
             currentRobotMode = Constants.CurrentRobotModel.training
             currentElectronicFenceArea = NavigationTool.getEletronicFenceInfieldRectangle()
             currebtElectronicfenceDesinationPoint = NavigationTool.getEletronicFenceInfieldCenterPoint()
             currentElectronicFenceDesinationSamllRectangle = NavigationTool.getEletronicFenceInfieldCenterSmallRectangle()
             
-         } else { // 休息模式
+         }
+        
+        if data == 99 { // 休息模式，捡球区域为整个半场
             channel.invokeMethod("changeRobotMode", arguments: "rest")
             currentRobotMode = Constants.CurrentRobotModel.rest
             currentElectronicFenceArea = NavigationTool.getRestModelEletronicFenceRectangle()
             currebtElectronicfenceDesinationPoint = NavigationTool.getRestModelEletronicFenceCenterPoint()
              currentElectronicFenceDesinationSamllRectangle = NavigationTool.getRestModelEletronicFenceCenterRectangle()
-         }
+            
+        } else if data == 100 { //训练模式 内场
+            currentElectronicFenceArea = NavigationTool.getEletronicFenceInfieldRectangle()
+            currebtElectronicfenceDesinationPoint = NavigationTool.getEletronicFenceInfieldCenterPoint()
+            currentElectronicFenceDesinationSamllRectangle = NavigationTool.getEletronicFenceInfieldRectangle()
+        } else { // data == 101  //训练模式 外场
+            currentElectronicFenceArea = NavigationTool.getEletronicFenceOutfieldRectangle()
+            currebtElectronicfenceDesinationPoint = NavigationTool.getEletronicFenceOutfieldCenterPoint()
+            currentElectronicFenceDesinationSamllRectangle = NavigationTool.getEletronicFenceOutfieldRectangle()
+            
+        }
+        
     }
     
     // MARK: - trainingModeSwitchAreaDelegate 训练模式 内场外场区域切换的代理方法
@@ -66,8 +79,10 @@ extension CameraCalibrationController {
                  self.channel.invokeMethod("beginPickBall", arguments: data)
 //                print("开始重复发送start命令")
 //            }
+        
+        self.present(ParameterAdjustVC(), animated: true)
+        
     }
-    
 }
 
 class CameraDelegate: UIViewController {
