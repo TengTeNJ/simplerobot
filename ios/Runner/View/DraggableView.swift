@@ -40,13 +40,19 @@ class DraggableView: UIView {
              // 获取手势的平移量
              let translation = gesture.translation(in: self.superview)
              // 更新视图的位置
-             self.center = CGPoint(
+             var newCenter = CGPoint(
                  x: self.center.x + translation.x,
                  y: self.center.y + translation.y
              )
+             
+             // 限制拖动范围
+             newCenter.x = max(self.frame.width / 2, min(self.superview!.bounds.width - self.frame.width / 2, newCenter.x))
+             newCenter.y = max(self.frame.height / 2, min(self.superview!.bounds.height - self.frame.height / 2, newCenter.y))
+             
+             self.center = newCenter
              // 重置平移量
              gesture.setTranslation(.zero, in: self.superview)
-             print("视图的中心\(self.center)")
+//             print("视图的中心\(self.center)")
              didMoveView?(self.center)
 
          default:

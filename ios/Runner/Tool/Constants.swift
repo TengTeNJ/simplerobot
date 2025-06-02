@@ -48,6 +48,10 @@ class Constants {
     static let ScreenHeight = UIScreen.main.bounds.size.height
     static let Scale =  500.0 / 748.0
     
+    /// ABC 按钮的颜色
+    static let areaBtnColor = UIColor(red: 19/255.0, green: 19/255.0, blue: 20/255.0, alpha: 1.0)
+    static let areaBtnSelectedColor = UIColor(red: 233/255.0, green: 100/255.0, blue: 21/255.0, alpha: 1.0)
+    
     static let areaBgColor = UIColor(red: 27/255.0, green: 66/255.0, blue: 197/255.0, alpha: 0.75)
     static let areaBgSelectedColor = UIColor(red: 25/255.0, green: 243/255.0, blue: 134/255.0, alpha: 0.75)
     

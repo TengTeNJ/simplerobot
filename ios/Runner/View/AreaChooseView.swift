@@ -20,7 +20,7 @@ class AreaChooseView: UIView {
     lazy var areaABtn: UIButton = {
           let trainbtn = UIButton(type: .custom)
           trainbtn.frame = CGRect(x: 0, y: 0, width: Constants.ElectronicFence.infieldWidth, height: Constants.ElectronicFence.infieldOutfieldHeight)
-          trainbtn.backgroundColor = Constants.areaBgColor
+          trainbtn.backgroundColor = Constants.areaBgSelectedColor
           trainbtn.layer.cornerRadius = 4;
           trainbtn.tag = 10
           trainbtn.clipsToBounds = true
@@ -31,7 +31,20 @@ class AreaChooseView: UIView {
     lazy var areaCBtn: UIButton = {
           let trainbtn = UIButton(type: .custom)
         trainbtn.frame = CGRect(x: Constants.ElectronicFence.infieldWidth + 99, y: 0, width: Constants.ElectronicFence.outfieldWidth, height: Constants.ElectronicFence.infieldOutfieldHeight)
-        trainbtn.backgroundColor = Constants.areaBgColor
+        trainbtn.backgroundColor = Constants.areaBgSelectedColor
+        trainbtn.layer.cornerRadius = 4;
+        trainbtn.tag = 12
+
+        trainbtn.clipsToBounds = true
+          trainbtn.addTarget(self, action: #selector(btnAction(_:)), for: .touchUpInside)
+          return trainbtn
+      }()
+    
+    
+    lazy var areaBigABtn: UIButton = {
+          let trainbtn = UIButton(type: .custom)
+        trainbtn.frame = CGRect(x: 0, y: 0, width: 239, height: Constants.ElectronicFence.infieldOutfieldHeight)
+        trainbtn.backgroundColor = Constants.areaBgSelectedColor
         trainbtn.layer.cornerRadius = 4;
         trainbtn.tag = 12
 
@@ -53,20 +66,21 @@ class AreaChooseView: UIView {
         self.frame = CGRect(x: 334, y: 66 , width: Constants.ElectronicFence.infieldWidth +  Constants.ElectronicFence.outfieldWidth + 99, height: Constants.ElectronicFence.infieldOutfieldHeight)
         self.addSubview(areaABtn)
         self.addSubview(areaCBtn)
+        self.addSubview(areaBigABtn)
 
     }
     
     // MARK: - 按钮点击事件处理
        @objc func btnAction(_ sender: UIButton) {
            delegate?.AreaChooseViewDelegate(self, didSendData: sender.tag)
-          if (sender.tag == 10) {
-               areaABtn.backgroundColor = Constants.areaBgSelectedColor
-               areaCBtn.backgroundColor = Constants.areaBgColor
-           }
-           
-           if (sender.tag == 12 ) {
-               areaCBtn.backgroundColor = Constants.areaBgSelectedColor
-               areaABtn.backgroundColor = Constants.areaBgColor
-            }
+//          if (sender.tag == 10) {
+//               areaABtn.backgroundColor = Constants.areaBgSelectedColor
+//               areaCBtn.backgroundColor = Constants.areaBgColor
+//           }
+//           
+//           if (sender.tag == 12 ) {
+//               areaCBtn.backgroundColor = Constants.areaBgSelectedColor
+//               areaABtn.backgroundColor = Constants.areaBgColor
+//            }
        }
 }

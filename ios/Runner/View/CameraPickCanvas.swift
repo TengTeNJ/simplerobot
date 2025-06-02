@@ -26,6 +26,9 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
 
     
     func AreaChooseViewDelegate(_ view: AreaChooseView, didSendData data: Int) {
+        /// ABC 区域不可点击选择
+       // return
+        
         delegate?.trainingModeSwitchAreaDelegate(self, didSendData: data)
         highlightStartBtn(isHighlight: true)
     }
@@ -40,17 +43,15 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
 //        }
 //        
         // 训练模式如果没有选择区域，捡球按钮置灰，不可点击
-        if (areaChoose.areaABtn.backgroundColor == Constants.areaBgColor && areaChoose.areaCBtn.backgroundColor == Constants.areaBgColor) {
-            highlightStartBtn(isHighlight: false)
-
-        } else {
-            highlightStartBtn(isHighlight: true)
-        }
+//        if (areaChoose.areaABtn.backgroundColor == Constants.areaBgColor && areaChoose.areaCBtn.backgroundColor == Constants.areaBgColor) {
+//            highlightStartBtn(isHighlight: false)
+//
+//        } else {
+//            highlightStartBtn(isHighlight: true)
+//        }
         
         if (data == 99) {
             /// 训练模式
-           areaChoose.delegate = self
-           self.addSubview(areaChoose) // 两个捡球区域选择View
            self.bringSubviewToFront(cameraImageview)
             self.bringSubviewToFront(topleftImageview)
             self.bringSubviewToFront(bottomRightImageview)
@@ -60,11 +61,27 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
 //            virtualView.rightImageview.isHidden = true
 //            virtualView.topleftImageview.isHidden = true
 //            virtualView.bottomRightImageview.isHidden = true
+            /// 隐藏BC 区域
+            areaChoose.areaBigABtn.isHidden = false
+            areaChoose.areaABtn.isHidden = true
+            areaChoose.areaCBtn.isHidden = true
 
-        } else { // 休息模式不显示两个捡球区域选择View
-            areaChoose.removeFromSuperview()
-            highlightStartBtn(isHighlight: true)
+
+        } else if (data == 100){ // 休息模式不显示两个捡球区域选择View
+          //  areaChoose.removeFromSuperview()
+            //highlightStartBtn(isHighlight: true)
+            print("内场")
+            areaChoose.areaABtn.isHidden = false
+            areaChoose.areaBigABtn.isHidden = true
+            areaChoose.areaCBtn.isHidden = true
+        } else {
+            print("外场")
+            areaChoose.areaCBtn.isHidden = false
+
+            areaChoose.areaBigABtn.isHidden = true
+            areaChoose.areaABtn.isHidden = true
         }
+        
     }
     
     /// 高亮捡球开始按钮
@@ -155,6 +172,14 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+        self.addSubview(areaChoose)
+        areaChoose.areaBigABtn.isHidden = false
+        areaChoose.areaABtn.isHidden = true
+        areaChoose.areaCBtn.isHidden = true
+        // 三个捡球区域选择View
+        areaChoose.delegate = self
+
+        
         setUpOriginView()
         
     }
@@ -170,6 +195,7 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
         cameraImageview.frame.origin.y = 60 + 280 - 21 - cameraImageview.frame.size.height
         
         self.addSubview(topleftImageview)
+        topleftImageview.isHidden = true
         topleftImageview.center.x = virtualView.center.x;
         topleftImageview.frame.origin.y = 60 + 21
         
@@ -219,11 +245,11 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
         
     
         let lebel = UILabel(frame: CGRect(x: 700, y: 64, width: 60, height: 20))
-        lebel.text = "Mode"
+        lebel.text = "Zone"
         lebel.textColor = Constants.disableTextColor
         lebel.font = UIFont(name: "San Francisco Display-Regular", size: 16)
 
-        self.addSubview(lebel)
+       // self.addSubview(lebel)
         
         actionBtn = CommonTool.createBtn(CGRect(x: 664, y: 157, width: 84, height: 84), title: "Start", bgColor: Constants.hignBGColor)
         actionBtn.addTarget(self, action: #selector(beginPick(_:)), for: .touchUpInside)
