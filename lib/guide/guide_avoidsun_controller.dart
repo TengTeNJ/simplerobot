@@ -126,11 +126,12 @@ class _GuideAvoidsunControllerState extends State<GuideAvoidsunController> {
           Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 ///阳光直射提示
                 Container(
-
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Image(
                           width: 65,
@@ -201,10 +202,11 @@ class _GuideAvoidsunControllerState extends State<GuideAvoidsunController> {
           Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
 
-            //不能遮挡相机提示
-            Container(
+                //不能遮挡相机提示
+                Container(
             //  color: Colors.red,
               child: Column(
                     children: [
@@ -237,21 +239,28 @@ class _GuideAvoidsunControllerState extends State<GuideAvoidsunController> {
 
                   ),
                 ),
-
                 // 不能让机器人在死角提示
                 Container(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Image(
-                          width: 88,
-                          height: 73,
-                          image: AssetImage('images/guide/guide_dead_zone.png')
+                      Container(
+                        margin: EdgeInsets.only(left: 46),
+                        child:  Image(
+                            width: 88,
+                            height: 73,
+                            image: AssetImage('images/guide/guide_dead_zone.png')
+                        ),
                       ),
 
-                      SizedBox(width: 288,),
-                      SizedBox(height: 12,),
+
+                      SizedBox(width: 258,),
+                      SizedBox(height: 8,),
 
                       Container(
+                        margin: EdgeInsets.only(left: 46),
+
                         child: Row(
                           children: [
                             Container(
