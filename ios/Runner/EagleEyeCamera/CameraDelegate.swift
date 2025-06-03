@@ -80,8 +80,13 @@ extension CameraCalibrationController {
 //                print("开始重复发送start命令")
 //            }
         
-      //  self.present(ParameterAdjustVC(), animated: true)
         
+    }
+    
+    // MARK: - 设置面板点击的代理方法
+    func CameraPickSettingClickDelegate(_ view: CameraPickCanvas, didSendData data: String) {
+        self.present(ParameterAdjustVC(binaryMessenger: self.binaryMessenger), animated: true)
+
     }
 }
 

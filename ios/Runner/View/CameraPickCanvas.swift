@@ -9,6 +9,8 @@ import UIKit
 import Flutter
 
 protocol CameraPickCanvasDelegate: AnyObject {
+    func CameraPickSettingClickDelegate(_ view: CameraPickCanvas, didSendData data: String)
+
     func CameraPickCanvasDelegate(_ view: CameraPickCanvas, didSendData data: String)
     func ModeSwitchDelegate(_ view: CameraPickCanvas, didSendData data: Int) // 训练模式休息模式切换
     func beginPickBallDelegate(_ view: CameraPickCanvas, didSendData data: Bool) // 开始暂停捡球代理方法
@@ -255,10 +257,22 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
         actionBtn.addTarget(self, action: #selector(beginPick(_:)), for: .touchUpInside)
         self.addSubview(actionBtn)
         
+        
+     
+        
+        
         // 电量视图
         let batteryView = BatteryView()
         self.addSubview(batteryView)
         self.addSubview(createLab(targetVIew: batteryView, text: "Battery"))
+        
+        ///  设置面板按钮
+        let settingBtn = CommonTool.createImageBtn(CGRect(x: batteryView.frame.origin.x - 36 - 22, y: 304, width: 36, height: 36), imagenName: "setting_icon", bgColor: UIColor(red: 19/255.0, green: 19/255.0, blue: 20/255.0, alpha: 0.8))
+        settingBtn.setTitle("cali", for: .normal)
+        settingBtn.addTarget(self, action: #selector(settingClick(_:)), for: .touchUpInside)
+        self.addSubview(settingBtn)
+        self.addSubview(createLab(targetVIew: settingBtn, text: "Settings"))
+        
 
         
         
@@ -290,6 +304,10 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
     
     @objc func back(_ sender: UIButton) {
         delegate?.CameraPickCanvasDelegate(self, didSendData: sender.titleLabel?.text ?? "")
+    }
+    
+    @objc func settingClick(_ sender: UIButton) {
+        delegate?.CameraPickSettingClickDelegate(self, didSendData: sender.titleLabel?.text ?? "")
     }
     
     @objc func beginPick(_ sender: UIButton) {

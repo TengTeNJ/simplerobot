@@ -47,6 +47,7 @@ class ParameterAdjustVC: UIViewController {
         backBtn.layer.cornerRadius = 18;
         backBtn.setTitle("Save", for: .normal)
         backBtn.clipsToBounds = true
+        backBtn.addTarget(self, action: #selector(btnAction(_:)), for: .touchUpInside)
         backBtn.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
         return backBtn
       }()
