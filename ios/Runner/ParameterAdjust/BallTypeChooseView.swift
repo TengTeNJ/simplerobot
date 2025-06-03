@@ -9,6 +9,24 @@ import UIKit
 
 class BallTypeChooseView: UIView {
    
+    var didSelected: ((Int) -> Void)?
+
+    
+    // 定义一个可动态设置的属性
+    var isSelected: Bool = false {
+           didSet {
+               if isSelected {
+                   choosebtn.setBackgroundImage(UIImage(named: "icon_highlight"), for: .normal)
+                       iconImageVIew.image = UIImage(named: "ball_icon")
+                   } else {
+                       choosebtn.setBackgroundImage(UIImage(named: "icon_normal"), for: .normal)
+                       iconImageVIew.image = UIImage(named: "ball_icon_gray")
+                   }
+               }
+               
+     }
+    
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -43,14 +61,20 @@ class BallTypeChooseView: UIView {
     }()
     
     @objc func btnAction(_ sender: UIButton) {
+        self.didSelected?(1)
+
         sender.isSelected = !sender.isSelected
-        if sender.isSelected {
-            sender.setBackgroundImage(UIImage(named: "icon_highlight"), for: .normal)
-            iconImageVIew.image = UIImage(named: "ball_icon")
-        } else {
-            sender.setBackgroundImage(UIImage(named: "icon_normal"), for: .normal)
-            iconImageVIew.image = UIImage(named: "ball_icon_gray")
-        }
+        
+        sender.setBackgroundImage(UIImage(named: "icon_highlight"), for: .normal)
+        iconImageVIew.image = UIImage(named: "ball_icon")
+        
+//        if sender.isSelected {
+//            sender.setBackgroundImage(UIImage(named: "icon_highlight"), for: .normal)
+//            iconImageVIew.image = UIImage(named: "ball_icon")
+//        } else {
+//            sender.setBackgroundImage(UIImage(named: "icon_normal"), for: .normal)
+//            iconImageVIew.image = UIImage(named: "ball_icon_gray")
+//        }
      }
     
     private func setupView() {

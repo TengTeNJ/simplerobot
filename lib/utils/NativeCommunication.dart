@@ -1,9 +1,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:path/path.dart';
 
 import '../models/robot_data_model.dart';
 import 'ble_send_util.dart';
+import 'dialog.dart';
 
 /// 与原生交互的工具类
 class NativeCommunication {
@@ -14,6 +17,7 @@ class NativeCommunication {
 
   Future<void> getDataFromNative() async {
     platform.setMethodCallHandler((call) async {
+
       if (call.method == "beginPickBall") { /// 原生开启捡球按钮
         final bool pickState = call.arguments;
         if (pickState == true) {
@@ -60,12 +64,39 @@ class NativeCommunication {
       } else if(call.method == 'robotReset') { // APP 发送给蓝牙 重置指令
         print('Received from Swift:  机器人重置');
         BleSendUtil.setRobotReset();
-        /// 机器人重置以后发送stop
-        Future.delayed(Duration(milliseconds: 500), () {
-          /// 0x56 发送stop
-          BleSendUtil.setRobotStartPick(0);
 
+        Future.delayed(Duration(milliseconds: 100),() {
+          BleSendUtil.setRobotReset();
+          /// 机器人重置以后发送stop
+          Future.delayed(Duration(milliseconds: 500), () {
+            /// 0x56 发送stop
+            BleSendUtil.setRobotStartPick(0);
+          });
         });
+
+
+      } else if(call.method == 'changeRobotSpeed') { //调节行走轮速度
+        final bool speed = call.arguments;
+        if (speed == true) {
+          BleSendUtil.setSpeed(RobotSpeed.fast); //低速
+          print('Received from Swift:  调节机器人速度0.42');
+        } else {
+          BleSendUtil.setSpeed(RobotSpeed.faster); //高速
+          print('Received from Swift:  调节机器人速度0.45');
+        }
+      } else if(call.method == 'changeRobotReset') { // 调节机器人休息时间间隔
+        final bool resetTime = call.arguments;
+        if (resetTime == true) {
+          BleSendUtil.setRobotWaitTime(RobotResetGap.three); // 一分钟
+          print('Received from Swift:  调节机器人休息时间间隔1分钟');
+        } else {
+          BleSendUtil.setRobotWaitTime(RobotResetGap.three); // 三分钟
+          print('Received from Swift:  调节机器人休息时间间隔3分钟');
+        }
+      } else if(call.method == 'changeRobotBallType') {
+        final String type = call.arguments;
+        print('Received from Swift:  调节机器人ball Type${type}');
+        BleSendUtil.setRobotCollectingWheelSpeed(int.parse(type));
       }
     });
   }
