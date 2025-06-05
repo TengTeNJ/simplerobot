@@ -60,7 +60,7 @@ extension CameraCalibrationController {
         readybtn.frame = CGRect(x: Constants.ScreenWidth - 32 - 52, y: 32, width: 52, height: 52)
         readybtn.setImage(UIImage(named: "ready_icon.png"), for: .normal)
               
-        readybtn.backgroundColor = UIColor(red: 156/255.0, green: 156/255.0, blue: 156/255.0, alpha: 0.85)
+        readybtn.backgroundColor = UIColor(red: 19/255.0, green: 154/255.0, blue: 108/255.0, alpha: 0.85)
         readybtn.addTarget(self, action: #selector(nextAction(_:)), for: .touchUpInside)
         readybtn.contentEdgeInsets = UIEdgeInsets(top: 20, left: 17, bottom: 17, right: 14)
         readybtn.imageView?.contentMode = .scaleAspectFit

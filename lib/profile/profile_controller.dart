@@ -84,10 +84,13 @@ class _ProfileControllerState extends State<ProfileController> {
              //   child: ProfileDataListView() ,
              // ),
 
-             Expanded(child: Padding(
-               padding: EdgeInsets.only(left: 24, right: 24),
-               child: SettingListView(datas: data,),
-             )
+             Expanded(child:
+             Container(
+               // child: Padding(padding: EdgeInsets.only(left: 24, right: 24),
+                 child: SettingListView(datas: data,),
+               )
+
+             // ),
              )
            ]
          ),

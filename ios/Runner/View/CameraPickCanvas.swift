@@ -67,6 +67,11 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
             areaChoose.areaBigABtn.isHidden = false
             areaChoose.areaABtn.isHidden = true
             areaChoose.areaCBtn.isHidden = true
+            /// 改变zoneLab 的位置
+            zoneSignLabel.frame.origin.y = 60 + 280 + 4
+            zoneSignLabel.frame.origin.x = 82 + 250
+            zoneSignLabel.frame.size = CGSize(width: areaChoose.areaBigABtn.frame.size.width, height: 16)
+            zoneSignLabel.text = "Zone A"
 
 
         } else if (data == 100){ // 休息模式不显示两个捡球区域选择View
@@ -76,12 +81,24 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
             areaChoose.areaABtn.isHidden = false
             areaChoose.areaBigABtn.isHidden = true
             areaChoose.areaCBtn.isHidden = true
+            
+            /// 改变zoneLab 的位置
+            zoneSignLabel.frame.origin.y = 60 + 280 + 4
+            zoneSignLabel.frame.origin.x = areaChoose.areaABtn.frame.origin.x + 334
+            zoneSignLabel.frame.size = CGSize(width: areaChoose.areaABtn.frame.size.width, height: 16)
+            zoneSignLabel.text = "Zone B"
         } else {
             print("外场")
             areaChoose.areaCBtn.isHidden = false
 
             areaChoose.areaBigABtn.isHidden = true
             areaChoose.areaABtn.isHidden = true
+            
+            /// 改变zoneLab 的位置
+            zoneSignLabel.frame.origin.y = 60 + 280 + 4
+            zoneSignLabel.frame.origin.x = areaChoose.areaCBtn.frame.origin.x + 334
+            zoneSignLabel.frame.size = CGSize(width: areaChoose.areaCBtn.frame.size.width, height: 16)
+            zoneSignLabel.text = "Zone C"
         }
         
     }
@@ -138,6 +155,17 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
         rightImageview.isUserInteractionEnabled = true
         return rightImageview
     }()
+    
+    ///ABC 的label标识
+    lazy var zoneSignLabel: UILabel = {
+        let zoneSignLabel = UILabel(frame: CGRect(x: 82 + 250, y: 60 + 280 + 4, width: areaChoose.areaBigABtn.frame.size.width, height: 16))
+        zoneSignLabel.text = "Zone A"
+        zoneSignLabel.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        zoneSignLabel.textColor = UIColor(red: 25/255.0, green: 243/255.0, blue: 134/255.0, alpha: 1.0)
+        zoneSignLabel.textAlignment = .center
+        return zoneSignLabel
+    }()
+    
     
     @objc func rightTophandleTap(_ gesture: UITapGestureRecognizer) {
         rightImageview.image = UIImage(named: "orign_icon_highlight")
@@ -257,17 +285,8 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
         actionBtn.addTarget(self, action: #selector(beginPick(_:)), for: .touchUpInside)
         self.addSubview(actionBtn)
         
-        
-     
-        
-        
-        // 电量视图
-        let batteryView = BatteryView()
-        self.addSubview(batteryView)
-        self.addSubview(createLab(targetVIew: batteryView, text: "Battery"))
-        
         ///  设置面板按钮
-        let settingBtn = CommonTool.createImageBtn(CGRect(x: batteryView.frame.origin.x - 36 - 22, y: 304, width: 36, height: 36), imagenName: "setting_icon", bgColor: UIColor(red: 19/255.0, green: 19/255.0, blue: 20/255.0, alpha: 0.8))
+        let settingBtn = CommonTool.createImageBtn(CGRect(x: UIScreen.main.bounds.width - 60*3 - 4*3 - 36, y: 304, width: 36, height: 36), imagenName: "setting_icon", bgColor: UIColor(red: 19/255.0, green: 19/255.0, blue: 20/255.0, alpha: 0.8))
         settingBtn.setTitle("cali", for: .normal)
         settingBtn.addTarget(self, action: #selector(settingClick(_:)), for: .touchUpInside)
         self.addSubview(settingBtn)
@@ -275,12 +294,21 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
         
 
         
-        
-        let caliBtn = CommonTool.createImageBtn(CGRect(x: batteryView.frame.origin.x + 75 + 18, y: 304, width: 36, height: 36), imagenName: "calibration_icon", bgColor: UIColor(red: 19/255.0, green: 19/255.0, blue: 20/255.0, alpha: 0.8))
+        let caliBtn = CommonTool.createImageBtn(CGRect(x: settingBtn.frame.origin.x + 36 + 22, y: 304, width: 36, height: 36), imagenName: "calibration_icon", bgColor: UIColor(red: 19/255.0, green: 19/255.0, blue: 20/255.0, alpha: 0.8))
+
+        //let caliBtn = CommonTool.createImageBtn(CGRect(x: batteryView.frame.origin.x + 75 + 18, y: 304, width: 36, height: 36), imagenName: "calibration_icon", bgColor: UIColor(red: 19/255.0, green: 19/255.0, blue: 20/255.0, alpha: 0.8))
         caliBtn.setTitle("cali", for: .normal)
         caliBtn.addTarget(self, action: #selector(back(_:)), for: .touchUpInside)
         self.addSubview(caliBtn)
         self.addSubview(createLab(targetVIew: caliBtn, text: "Calibrate"))
+        
+        // 电量视图
+        let batteryView = BatteryView(frame: CGRectMake(caliBtn.frame.origin.x + 36 + 21, 304, 75, 36))
+        self.addSubview(batteryView)
+        self.addSubview(createLab(targetVIew: batteryView, text: "Battery"))
+        
+        
+        addSubview(zoneSignLabel)
 
 
     }
@@ -288,7 +316,7 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
     func createLab(targetVIew : UIView,text: String) -> UILabel {
         let batteryLabel = UILabel(frame: CGRectZero)
         batteryLabel.center.x = targetVIew.center.x
-        batteryLabel.frame.origin.y = targetVIew.frame.origin.y + targetVIew.bounds.height + 10
+        batteryLabel.frame.origin.y = targetVIew.frame.origin.y + targetVIew.bounds.height + 12
         batteryLabel.bounds.size = CGSize(width: 60, height: 15)
         batteryLabel.font = UIFont.systemFont(ofSize: 12)
 

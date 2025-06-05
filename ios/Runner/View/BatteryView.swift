@@ -25,7 +25,7 @@ class BatteryView: UIView {
                 batteryLab.text = "\(message)%"
                 if (batteryLab.text == "100%") {
                     /// 电量100时 刷新宽高
-                    self.frame = CGRect(x: 658, y: 304 , width: 85 , height: 36)
+                    self.frame.size.width = 85
                     batteryLab.frame.size.width = 65
                 }
                 
@@ -38,7 +38,7 @@ class BatteryView: UIView {
     
     private func setupView() {
        
-        self.frame = CGRect(x: 658, y: 304 , width: 75 , height: 36)
+//        self.frame = CGRect(x: 658, y: 304 , width: 75 , height: 36)
        
         self.backgroundColor = UIColor(red: 19/255.0, green: 19/255.0, blue: 20/255.0, alpha: 0.8)
         self.layer.cornerRadius = 18
