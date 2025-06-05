@@ -39,7 +39,7 @@ extension CameraCalibrationController {
         let currentDirection = (x: directionVectorX, y: directionVectorY)
         let targetPoint = (x: Double(currebtElectronicfenceDesinationPoint.x), y: Double(currebtElectronicfenceDesinationPoint.y))
         let result = ElectronicFence.new1calculateSteeringDirectionAndAngle(currentPoint: currentPoint, currentDirection: currentDirection , targetPoint: targetPoint )
-              print("转向方向: \(result.direction), 夹角: \(result.angle) 度")
+              print("电子围栏导航转向方向: \(result.direction), 夹角: \(result.angle) 度")
         
         var realAngle = result.angle
         if (Int(realAngle) ?? 0 > 120) {
@@ -104,7 +104,7 @@ extension CameraCalibrationController {
              } else if (!currentElectronicFenceArea.contains(dstPoint)) {
                  electronicFenceNavigation = true
                  /// 开启电子围栏导航
-                 if(CommonTool.calculateTimeStamp(lastDate: lastNaviDate, currentDate: Date()) >= 1) {
+                 if(CommonTool.calculateTimeStamp(lastDate: lastNaviDate, currentDate: Date()) >= 1 && self.canvas.actionBtn.titleLabel?.text == "Pause") {
                      electronicFenceNavigation(directionVectorX: directVector.x, directionVectorY: directVector.y)
                      lastNaviDate = Date()
                    }

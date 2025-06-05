@@ -117,6 +117,9 @@ var channel: FlutterMethodChannel
     var averagePoint = CGPoint(x: 0, y: 0)
     /// 上次给机器人导航的时间
     var lastNaviDate = Date()
+    
+    /// 上次鹰眼识别到机器人的时间 （2.失去视野超过15—20s,就让机器人开启自动捡球模式。）
+    var lastIdentifyRoborDate = Date()
 
     
     //var canvas: CameraPickCanvas!
@@ -174,6 +177,9 @@ var channel: FlutterMethodChannel
         canvas.isHidden = true
         return canvas
     }()
+    
+    // 创建 TimerManager 实例
+    let timerManager = TimerManager()
     
     func calculateTime(index :Int) {
         let now = Date()
@@ -291,6 +297,9 @@ var channel: FlutterMethodChannel
         self.dismiss(animated: false)
         self.canvas.robot.isHidden = true
         timer.invalidate()
+        
+        channel.invokeMethod("popToControl", arguments: "2") // 推出到遥控界面
+
                 
     }
     
@@ -375,7 +384,11 @@ var channel: FlutterMethodChannel
   }
 
     func processObservations(for request: VNRequest, error: Error?) {
-    //print("关键点监测的结果\(request.results)")
+//        if (CommonTool.calculateTimeStamp(lastDate: lastIdentifyRoborDate, currentDate: Date()) > 20) {
+////            print("机器人失去视野10s了")
+//            self.channel.invokeMethod("lostViewTimeout", arguments: true)
+//        }
+    //  print("机器人监测的结果\(request.results)")
         DispatchQueue.main.async {
             if let results = request.results as? [VNRecognizedObjectObservation] {
                 DispatchQueue.main.async {
@@ -522,7 +535,10 @@ var channel: FlutterMethodChannel
               
               // 显示虚拟地图机器人的位置
               showVirtualRobotPosition(dstPoint: dstPoint ?? CGPoint(x: 0, y: 0))
-            
+              // 记录此次识别到机器人的时间
+              lastIdentifyRoborDate = Date()
+            //  print("机器人识别到了")
+              
               /// 电子围栏区域,超出显示红色
               var isInElectronicFence = true
               let rectangle = currentElectronicFenceArea

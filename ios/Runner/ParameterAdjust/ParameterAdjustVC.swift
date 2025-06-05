@@ -40,18 +40,6 @@ class ParameterAdjustVC: UIViewController {
         return backBtn
       }()
     
-    lazy var saveBtn: UIButton = {
-        let backBtn = UIButton(type: .custom)
-        backBtn.frame = .zero
-        backBtn.backgroundColor = Constants.hignBGColor
-        backBtn.layer.cornerRadius = 18;
-        backBtn.setTitle("Save", for: .normal)
-        backBtn.clipsToBounds = true
-        backBtn.addTarget(self, action: #selector(btnAction(_:)), for: .touchUpInside)
-        backBtn.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        return backBtn
-      }()
-    
     lazy var balltypelabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
@@ -93,18 +81,6 @@ class ParameterAdjustVC: UIViewController {
             make.width.equalTo(7) // 设置背景图片的宽度为 7
             make.height.equalTo(14) // 设置背景图片的高度为 14
         }
-        
-        
-        view.addSubview(saveBtn)
-        saveBtn.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(24)
-            make.right.equalToSuperview().offset(-24)
-            make.width.equalTo(65)
-            make.height.equalTo(36)
-         }
-        
-
-        
         
         let adjustViewRollerSpeed = ParameterAdjustView()
         adjustViewRollerSpeed.typeLabel.text = "Roller Speed"

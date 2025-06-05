@@ -12,7 +12,9 @@ enum RobotStatu {
 enum RobotMode {
   training, // 训练模式
   remote, // 遥控模式
-  rest // 休息模式
+  rest, // 休息模式
+  onepick // 1.0的捡球模式
+
 }
 
 /*机器人避障距离 */
@@ -24,8 +26,8 @@ enum RobotAvoidanceDistance {
 /*机器人捡满50个球休息间隔设置 */
 enum RobotResetGap {
   zero, // 0 分钟
-  three, // 3 分钟
-  six // 6 分钟
+  one, // 1 分钟
+  three // 6 分钟
 }
 
 /*机器人速度 */

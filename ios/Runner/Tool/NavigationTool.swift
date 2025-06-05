@@ -63,7 +63,7 @@ class NavigationTool: NSObject {
     static
     func getEletronicFenceInfieldRectangle() -> CGRect {
         
-        return CGRect(x: 334 - 20, y: 62, width: Constants.ElectronicFence.infieldWidth + 20, height: Constants.ElectronicFence.infieldOutfieldHeight)
+        return CGRect(x: 334 - 20, y: 110, width: Constants.ElectronicFence.infieldWidth + 20, height: Constants.ElectronicFence.infieldOutfieldHeight - 86)
     }
     
     /// 电子围栏内场的中心点

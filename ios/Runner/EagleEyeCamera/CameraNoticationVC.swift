@@ -17,6 +17,20 @@ extension CameraCalibrationController {
         /// 导航机器人到右下角的原点
         originNavigation = true
         commonNavigation(directionVectorX: 1, directionVectorY: 1)
+        
+        /// 1. 原点导航过程中 超过30s就让原点导航结束（防止中间过程中失去视野导致机器人会一直走。）
+        ///  开启定时器
+//        timerManager.startTimer(interval: 30) {
+//            /// APP 发送导航结束指令*/ //0x54   1 到达原点  2 区域位置到达
+//             print("导航到原点了")
+//            if (self.originNavigation) {
+//                self.channel.invokeMethod("endNavigation", arguments: "1")
+//            }
+//            /// 停止计时器
+//            self.timerManager.stopTimer()
+//            
+//        }
+        
      }
     
     @objc func handleBeginNotification(_ notification: Notification) {
