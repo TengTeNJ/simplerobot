@@ -347,14 +347,14 @@ class _PickModeControllerState extends State<PickModeController> {
 
     return Scaffold(
       backgroundColor: Constants.darkControllerColor,
-      appBar: CustomAppBar(),
+     // appBar: CustomAppBar(),
       body: WillPopScope(child:Container(
       child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
         // Container(
         children: [
           Container(
-            margin: EdgeInsets.only(left: 24) ,
+            margin: EdgeInsets.only(left: 24,top: 58) ,
             child: GestureDetector( onTap: (){
               TTDialog.robotEndTask(context, () async{
                 NavigatorUtil.pop();

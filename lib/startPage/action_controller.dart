@@ -253,14 +253,14 @@ class _ActionControllerState extends State<ActionController> {
 
     return Scaffold(
       backgroundColor: Constants.darkControllerColor,
-      appBar: CustomAppBar(),
+      // appBar: CustomAppBar(),
       body: WillPopScope(child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           // Container(
           children: [
             Container(
-              margin: EdgeInsets.only(top: 6, left: 16),
+              margin: EdgeInsets.only(top: 58, left: 16),
               child: Row(
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -372,7 +372,7 @@ class _ActionControllerState extends State<ActionController> {
             ),
             Container(
               // color: Colors.orange,
-              margin: EdgeInsets.only(top: 18),
+              margin: EdgeInsets.only(top: 44),
               width: Constants.screenWidth(context),
              // height: 100,
               child: ActionDataListView(todayCount: '${todayPickUpBalls}',useMinutes: todayRobotWorkTime,todayCal: todayCal,),

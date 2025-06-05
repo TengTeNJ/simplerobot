@@ -144,13 +144,13 @@ class _RobotStatsControllerState extends State<RobotStatsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Constants.darkControllerColor,
-      appBar: CustomAppBar(),
+      // appBar: CustomAppBar(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.only(left: 24) ,
+              margin: EdgeInsets.only(left: 24,top: 58) ,
               child: GestureDetector( onTap: () async{
                 NavigatorUtil.pop();
               },
@@ -182,7 +182,7 @@ class _RobotStatsControllerState extends State<RobotStatsController> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(top: 46,left: 10),
+                    margin: EdgeInsets.only(top: 46,left: 0),
                     child: StatsDataListView(totalPickUpBallsCount: '${totalPickupBallCount}',totalPickupBallTime: '${totalPickupBallTimes}',),
                   ),
 

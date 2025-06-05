@@ -68,7 +68,7 @@ class _StatsListViewState extends State<StatsListView> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 28, top:20),
+            padding: EdgeInsets.only(left: 24, top:20),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               // mainAxisAlignment: MainAxisAlignment.center,
@@ -84,7 +84,7 @@ class _StatsListViewState extends State<StatsListView> {
                 ),
                 SizedBox(width: 5,),
 
-                Expanded(child:    Text(
+                Expanded(child: Text(
                   widget.title ?? '--',
                   style: TextStyle(
                       fontFamily: 'SanFranciscoDisplay',
