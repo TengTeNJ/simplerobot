@@ -142,6 +142,8 @@ var channel: FlutterMethodChannel
     var timer = Timer()
     
     var mat = Mat()
+    /// 是否是跳过引导页面进到鹰眼界面
+    var isSkipGuidePage :Bool = false
     
     lazy var realRobot : UIView = {
         let real = CommonTool.createVIew(CGRect(x: 0, y: 0, width: 5, height: 5))
@@ -286,7 +288,7 @@ var channel: FlutterMethodChannel
         } else {
             let alertVC = CustomAlertViewController(title: "Confirm Exit", message: "Are you sure You want to exit")
             alertVC.delegate  = self
-//            alertVC.modalPresentationStyle = .overFullScreen
+            alertVC.modalPresentationStyle = .overFullScreen
             present(alertVC, animated: false, completion: nil)
         }
      }
@@ -298,7 +300,7 @@ var channel: FlutterMethodChannel
         self.canvas.robot.isHidden = true
         timer.invalidate()
         
-        channel.invokeMethod("popToControl", arguments: "2") // 推出到遥控界面
+        channel.invokeMethod("popToControl", arguments: isSkipGuidePage) // 推出到遥控界面
 
                 
     }

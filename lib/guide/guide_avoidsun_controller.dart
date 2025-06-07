@@ -21,7 +21,7 @@ class _GuideAvoidsunControllerState extends State<GuideAvoidsunController> {
   
   void openNativeScreen() async {
     try {
-      await platfrom.invokeMethod('openNativeScreen');
+      await platfrom.invokeMethod('openNativeScreen',false);
     } on PlatformException catch(e) {
       print('Failed to open native screen: ${e.message}');
     }
@@ -40,20 +40,6 @@ class _GuideAvoidsunControllerState extends State<GuideAvoidsunController> {
     // TODO: implement initState
     super.initState();
     getDataFromSwift();
-   // sendDataToSwift();
-   //  MethodChannel('com.example/native').setMethodCallHandler((call) async {
-   //
-   //    print('hahahahah${call.method}');
-   //    if (call.method == 'openDialog') {
-   //
-   //      TTDialog.robotEndTask(context, () async{
-   //        NavigatorUtil.pop();
-   //        NavigatorUtil.pop();
-   //      });
-   //    }
-   //  });
-
-
   }
 
   // void sendDataToSwift() async {

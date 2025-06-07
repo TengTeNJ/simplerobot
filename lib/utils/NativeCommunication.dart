@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:path/path.dart';
+import 'package:tennis_robot/utils/navigator_util.dart';
 
 import '../models/robot_data_model.dart';
 import 'ble_send_util.dart';
@@ -65,6 +66,8 @@ class NativeCommunication {
         print('Received from Swift:  机器人重置');
         BleSendUtil.setRobotReset();
 
+
+
         Future.delayed(Duration(milliseconds: 100),() {
           BleSendUtil.setRobotReset();
           /// 机器人重置以后发送stop
@@ -98,6 +101,23 @@ class NativeCommunication {
         print('Received from Swift:  调节机器人ball Type${type}');
         BleSendUtil.setRobotCollectingWheelSpeed(int.parse(type));
       }
+      else if(call.method == 'popToControl') { // 退出到遥控界面
+        final bool isSkip = call.arguments;
+        if (isSkip) {
+          NavigatorUtil.pop();
+        } else {
+          NavigatorUtil.pop();
+          NavigatorUtil.pop();
+          NavigatorUtil.pop();
+        }
+      }
+
+      // else if(call.method == 'lostViewTimeout') { // 失去视野超过20s,切换成1.0的捡球模式
+      //   BleSendUtil.setRobotMode(RobotMode.onepick);
+      //   print("Received from Swift机器人失去视野10s了");
+      //
+      //
+      // }
     });
   }
 

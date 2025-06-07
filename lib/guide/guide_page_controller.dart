@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../constant/constants.dart';
 import '../route/routes.dart';
+import '../utils/NativeCommunication.dart';
 import '../utils/navigator_util.dart';
 
 /// 引导页面
@@ -18,7 +19,7 @@ class _GuidePageControllerState extends State<GuidePageController> {
 
   void openNativeScreen() async {
     try {
-      await platfrom.invokeMethod('openNativeScreen');
+      await platfrom.invokeMethod('openNativeScreen',true);
     } on PlatformException catch(e) {
       print('Failed to open native screen: ${e.message}');
     }
@@ -30,6 +31,17 @@ class _GuidePageControllerState extends State<GuidePageController> {
     } on PlatformException catch(e) {
       print('Failed to open native screen: ${e.message}');
     }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getDataFromSwift();
+  }
+
+  void getDataFromSwift() async {
+    await NativeCommunication().getDataFromNative();
   }
 
   @override
@@ -77,6 +89,7 @@ class _GuidePageControllerState extends State<GuidePageController> {
 
               GestureDetector(onTap: (){
                 NavigatorUtil.push(Routes.guideCameraPlacementPage);
+                // NavigatorUtil.pushNamedAndRemoveUntil(Routes.guideCameraPlacementPage);
               },
                 child: Container(
                   margin: EdgeInsets.only(top: 32,right: 32),

@@ -367,11 +367,13 @@ class _PickModeControllerState extends State<PickModeController> {
                 // crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   GestureDetector(onTap: (){
-                    TTDialog.robotEndTask(context, () async{
-                      NavigatorUtil.pop();
-                      NavigatorUtil.pop();
-                      BleSendUtil.setRobotMode(RobotMode.rest);
-                    });
+                    NavigatorUtil.pop();
+                    BleSendUtil.setRobotMode(RobotMode.rest);
+                    // TTDialog.robotEndTask(context, () async{
+                    //   NavigatorUtil.pop();
+                    //   NavigatorUtil.pop();
+                    //   BleSendUtil.setRobotMode(RobotMode.rest);
+                    // });
                   },
                     child: Container(
                       padding: EdgeInsets.only(left: 0,top: 12,bottom: 12,right: 24),
@@ -424,7 +426,7 @@ class _PickModeControllerState extends State<PickModeController> {
               });
             },
               child: Image.asset(
-                gifPaths[_currentGifIndex],
+                "images/camerapick/full_pick.apng",
                 width: 209,
                 height: 376,
                 gaplessPlayback: true,

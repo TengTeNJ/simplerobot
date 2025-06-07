@@ -23,8 +23,12 @@ import UIKit
       let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
        let channel = FlutterMethodChannel(name: "native_screen", binaryMessenger: controller.binaryMessenger)
       channel.setMethodCallHandler { (call,result) in
-          if call.method == "openNativeScreen" { // Flutter 打开原生界面
-              self.openNativeScreen(message: messenger)
+          if call.method == "openNativeScreen" {// Flutter 打开原生界面
+              if let isSkip = call.arguments as? Bool {
+                  print("888888\(isSkip)")
+                  self.openNativeScreen(message: messenger,isSkip: isSkip)
+
+              }
           } else if call.method == "getNativeData" {
               let data = "Hello from Swift!"
               result(data)
@@ -96,9 +100,13 @@ import UIKit
       return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
     
-    func openNativeScreen(message :FlutterBinaryMessenger) {
+    func openNativeScreen(message :FlutterBinaryMessenger,isSkip: Bool) {
         let nativeViewController = CameraCalibrationController(binaryMessenger: message)
+        nativeViewController.isSkipGuidePage = isSkip
        let navigationController = UINavigationController(rootViewController: nativeViewController)
+      if UIDevice.current.userInterfaceIdiom == .pad {
+         navigationController.modalPresentationStyle = .fullScreen
+       }
        let flutterViewController = window?.rootViewController as! FlutterViewController
        flutterViewController.present(navigationController, animated: true, completion: nil)
     }
