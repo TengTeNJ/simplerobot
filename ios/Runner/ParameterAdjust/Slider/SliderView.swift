@@ -62,12 +62,6 @@ class SliderView: UIView {
         maxLabel.text = "2"
         
         sliderConfig()
-        
-        
-        sliderConfig()
-        
-        
-        
     }
     
     required init?(coder: NSCoder) {
@@ -96,7 +90,13 @@ class SliderView: UIView {
     //  MARK: - sliderValueChange
     @objc func sliderValueChange(slider: UISlider) {
         let value = Int(slider.value)
-        self.didMovedSliderd?(value)
-//        textLabel.text = String(value)
+        print("666\(slider.value)")
+        if (slider.value > 1.5) {
+            slider.setValue(2, animated: true)
+            self.didMovedSliderd?(2)
+        } else {
+            slider.setValue(1, animated: true)
+            self.didMovedSliderd?(1)
+        }
     }
 }

@@ -94,6 +94,7 @@ class ParameterAdjustVC: UIViewController {
             make.height.equalTo(91)
         }
         adjustViewRollerSpeed.viewDidChoosed = { [weak self] value in
+            print("滑竿的值\(value)")
             if (value == 1) {
                 adjustViewRollerSpeed.numLabel.text = "0.42m/s"
                 self?.channel.invokeMethod("changeRobotSpeed", arguments: true)
@@ -133,9 +134,8 @@ class ParameterAdjustVC: UIViewController {
                 UserDefaults.standard.set(2, forKey: "flutter.ResetGapData")
 
             }
-
+            UserDefaults.standard.synchronize()
             self?.feedback()
-
         }
         
         view.addSubview(balltypelabel)
@@ -149,9 +149,13 @@ class ParameterAdjustVC: UIViewController {
                 let resetGapvalue = UserDefaults.standard.integer(forKey: "flutter.ResetGapData") as? Int ?? 1
                 if (resetGapvalue == 1) { // 1min
                     adjustViewResetGap.sliderDefalutValue = 1
+                    adjustViewResetGap.numLabel.text = "1min"
+
                     
                 } else if(resetGapvalue == 2) { // 3min
                     adjustViewResetGap.sliderDefalutValue = 2
+                    adjustViewResetGap.numLabel.text = "3min"
+
                  }
                 
                 
@@ -160,9 +164,13 @@ class ParameterAdjustVC: UIViewController {
                 
                 if (rollerSpeedvalue == 1) { // 1min
                     adjustViewRollerSpeed.sliderDefalutValue = 1
+                    adjustViewRollerSpeed.numLabel.text = "0.42m/s"
+
                     
                 } else if(rollerSpeedvalue == 2) { // 3min
                     adjustViewRollerSpeed.sliderDefalutValue = 2
+                    adjustViewRollerSpeed.numLabel.text = "0.45m/s"
+
                  }
         
        
