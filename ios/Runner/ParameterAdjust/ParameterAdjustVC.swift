@@ -11,8 +11,8 @@ import SnapKit
 // 参数调节Vc
 class ParameterAdjustVC: UIViewController {
     
-    let bigMargin = 55.0
-    let margin = 12.0
+    let bigMargin = 135.0
+    let margin = 10.0
     
     var channel: FlutterMethodChannel
     var binaryMessenger: FlutterBinaryMessenger
@@ -36,7 +36,6 @@ class ParameterAdjustVC: UIViewController {
         backBtn.setImage(UIImage(named: "back_icon"), for: .normal)
         backBtn.addTarget(self, action: #selector(btnAction(_:)), for: .touchUpInside)
         backBtn.clipsToBounds = true
-
         return backBtn
       }()
     
@@ -45,8 +44,6 @@ class ParameterAdjustVC: UIViewController {
         label.textColor = .white
         label.text = "Ball Type"
         label.font = UIFont.systemFont(ofSize: 18, weight: .regular)
-
-    
         return label
       }()
     
@@ -59,9 +56,9 @@ class ParameterAdjustVC: UIViewController {
     }
     
     func feedback() {
-           // 创建震动效果
-           let generator = UIImpactFeedbackGenerator(style: .medium)
-           generator.impactOccurred()
+        // 创建震动效果
+       let generator = UIImpactFeedbackGenerator(style: .medium)
+       generator.impactOccurred()
     }
     
     
@@ -88,9 +85,9 @@ class ParameterAdjustVC: UIViewController {
         view.addSubview(adjustViewRollerSpeed)
         adjustViewRollerSpeed.sliderDefalutValue = 2.0
         adjustViewRollerSpeed.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(55)
+            make.left.equalToSuperview().offset(135)
             make.top.equalTo(backBtn.snp_bottomMargin).offset(34)
-            make.width.equalTo(345)
+            make.width.equalTo(540)
             make.height.equalTo(91)
         }
         adjustViewRollerSpeed.viewDidChoosed = { [weak self] value in
@@ -99,89 +96,41 @@ class ParameterAdjustVC: UIViewController {
                 adjustViewRollerSpeed.numLabel.text = "0.42m/s"
                 self?.channel.invokeMethod("changeRobotSpeed", arguments: true)
                 UserDefaults.standard.set(1, forKey: "flutter.robotSpeedData")
-
-
-            } else {
+             } else {
                 adjustViewRollerSpeed.numLabel.text = "0.45m/s"
                 self?.channel.invokeMethod("changeRobotSpeed", arguments: false)
                 UserDefaults.standard.set(2, forKey: "flutter.robotSpeedData")
-
             }
             self?.feedback()
         }
         
+        // 读取 Flutter 保存的数据 Roller speed
+        let rollerSpeedvalue = UserDefaults.standard.integer(forKey: "flutter.robotSpeedData") as? Int ?? 1
         
-        let adjustViewResetGap = ParameterAdjustView()
-        adjustViewResetGap.typeLabel.text = "Reset Gap"
-        adjustViewResetGap.numLabel.text = "1min"
-        view.addSubview(adjustViewResetGap)
-        adjustViewResetGap.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-55)
-            make.top.equalTo(backBtn.snp_bottomMargin).offset(34)
-            make.width.equalTo(345)
-            make.height.equalTo(91)
-        }
-        adjustViewResetGap.viewDidChoosed = { [weak self] value in
-            if (value == 1) {
-                adjustViewResetGap.numLabel.text = "1min"
-                self?.channel.invokeMethod("changeRobotReset", arguments: true)
-                UserDefaults.standard.set(1, forKey: "flutter.ResetGapData")
+        if (rollerSpeedvalue == 1) { // 1min
+            adjustViewRollerSpeed.sliderDefalutValue = 1
+            adjustViewRollerSpeed.numLabel.text = "0.42m/s"
 
+            
+        } else if(rollerSpeedvalue == 2) { // 3min
+            adjustViewRollerSpeed.sliderDefalutValue = 2
+            adjustViewRollerSpeed.numLabel.text = "0.45m/s"
 
-            } else {
-                adjustViewResetGap.numLabel.text = "3min"
-                self?.channel.invokeMethod("changeRobotReset", arguments: false)
-                UserDefaults.standard.set(2, forKey: "flutter.ResetGapData")
-
-            }
-            UserDefaults.standard.synchronize()
-            self?.feedback()
-        }
+         }
         
         view.addSubview(balltypelabel)
         balltypelabel.snp.makeConstraints { make in
-            make.top.equalTo(adjustViewResetGap.snp_bottomMargin).offset(32)
-            make.centerX.equalToSuperview()
+          make.top.equalTo(adjustViewRollerSpeed.snp_bottomMargin).offset(32)
+          make.centerX.equalToSuperview()
         }
         
-    
-        // 读取 Flutter 保存的数据 ResetGap
-                let resetGapvalue = UserDefaults.standard.integer(forKey: "flutter.ResetGapData") as? Int ?? 1
-                if (resetGapvalue == 1) { // 1min
-                    adjustViewResetGap.sliderDefalutValue = 1
-                    adjustViewResetGap.numLabel.text = "1min"
-
-                    
-                } else if(resetGapvalue == 2) { // 3min
-                    adjustViewResetGap.sliderDefalutValue = 2
-                    adjustViewResetGap.numLabel.text = "3min"
-
-                 }
-                
-                
-                // 读取 Flutter 保存的数据 Roller speed
-                let rollerSpeedvalue = UserDefaults.standard.integer(forKey: "flutter.robotSpeedData") as? Int ?? 1
-                
-                if (rollerSpeedvalue == 1) { // 1min
-                    adjustViewRollerSpeed.sliderDefalutValue = 1
-                    adjustViewRollerSpeed.numLabel.text = "0.42m/s"
-
-                    
-                } else if(rollerSpeedvalue == 2) { // 3min
-                    adjustViewRollerSpeed.sliderDefalutValue = 2
-                    adjustViewRollerSpeed.numLabel.text = "0.45m/s"
-
-                 }
         
-       
-     
- 
         let ballTypeWidth = (Constants.ScreenWidth - bigMargin * 2 - margin * 2)/3.0
         
         let balltypeView1 = BallTypeChooseView()
         view.addSubview(balltypeView1)
         balltypeView1.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(55)
+            make.left.equalToSuperview().offset(135)
             make.top.equalTo(balltypelabel.snp_bottomMargin).offset(32)
             make.width.equalTo(ballTypeWidth)
             make.height.equalTo(54)
@@ -225,9 +174,6 @@ class ParameterAdjustVC: UIViewController {
             balltypeView3.isSelected = false
             UserDefaults.standard.set(1, forKey: "flutter.ballTypeData")
             self?.channel.invokeMethod("changeRobotBallType", arguments: "1")
-
-        
-
         }
         
         balltypeView2.didSelected = { [weak self] value in
