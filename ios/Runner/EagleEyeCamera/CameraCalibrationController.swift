@@ -115,8 +115,11 @@ var channel: FlutterMethodChannel
     
     /// 拟合出来的前十次机器人的坐标
     var averagePoint = CGPoint(x: 0, y: 0)
-    /// 上次给机器人导航的时间
+    /// 上次给机器人导航数据的时间
     var lastNaviDate = Date()
+    
+    /// 上次给机器人导航结束的时间
+    var lastNaviEndDate = Date()
     
     /// 上次鹰眼识别到机器人的时间 （2.失去视野超过15—20s,就让机器人开启自动捡球模式。）
     var lastIdentifyRoborDate = Date()

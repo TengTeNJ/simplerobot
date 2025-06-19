@@ -18,6 +18,11 @@ class NavigatorUtil {
     return Navigator.of(NavigatorUtil.utilContext).popAndPushNamed(routeName,arguments: arguments);
   }
 
+  static pushNamedAndRemoveUntil(String routeName,{Object arguments = const Object()}) {
+   // return Navigator.of(NavigatorUtil.utilContext).pushNamedAndRemoveUntil(routeName, '/');
+    return Navigator.pushNamedAndRemoveUntil(NavigatorUtil.utilContext, routeName, (route) => false);
+  }
+  
   //  出栈（pop）
   static pop() {
     return Navigator.of(NavigatorUtil.utilContext).pop();

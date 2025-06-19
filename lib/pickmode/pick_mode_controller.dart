@@ -112,14 +112,13 @@ class _PickModeControllerState extends State<PickModeController> {
   }
 
   @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
+  // void dispose() {
+  //   _timer?.cancel();
+  //   super.dispose();
+  // }
 
   void initState() {
    // enableKeepScreenOn();
-    _startTimer();
     // 断链退到连接界面
   BluetoothManager().disConnect = () {
     NativeCommunication().sendDataToNative('bluetoothDisconnectSingle',0);
@@ -184,8 +183,6 @@ class _PickModeControllerState extends State<PickModeController> {
       }
     }
 
-
-
     // 监听捡球数变化
     RobotManager().dataChange = (TCPDataType type) {
       int power = RobotManager().dataModel.powerValue;
@@ -211,7 +208,7 @@ class _PickModeControllerState extends State<PickModeController> {
       }
 
       if(type == TCPDataType.finishOneFlag) { // 機器人撿球成功上報
-        print('robot finishOneFlag');
+        print('pickController robot finishOneFlag');
         setState(() {
           todayPickUpBalls += 1;
           // 卡路里刷新
@@ -236,12 +233,108 @@ class _PickModeControllerState extends State<PickModeController> {
       } else if(type == TCPDataType.warnInfo) { // 告警信息
         print('robot warnInfo');
       } else if(type == TCPDataType.robotBallIsFull) {
+        print("球满准备发送导航数据");
         NativeCommunication().sendDataToNative('RobotBallFullSingle',0);
       } else if(type == TCPDataType.robotResponseBeginNavigation) {
         NativeCommunication().sendDataToNative('RobotBeginNaviSingle',0);
       } else if(type == TCPDataType.robotResponseEndNavigation) {
         sendNaviEndResponseDataToSwift(RobotManager().dataModel.navigationEndType);
        // NativeCommunication().sendDataToNative('RobotEndNaviSingle',RobotManager().dataModel.navigationEndType);
+      } else if(type == TCPDataType.robotObstacleAvoidance) {
+        NativeCommunication().sendDataToNative('RobotObstacleAvoidanceEndSingle',0);
+      } else if(type == TCPDataType.robotResponseReceiveStartOrStop) {
+        NativeCommunication().sendDataToNative('RobotReceiveStartOrStopSingle',RobotManager().dataModel.responseStartStopType);
+
+      }
+    };
+  }
+
+  void listenDataChange() {
+    //机器人工作时间回调
+    BluetoothManager().workTimeChange = (time) {
+      print('机器人工作时间回调${time}');
+      EventBus().sendEvent(kRobotPickballTimeChange);
+      setState(() {
+        todayRobotWorkTime = (int.parse(time)) ~/ 60;
+      });
+    };
+
+    void sendBatteryDataToSwift(int battery) async {
+      try {
+        await platfrom.invokeMethod('fLutterSendBattery', '${battery}');
+      } on PlatformException catch(e) {
+        print('Failed to open native screen: ${e.message}');
+      }
+    }
+
+    void sendNaviEndResponseDataToSwift(int naviType) async {
+      print('导航类型666${naviType}');
+      try {
+        await platfrom.invokeMethod('RobotEndNaviSingle', '${naviType}');
+      } on PlatformException catch(e) {
+        print('Failed to sendNaviEndResponseDataToSwift: ${e.message}');
+      }
+    }
+
+
+
+    // 监听捡球数变化
+    RobotManager().dataChange = (TCPDataType type) {
+      int power = RobotManager().dataModel.powerValue;
+      // if (currentBattery != power) { /// 电量有变化时才发送通知，防止发送过于频繁
+      sendBatteryDataToSwift(power);
+      // }
+      currentBattery = power;
+      if (power < 20 && power > 5) {
+        if (lowBatteryAlertIsShow == false) {
+          lowBatteryAlertIsShow = true;
+          // 低电量弹窗
+          TTDialog.robotLowBatteryDialog(context,currentBattery: power,() async {
+            NavigatorUtil.pop();
+          });
+        }
+      }
+
+      if (power <=5  && shutDownAlertIsShow == false) { // 提示关机弹窗
+        shutDownAlertIsShow = true;
+        TTDialog.robotLowBatteryDialog(context,currentBattery: power, () async {
+          NavigatorUtil.pop();
+        });
+      }
+
+      if(type == TCPDataType.finishOneFlag) { // 機器人撿球成功上報
+        print('pickController robot finishOneFlag 点击自动按钮后');
+        setState(() {
+          todayPickUpBalls += 1;
+          // 卡路里刷新
+          calculateTodayKal(todayPickUpBalls);
+        });
+        getBallData();// 数据库处理
+        EventBus().sendEvent(kRobotPickballCountChange);
+
+      } else if(type == TCPDataType.errorInfo) { // 异常信息
+        var desc = '';
+        var status = RobotManager().dataModel.errorStatu;
+        if (status == 1) {  // 1 收球轮异常故障
+          desc = 'Abnormal malfunction of the ball receiving wheel';
+        } else if(status == 2) { //行走轮异常故障
+          desc = 'Abnormal malfunction of the walking wheel';
+        } else if(status == 3) { //摄像头异常故障
+          desc = 'Camera malfunction';
+        } else if (status == 4) { // 雷达异常故障
+          desc = 'Radar abnormal malfunction';
+        }
+
+      } else if(type == TCPDataType.warnInfo) { // 告警信息
+        print('robot warnInfo');
+      } else if(type == TCPDataType.robotBallIsFull) {
+        print("球满准备发送导航数据");
+        NativeCommunication().sendDataToNative('RobotBallFullSingle',0);
+      } else if(type == TCPDataType.robotResponseBeginNavigation) {
+        NativeCommunication().sendDataToNative('RobotBeginNaviSingle',0);
+      } else if(type == TCPDataType.robotResponseEndNavigation) {
+        sendNaviEndResponseDataToSwift(RobotManager().dataModel.navigationEndType);
+        // NativeCommunication().sendDataToNative('RobotEndNaviSingle',RobotManager().dataModel.navigationEndType);
       } else if(type == TCPDataType.robotObstacleAvoidance) {
         NativeCommunication().sendDataToNative('RobotObstacleAvoidanceEndSingle',0);
       } else if(type == TCPDataType.robotResponseReceiveStartOrStop) {
@@ -369,12 +462,8 @@ class _PickModeControllerState extends State<PickModeController> {
                   GestureDetector(onTap: (){
                     NavigatorUtil.pop();
                     BleSendUtil.setRobotMode(RobotMode.rest);
-                    // TTDialog.robotEndTask(context, () async{
-                    //   NavigatorUtil.pop();
-                    //   NavigatorUtil.pop();
-                    //   BleSendUtil.setRobotMode(RobotMode.rest);
-                    // });
-                  },
+                    print("界面退出");
+                    },
                     child: Container(
                       padding: EdgeInsets.only(left: 0,top: 12,bottom: 12,right: 24),
                       color: Constants.darkControllerColor,
@@ -418,12 +507,13 @@ class _PickModeControllerState extends State<PickModeController> {
                 BleSendUtil.setRobotMode(RobotMode.training);
                 print('start training');
               }
-              NavigatorUtil.push(Routes.guidePage);
+              listenDataChange();
 
-              Vibration.vibrate(duration: 500);
-              setState(() {
-                imageName = imageName == 'mode_start' ? 'mode_pause' :'mode_start';
-              });
+              // NavigatorUtil.push(Routes.guidePage);
+              // Vibration.vibrate(duration: 500);
+              // setState(() {
+              //   imageName = imageName == 'mode_start' ? 'mode_pause' :'mode_start';
+              // });
             },
               child: Image.asset(
                 "images/camerapick/full_pick.apng",
@@ -439,41 +529,6 @@ class _PickModeControllerState extends State<PickModeController> {
             child: RemoteControlView(),
           ),
 
-          // Container(
-          //   alignment: Alignment.center,
-          //   margin: EdgeInsets.only(top: 42),
-          //   child: Padding(
-          //    padding: EdgeInsets.only(bottom: 0),
-          //     child: ModeSwitchView(areaClick: (index){
-          //       setState(() {
-          //         Vibration.vibrate(duration: 500); // 触发震动
-          //         if(index == 0) {
-          //           selectedMode = SelectedMode.pickMode;
-          //           if (imageName == 'mode_start'){
-          //             BleSendUtil.setRobotMode(RobotMode.training);
-          //             print('捡球模式');
-          //           } else {
-          //             BleSendUtil.setRobotMode(RobotMode.rest);
-          //             print('暂停模式');
-          //           }
-          //           print('123456${Constants.screenHeight(context)}');
-          //           print('宽${Constants.screenWidth(context)}');
-          //         } else {
-          //           print('遥控模式');
-          //           selectedMode = SelectedMode.controlMode;
-          //           BleSendUtil.setRobotMode(RobotMode.remote);
-          //
-          //           // 500毫秒-> 设置控制角度为零，防止Fly那边报错
-          //           Future.delayed(Duration(milliseconds: 500), () {
-          //             print('设置角度为0');
-          //             BleSendUtil.setRobotAngle(0);
-          //           });
-          //         }
-          //       });
-          //     },),
-          //   ),
-          // ),
-
           selectedMode == SelectedMode.pickMode ?
           Container(
             margin: EdgeInsets.only(top: 42,left: 78,right: 78),
@@ -481,10 +536,11 @@ class _PickModeControllerState extends State<PickModeController> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 GestureDetector(onTap: (){
+                  listenDataChange();
+                  Vibration.vibrate(duration: 500);
                   NavigatorUtil.push(Routes.guidePage);
                   },
                   child: Container(
-                    // margin: EdgeInsets.only(top: 32,left: 32),
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
@@ -500,10 +556,12 @@ class _PickModeControllerState extends State<PickModeController> {
                SizedBox(width: 54,),
 
                GestureDetector(onTap: (){
+                 listenDataChange();
                  print('遥控模式');
                  setState(() {
                    selectedMode = SelectedMode.controlMode;
                    BleSendUtil.setRobotMode(RobotMode.remote);
+                   Vibration.vibrate(duration: 500);
 
                    // 500毫秒-> 设置控制角度为零，防止Fly那边报错
                    Future.delayed(Duration(milliseconds: 500), () {
@@ -538,7 +596,9 @@ class _PickModeControllerState extends State<PickModeController> {
              setState(() {
                selectedMode = SelectedMode.pickMode;
              });
-          },
+             print("点击back");
+             BleSendUtil.setRobotMode(RobotMode.rest);
+             },
             child: Container(
               margin: EdgeInsets.only(top: 67),
               width: 167,
