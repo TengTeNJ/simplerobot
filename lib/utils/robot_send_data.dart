@@ -17,10 +17,11 @@ enum ManualFetchType {
 
 /*切换机器人模式*/
 List<int> changeRobotMode(RobotMode mode) {
+  print('7777${mode}');
   int start = kDataFrameHeader;
   int length = 6;
   int cmd = 0x35;
-  int data = mode.index + 1;
+  int data = mode.index;
   int cs = start + length + cmd + data;
   int end = kDataFrameFoot;
   print('切换机器人模式:${[start, length, cmd, data, cs, end]}');

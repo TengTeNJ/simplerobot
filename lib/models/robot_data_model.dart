@@ -10,10 +10,10 @@ enum RobotStatu {
 
 /*机器人运行模式*/
 enum RobotMode {
-  training, // 训练模式
-  remote, // 遥控模式
-  rest, // 休息模式
-  onepick // 1.0的捡球模式
+  rest, // 休息模式(0 -- )
+  training, // 训练模式 (1 -- 传给FLy 的模式的值)
+  remote, // 遥控模式(2 -- )
+  onepick // 1.0的捡球模式 (3 -- )
 
 }
 

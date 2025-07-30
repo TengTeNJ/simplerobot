@@ -18,7 +18,7 @@ class _ProfileControllerState extends State<ProfileController> {
   List<SettingModel> data = [
     SettingModel('images/profile/setting_ball_type.png','Ball Type'),
     SettingModel('images/profile/setting_roller_speed.png','Roller Speed'),
-    SettingModel('images/profile/setting_reset_gap.png','Reset Gap'),
+    // SettingModel('images/profile/setting_reset_gap.png','Reset Gap'),
     SettingModel('images/profile/setting_profile.png','Profile'),
     SettingModel('images/profile/setting_fault.png','Fault'),
   ];

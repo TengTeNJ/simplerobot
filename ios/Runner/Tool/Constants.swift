@@ -80,6 +80,9 @@ class Constants {
     
     /// 0x62机器人应答start,stop成功
     static let Notification_Robot_Receive_StartOrStopSingle = "RobotReceiveStartOrStopSingle"
+    
+    /// 捡球成功上报
+    static let Notification_Robot_Pick_Ball_Success = "RobotPickupBallSuccess"
 
 
 

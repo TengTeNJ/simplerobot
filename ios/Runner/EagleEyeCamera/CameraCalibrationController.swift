@@ -107,8 +107,19 @@ var channel: FlutterMethodChannel
     var currentElectronicFenceArea = NavigationTool.getRestModelEletronicFenceRectangle()
     /// 是否开始原点导航（机器人捡满50球开始）
     var originNavigation: Bool = false
-    /// 是否开始电子围栏导航（
+    /// 是否开始电子围栏导航
     var electronicFenceNavigation: Bool = false
+    
+    // MARK: - 自动导航相关
+    /// 是否开始自动导航（在一个区域捡球超过30s没有捡球上报，自动导航到另一个区域）
+    var autoNavigation: Bool = false
+    /// 自动导航的终点区域(默认内场上半场的矩形区域)
+    var currentAutoNaviDedinationRectangle = 
+        NavigationTool.getEletronicFenceTopHalfInfieldRectangle()
+    /// 自动导航的终点坐标(默认内场上半场的中心点)
+    var currentAutoNaviDesinationPoint: CGPoint = NavigationTool.getEletronicFenceTopHalfInfieldCenterPoint()
+    
+    
     
     /// 当前小矩形框矩形框判断
     var currentElectronicFenceDesinationSamllRectangle = NavigationTool.getRestModelEletronicFenceCenterRectangle()
@@ -123,6 +134,9 @@ var channel: FlutterMethodChannel
     
     /// 上次鹰眼识别到机器人的时间 （2.失去视野超过15—20s,就让机器人开启自动捡球模式。）
     var lastIdentifyRoborDate = Date()
+    
+    /// 上次捡球成功上报的时间
+    var lastPickBallSuccessDate = Date()
 
     
     //var canvas: CameraPickCanvas!
@@ -152,7 +166,6 @@ var channel: FlutterMethodChannel
         let real = CommonTool.createVIew(CGRect(x: 0, y: 0, width: 5, height: 5))
         real.backgroundColor = .black
        // view.addSubview(real)
-
         return real
     }()
     
@@ -183,8 +196,11 @@ var channel: FlutterMethodChannel
         return canvas
     }()
     
-    // 创建 TimerManager 实例
+    // 创建 原点导航超过30s还没停止的定时器
     let timerManager = TimerManager()
+    
+    // 创建 捡球上报成功的定时器
+   let pickBalltimerManager = TimerManager()
     
     func calculateTime(index :Int) {
         let now = Date()
@@ -212,7 +228,11 @@ var channel: FlutterMethodChannel
         print("界面退出了")
         // 恢复屏幕自动熄灭
         UIApplication.shared.isIdleTimerDisabled = false
+        timerManager.stopTimer()
+        pickBalltimerManager.stopTimer()
       }
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -255,8 +275,21 @@ var channel: FlutterMethodChannel
         NotificationCenter.default.addObserver(self, selector: #selector(handleAvoEndNotification(_:)), name: Notification.Name(Constants.Notification_Robot_Obstacle_Avoidance_End_Navi), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleDisconnectNotification(_:)), name: Notification.Name(Constants.Notification_Robot_Bluetooth_Disconnect), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleStartOrStopNotification(_:)), name: Notification.Name(Constants.Notification_Robot_Receive_StartOrStopSingle), object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handlePickBallSuccessNotification(_:)), name: Notification.Name(Constants.Notification_Robot_Pick_Ball_Success), object: nil)
+        
 
         
+        
+//        let view2 = UIView(frame: NavigationTool.getEletronicFenceTopHalfOutfieldRectangle())
+//        view2.backgroundColor = .yellow
+//        view.addSubview(view2)
+//        
+//        
+//        let view1 = UIView(frame: CGRect(x: NavigationTool.getEletronicFenceTopHalfOutfieldRectangleCenterPoint().x, y: NavigationTool.getEletronicFenceTopHalfOutfieldRectangleCenterPoint().y, width: 10, height: 10))
+//        view1.backgroundColor = .red
+//        view.addSubview(view1)
+//
         
         
         hideLoading()

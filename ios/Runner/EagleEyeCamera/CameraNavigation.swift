@@ -53,6 +53,27 @@ extension CameraCalibrationController {
       ])
     }
     
+    // 自动导航
+    func autoNavigation(directionVectorX: Double ,directionVectorY: Double) {
+        let currentPoint = (x: Double(curentRobotPosition.x), y: Double(curentRobotPosition.y))
+        let currentDirection = (x: directionVectorX, y: directionVectorY)
+        let targetPoint = (x: Double(currentAutoNaviDesinationPoint.x), y: Double(currentAutoNaviDesinationPoint.y))
+        let result = ElectronicFence.new1calculateSteeringDirectionAndAngle(currentPoint: currentPoint, currentDirection: currentDirection , targetPoint: targetPoint )
+              print("自动导航转向方向: \(result.direction), 夹角: \(result.angle) 度")
+        
+        var realAngle = result.angle
+        if (Int(realAngle) ?? 0 > 120) {
+            realAngle =  "120"
+        }
+        /// 通知机器人开始导航 // 0x52
+        channel.invokeMethod("beginNavigation", arguments: [
+          "type":"1",
+          "direction": "\(result.direction)",
+          "angle": "\(realAngle)"
+      ])
+    }
+    
+    
     
      /// 显示虚拟地图机器人的位置
      /// - Parameter dstPoint: 虚拟地图机器人的坐标
@@ -62,18 +83,25 @@ extension CameraCalibrationController {
         /// 到达原点（默认右下角）
          if (currebtOriginRectangle.contains(dstPoint) && originNavigation) {
              /// APP 发送导航结束指令*/ //0x54   1 到达原点  2 区域位置到达
-             // originNavigation = false
               print("导航到原点了")
               channel.invokeMethod("endNavigation", arguments: "1")
          }
          
-         /// 到达电子内场区域了
-         if (currentElectronicFenceDesinationSamllRectangle.contains(dstPoint) && electronicFenceNavigation) {
+         /// 到达电子围栏区域了
+         if (currentElectronicFenceDesinationSamllRectangle.contains(dstPoint) && electronicFenceNavigation && CommonTool.calculateTimeStamp(lastDate: lastNaviEndDate, currentDate: Date()) > 1) {
              /// APP 发送导航结束指令*/ //0x54   1 到达原点  2 区域位置到达
-             // electronicFenceNavigation = false
               print("导航到内场的电子围栏里面了了")
               channel.invokeMethod("endNavigation", arguments: "2")
-       }
+              lastNaviEndDate = Date()
+         }
+         
+         /// 自动导航到达终点的判定
+         if (currentAutoNaviDedinationRectangle.contains(dstPoint) && autoNavigation) {
+             autoNavigation = false
+             print("导航到自动导航区域里面了了")
+             channel.invokeMethod("endNavigation", arguments: "2")
+         }
+         
          
          let doubleXValue: Double = Double(dstPoint.x) as Double
          let doubleYValue: Double = Double(dstPoint.y) as Double
@@ -98,19 +126,26 @@ extension CameraCalibrationController {
                  if(CommonTool.calculateTimeStamp(lastDate: lastNaviDate, currentDate: Date()) >= 1) {
                      commonNavigation(directionVectorX: directVector.x, directionVectorY: directVector.y)
                      lastNaviDate = Date()
-                     print("")
                  }
                  
              } else if (!currentElectronicFenceArea.contains(dstPoint)) {
                  electronicFenceNavigation = true
+                 /// 自动导航计时停止
+                 self.pickBalltimerManager.pauseTimer()
                  /// 开启电子围栏导航
                  if(CommonTool.calculateTimeStamp(lastDate: lastNaviDate, currentDate: Date()) >= 1 && self.canvas.actionBtn.titleLabel?.text == "Pause") {
                      electronicFenceNavigation(directionVectorX: directVector.x, directionVectorY: directVector.y)
                      lastNaviDate = Date()
                    }
-             }
-            
-         }
+             } else if (autoNavigation) { //开始自动导航（在一个区域捡球超过30s没有捡球上报，自动导航到另一个区域
+                    if(CommonTool.calculateTimeStamp(lastDate: lastNaviDate, currentDate: Date()) >= 1 ) {
+                        autoNavigation(directionVectorX: directVector.x, directionVectorY: directVector.y)
+                         lastNaviDate = Date()
+                       }
+                
+            }
+             
+        }
         
          lastRobotPosition = dstPoint
         

@@ -236,6 +236,9 @@ class _PickModeControllerState extends State<PickModeController> {
       } else if(type == TCPDataType.robotBallIsFull) {
         print("球满准备发送导航数据");
         NativeCommunication().sendDataToNative('RobotBallFullSingle',0);
+        // Auto 模式 按钮置为暂停
+        imageName = "mode_pause";setState(() {});
+
       } else if(type == TCPDataType.robotResponseBeginNavigation) {
         NativeCommunication().sendDataToNative('RobotBeginNaviSingle',0);
       } else if(type == TCPDataType.robotResponseEndNavigation) {
@@ -333,6 +336,8 @@ class _PickModeControllerState extends State<PickModeController> {
       } else if(type == TCPDataType.robotBallIsFull) {
         print("球满准备发送导航数据");
         NativeCommunication().sendDataToNative('RobotBallFullSingle',0);
+        // Auto 模式 按钮置为暂停
+        imageName = "mode_pause";setState(() {});
       } else if(type == TCPDataType.robotResponseBeginNavigation) {
         NativeCommunication().sendDataToNative('RobotBeginNaviSingle',0);
       } else if(type == TCPDataType.robotResponseEndNavigation) {
@@ -523,7 +528,7 @@ class _PickModeControllerState extends State<PickModeController> {
 
           else if (selectedMode == SelectedMode.autoMode) // 自动捡球
             Container(
-              margin: EdgeInsets.only(left:0,top: 64),
+              margin: EdgeInsets.only(left:0,top: 145),
               child: GestureDetector(onTap: (){
                 Vibration.vibrate(duration: 500);
                 if (imageName == 'mode_start') {
@@ -539,14 +544,30 @@ class _PickModeControllerState extends State<PickModeController> {
                 listenDataChange();
 
               },
-                child: Image.asset(
-                  "images/home/${imageName}.apng",
-                  width: 209,
-                  height: 376,
-                  gaplessPlayback: true,
+                // child: Image.asset(
+                //   "images/home/${imageName}.apng",
+                //   width: 209,
+                //   height: 376,
+                //   gaplessPlayback: true,
+                // ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                  Image.asset(
+                    "images/home/${imageName}.apng",
+                    width: 204,
+                    height: 204,
+                    gaplessPlayback: true,
+                  ),
+                    SizedBox(height: 24,),
+                    Constants.regularWhiteTextWidget("Auto", 17, Constants.selectedModelBgColor)
+
+                  ],
                 ),
               ),
             )
+
              /// 中间轮盘遥控滑竿
               else Container(
             alignment: Alignment.center,
@@ -569,6 +590,11 @@ class _PickModeControllerState extends State<PickModeController> {
                   Vibration.vibrate(duration: 500);
                   selectedMode = SelectedMode.autoMode;
                   BleSendUtil.setRobotMode(RobotMode.onepick);
+                  Future.delayed(Duration(milliseconds: 500), () { // 自动开始捡球
+                    BleSendUtil.setRobotStartPick(1); // 开启捡球
+                  });
+
+
 
                   setState(() {});
                 },
@@ -580,7 +606,16 @@ class _PickModeControllerState extends State<PickModeController> {
                       borderRadius: BorderRadius.circular(40),
                     ),
                     child: Center(
-                      child: Image(image: AssetImage('images/guide/auto_mode.png'),width: 26,height: 28,),
+                      // child: Image(image: AssetImage('images/guide/auto_mode.png'),width: 26,height: 28,),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image(image: AssetImage('images/guide/auto_mode.png'),width: 26,height: 28,),
+                          SizedBox(width: 7,),
+                          Constants.regularWhiteTextWidget("Auto", 12, Constants.selectedModelOrangeBgColor),
+                        ],
+                      ),
+
                     ),
                   ),
                 ),
@@ -592,6 +627,7 @@ class _PickModeControllerState extends State<PickModeController> {
                   Vibration.vibrate(duration: 500);
                   NavigatorUtil.push(Routes.guidePage);
                   BleSendUtil.setRobotMode(RobotMode.training);
+
 
                 },
                   child: Container(
@@ -662,9 +698,14 @@ class _PickModeControllerState extends State<PickModeController> {
              });
              print("点击back");
              BleSendUtil.setRobotMode(RobotMode.rest);
+             // start 置为stop
+             Future.delayed(Duration(milliseconds: 500), () { // 自动开始捡球
+               BleSendUtil.setRobotStartPick(0); // 暂停捡球
+             });
+
              },
             child: Container(
-              margin:  selectedMode == SelectedMode.autoMode ? EdgeInsets.only(bottom: 87) :
+              margin:  selectedMode == SelectedMode.autoMode ? EdgeInsets.only(top: 100) :
               EdgeInsets.only(top: 87),
               width: 167,
               height: 66,

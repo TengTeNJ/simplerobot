@@ -21,7 +21,6 @@ import 'package:tennis_robot/utils/robot_send_data.dart';
 import 'control_time_out_util.dart';
 import 'dialog.dart';
 import 'global.dart';
-import 'navigator_util.dart';
 
 
 Timer? repeatTimer;
@@ -129,7 +128,7 @@ class BluetoothManager {
         // 保存读写特征值
         late final notifyCharacteristic;
         if(model.device.name == kBLEDevice_NewName){
-          // digital shoots
+          // seeker bot
           notifyCharacteristic = QualifiedCharacteristic(
               serviceId: Uuid.parse(kBLE_270_SERVICE_UUID),
               characteristicId: Uuid.parse(kBLE_270_CHARACTERISTIC_NOTIFY_UUID),
@@ -138,7 +137,7 @@ class BluetoothManager {
         }else{
 
         }
-        // 确保是digital shoots
+        // 确保是seeker bot
         if(model.device.name == kBLEDevice_NewName){
           final writerCharacteristic = QualifiedCharacteristic(
               serviceId: Uuid.parse(kBLE_270_SERVICE_UUID),
@@ -146,7 +145,7 @@ class BluetoothManager {
               deviceId: model.device.id);
           model.writerCharacteristic = writerCharacteristic;
         }
-        //  给digital shoots设备发送上线通知，不能给测速器发送
+        //  给seeker bot 设备发送上线通知，不能给测速器发送
         if(model.device.name == kBLEDevice_NewName){
 
           // 每五秒发送一次心跳指令
@@ -164,7 +163,7 @@ class BluetoothManager {
           // }
         }
         // 连接成功弹窗
-      //  EasyLoading.showSuccess('Bluetooth connection successful');
+       // EasyLoading.showSuccess('Bluetooth connection successful');
         // 监听数据
        Future.delayed(Duration(milliseconds: 2000),(){
          _ble.subscribeToCharacteristic(notifyCharacteristic).listen((data) {
@@ -237,7 +236,7 @@ class BluetoothManager {
     }
     print('999${model}');
     // 多个命令同时发时 增加10ms的时间间隔
-    sleep(Duration(milliseconds: 10));
+    // sleep(Duration(milliseconds: 10));
     // Future.delayed(Duration(milliseconds: 50),() async{
     _ble.writeCharacteristicWithResponse(model.writerCharacteristic!,
          value: data);

@@ -45,11 +45,10 @@ import UIKit
               print("收到FLutter机器人的球满指令了")
 
               if let battery = call.arguments as? String {
-                  print("Received battery from Flutter: \(battery)")
+                  print("Received 球满的指令 from Flutter: \(battery)")
                   let userInfo = ["message": "\(battery)"]
                   NotificationCenter.default.post(name: Notification.Name(Constants.Notification_Robot_Ball_Full), object: nil, userInfo: userInfo)
-
-              }
+             }
               result(nil)
           } else if call.method == Constants.Notification_Robot_Begin_Navi {
               if let battery = call.arguments as? String {
@@ -85,7 +84,12 @@ import UIKit
                   NotificationCenter.default.post(name: Notification.Name(Constants.Notification_Robot_Receive_StartOrStopSingle), object: nil, userInfo: userInfo)
               }
               result(nil)
-          } else if call.method == "fLutterSendMessage" {
+          } else if call.method ==
+                        Constants.Notification_Robot_Pick_Ball_Success {
+              NotificationCenter.default.post(name: Notification.Name(Constants.Notification_Robot_Pick_Ball_Success), object: nil, userInfo: nil)
+          }
+          
+          else if call.method == "fLutterSendMessage" {
               if let args = call.arguments as? String {
                   print("Received data from Flutter: \(args)")
               }

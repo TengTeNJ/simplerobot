@@ -80,11 +80,17 @@ extension CameraCalibrationController {
 //                print("开始重复发送start命令")
 //            }
         
+        if data { // 点击开始捡球添加自动导航逻辑
+          self.commonAutoNavigation()
+        }
         
+
     }
     
     // MARK: - 设置面板点击的代理方法
     func CameraPickSettingClickDelegate(_ view: CameraPickCanvas, didSendData data: String) {
+//        NotificationCenter.default.post(name: Notification.Name(Constants.Notification_Robot_Pick_Ball_Success), object: nil, userInfo: nil)
+
         self.present(ParameterAdjustVC(binaryMessenger: self.binaryMessenger), animated: true)
 
     }

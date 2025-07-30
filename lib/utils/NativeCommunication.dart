@@ -135,6 +135,8 @@ class NativeCommunication {
         await platfrom1.invokeMethod('${type}','');
       } else if (type == 'RobotReceiveStartOrStopSingle') {
         await platfrom1.invokeMethod('${type}','${navigationType}');
+      } else if (type == 'RobotPickupBallSuccess') {
+        await platfrom1.invokeMethod('${type}','');
       }
 
       print('sendDataToNative6666');
