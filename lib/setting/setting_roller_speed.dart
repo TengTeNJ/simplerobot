@@ -1,5 +1,7 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tennis_robot/models/language_model.dart';
 import 'package:tennis_robot/models/robot_data_model.dart';
 import 'package:tennis_robot/setting/asserts_image_builder.dart';
 import 'package:tennis_robot/setting/image_slider_thumb.dart';
@@ -196,7 +198,7 @@ class _SettingRollerSpeedState extends State<SettingRollerSpeed> {
                 margin: EdgeInsets.only(top: 36),
                 child: Center(
                   child:
-                  Constants.boldWhiteTextWidget('You can adjust the speed of the robots wheel movement through different gears', 16),
+                  Constants.boldWhiteTextWidget('${Provider.of<LanguageModel>(context,listen: false).getText("你可通过调节档位调整捡球机的移动速度")}', 16),
                 ),
               ),
 
@@ -236,7 +238,7 @@ class _SettingRollerSpeedState extends State<SettingRollerSpeed> {
               Container(
                 child: Center(
                   child:
-                  Constants.mediumWhiteTextWidget('Save 20% of the battery.', 16, Color.fromRGBO(248, 98, 21, 1.0)),
+                  Constants.mediumWhiteTextWidget('${Provider.of<LanguageModel>(context,listen: false).getText("1档可节省20%电量")}', 16, Color.fromRGBO(248, 98, 21, 1.0)),
                 ),
               ) : Container()
 

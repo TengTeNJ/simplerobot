@@ -51,6 +51,8 @@ class BluetoothManager {
   Function(String time)? workTimeChange; // 机器人工作时间改变
   Function(String blueName)? blueNameChange; // 机器人名字
   Function()? disConnect; // 机器人断链
+  Function()? connectSuccess; // 机器人连接成功
+
 
   Function(int index)? clickIndex ; // 机器人手动关机或者捡球操作
 
@@ -164,6 +166,7 @@ class BluetoothManager {
         }
         // 连接成功弹窗
        // EasyLoading.showSuccess('Bluetooth connection successful');
+        BluetoothManager().connectSuccess?.call();
         // 监听数据
        Future.delayed(Duration(milliseconds: 2000),(){
          _ble.subscribeToCharacteristic(notifyCharacteristic).listen((data) {

@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tennis_robot/models/language_model.dart';
 import 'package:vibration/vibration.dart';
 
 import '../constant/constants.dart';
@@ -193,7 +195,7 @@ class _NewSettingBallTypeControllerState extends State<NewSettingBallTypeControl
               Container(
                 margin: EdgeInsets.only(top: 37),
                 width: Constants.screenWidth(context)- 100,
-                child: Constants.mediumWhiteTextWidget('You can adjust the ball collection speed of the robot.', 17, Colors.white,maxLines: 3),
+                child: Constants.mediumWhiteTextWidget('${Provider.of<LanguageModel>(context,listen: false).getText("调节机器人收球速度")}', 17, Colors.white,maxLines: 3),
               ),
 
 

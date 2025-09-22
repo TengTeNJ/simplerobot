@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:tennis_robot/models/language_model.dart';
 import 'package:tennis_robot/utils/robot_send_data.dart';
 
 import '../constant/constants.dart';
@@ -82,7 +84,7 @@ class _GuideAvoidsunControllerState extends State<GuideAvoidsunController> {
 
               Container(
                 margin: EdgeInsets.only(top: 36),
-                child:  Constants.mediumWhiteTextWidget('Reminders', 36, Colors.white),
+                child:  Constants.mediumWhiteTextWidget('${Provider.of<LanguageModel>(context).getText("注意事项")}', 36, Colors.white),
               ),
 
               GestureDetector(onTap: (){
@@ -137,7 +139,7 @@ class _GuideAvoidsunControllerState extends State<GuideAvoidsunController> {
                               ),
                             ),
                             SizedBox(width: 6,),
-                            Constants.regularWhiteTextWidget('Avoid direct exposure to sunlight', 16, Colors.white),
+                            Constants.regularWhiteTextWidget('${Provider.of<LanguageModel>(context).getText("阳关提示")}', 16, Colors.white),
 
                           ],
                         ),
@@ -173,7 +175,7 @@ class _GuideAvoidsunControllerState extends State<GuideAvoidsunController> {
                             ),
                             SizedBox(width: 6,),
 
-                            Constants.regularWhiteTextWidget('Secure your phone', 16, Colors.white),
+                            Constants.regularWhiteTextWidget('${Provider.of<LanguageModel>(context).getText("手机固定提示")}', 16, Colors.white),
                           ],
                         ),
                       ),
@@ -216,7 +218,7 @@ class _GuideAvoidsunControllerState extends State<GuideAvoidsunController> {
                             ),
                             SizedBox(width: 6,),
 
-                            Constants.regularWhiteTextWidget('Avoid covering the camera', 16, Colors.white),
+                            Constants.regularWhiteTextWidget('${Provider.of<LanguageModel>(context).getText("手机摄像头提示")}', 16, Colors.white),
 
                           ],
                         ),
@@ -246,7 +248,6 @@ class _GuideAvoidsunControllerState extends State<GuideAvoidsunController> {
 
                       Container(
                         margin: EdgeInsets.only(left: 46),
-
                         child: Row(
                           children: [
                             Container(
@@ -258,7 +259,7 @@ class _GuideAvoidsunControllerState extends State<GuideAvoidsunController> {
                               ),
                             ),
                             SizedBox(width: 6,),
-                            Constants.regularWhiteTextWidget('Clear dead zone balls', 16, Colors.white),
+                            Constants.regularWhiteTextWidget('${Provider.of<LanguageModel>(context).getText("死球区域提示")}', 16, Colors.white),
                           ],
                         ),
                       ),

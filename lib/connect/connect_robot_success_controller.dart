@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tennis_robot/utils/data_base.dart';
 
 import '../constant/constants.dart';
+import '../models/language_model.dart';
 import '../route/routes.dart';
 import '../utils/blue_tooth_manager.dart';
 import '../utils/dialog.dart';
@@ -30,6 +32,8 @@ class _ConnectRobotSuccessControllerState extends State<ConnectRobotSuccessContr
           // 发送通知到连接界面
           EventBus().sendEvent(kRobotConnectChange);
           NavigatorUtil.popToRoot();
+          NavigatorUtil.init(NavigatorUtil.utilContext);
+
         });
     };
   }
@@ -87,10 +91,11 @@ class _ConnectRobotSuccessControllerState extends State<ConnectRobotSuccessContr
                    Constants.customTextWidget('SUCCESS!', 18 , '#E96415', fontWeight:FontWeight.w700),
                    SizedBox(height: 5,),
 
-                   Constants.customTextWidget('Bluetooth device connection \n successful', 18 , '#CCCCCC', fontWeight:FontWeight.w400,height:1.5 ),
+                   Constants.customTextWidget('${Provider.of<LanguageModel>(context, listen: false).getText('连接成功')}', 18 , '#CCCCCC', fontWeight:FontWeight.w400,height:1.5 ),
 
                    SizedBox(height: 53,),
-                   Constants.customTextWidget('Current Bluetooth Network', 18 , '#CCCCCC', fontWeight:FontWeight.w400),
+
+                   Constants.customTextWidget('${Provider.of<LanguageModel>(context, listen: false).getText('当前的蓝牙设备')}', 18 , '#CCCCCC', fontWeight:FontWeight.w400),
                    SizedBox(height: 5,),
 
                    Constants.customTextWidget('${kBLEDevice_NewName}', 18 , '#E96415', fontWeight:FontWeight.w400),

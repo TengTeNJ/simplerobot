@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/customAppBar.dart';
 import 'package:tennis_robot/models/pickupBall_time.dart';
@@ -12,6 +13,7 @@ import 'package:tennis_robot/utils/event_bus.dart';
 import 'package:tennis_robot/utils/robot_send_data.dart';
 import 'package:tt_indicator/tt_indicator.dart';
 
+import '../models/language_model.dart';
 import '../models/pickup_ball_model.dart';
 import '../route/routes.dart';
 import '../utils/ble_send_util.dart';
@@ -352,7 +354,7 @@ class _ActionControllerState extends State<ActionController> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Stats',
+                    Text('${Provider.of<LanguageModel>(context, listen: false).getText('数据')}',
                       style: TextStyle(
                         fontFamily: 'SanFranciscoDisplay',
                         color: Constants.selectedModelBgColor,

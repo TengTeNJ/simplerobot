@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tennis_robot/constant/constants.dart';
+import 'package:tennis_robot/models/language_model.dart';
 import 'package:tennis_robot/models/setting_model.dart';
 import 'package:tennis_robot/setting/setting_avoid_distance_controller.dart';
 import 'package:tennis_robot/setting/setting_reset_gap_controller.dart';
@@ -25,15 +27,15 @@ class _SettingItemViewState extends State<SettingItemView> {
     return GestureDetector(
      // behavior: HitTestBehavior.opaque,
       onTap: (){
-         if (widget.model.title == 'Ball Type') {
+         if (widget.model.title == '${Provider.of<LanguageModel>(context,listen: false).getText("收球类型")}') {
           // NavigatorUtil.present(SettingBallTypeController());
          NavigatorUtil.present(NewSettingBallTypeController());
 
-         } else if (widget.model.title =='Roller Speed'){
+         } else if (widget.model.title =='${Provider.of<LanguageModel>(context,listen: false).getText("车轮速度")}'){
            NavigatorUtil.present(SettingRollerSpeed());
-         } else if (widget.model.title == 'Profile') {
+         } else if (widget.model.title == '${Provider.of<LanguageModel>(context,listen: false).getText("个人资料")}') {
            NavigatorUtil.present(UserProfileController());
-         } else if (widget.model.title == 'Fault') {
+         } else if (widget.model.title == '${Provider.of<LanguageModel>(context,listen: false).getText("故障引导")}') {
            NavigatorUtil.present(FaultInfoController());
          } else {
            NavigatorUtil.present(SettingResetGapController());

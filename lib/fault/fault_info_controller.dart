@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tennis_robot/models/language_model.dart';
 
 import '../constant/constants.dart';
 import '../utils/navigator_util.dart';
@@ -63,7 +65,7 @@ class _FaultInfoControllerState extends State<FaultInfoController> {
               
               Container(
                 width: Constants.screenWidth(context) - 52*2,
-                child: Constants.mediumWhiteTextWidget('Faults and Solutions', 18, Colors.white,maxLines: 3 ,height: 1.1),
+                child: Constants.mediumWhiteTextWidget('${Provider.of<LanguageModel>(context,listen: false).getText("关于故障与解决方法")}', 18, Colors.white,maxLines: 3 ,height: 1.1),
               ),
 
 
@@ -87,14 +89,14 @@ class _FaultInfoControllerState extends State<FaultInfoController> {
 
               Container(
                 width: Constants.screenWidth(context) - 52*2,
-                child: Constants.mediumWhiteTextWidget('1.Faults and Solutions', 16, Colors.white,maxLines: 3 ,
+                child: Constants.mediumWhiteTextWidget('${Provider.of<LanguageModel>(context,listen: false).getText("1.缠绕球网")}', 16, Colors.white,maxLines: 3 ,
                     height: 1.1),
               ),
 
               SizedBox(height: 12,),
               Container(
                 width: Constants.screenWidth(context) - 52*2,
-                child: Constants.mediumWhiteTextWidget('Solution: \nDetach the net from the SeekerBot\n and restart the machine.', 16,
+                child: Constants.mediumWhiteTextWidget('${Provider.of<LanguageModel>(context,listen: false).getText("缠绕球网解决办法")}', 16,
                     Color.fromRGBO(248, 98, 21, 1),maxLines: 3 ,
                     height: 1.1),
               ),
@@ -119,14 +121,14 @@ class _FaultInfoControllerState extends State<FaultInfoController> {
 
               Container(
                 width: Constants.screenWidth(context) - 52*2,
-                child: Constants.mediumWhiteTextWidget('2.Stuck in Tight Right-Angled Space', 16, Colors.white,maxLines: 3 ,
+                child: Constants.mediumWhiteTextWidget('${Provider.of<LanguageModel>(context,listen: false).getText("2.在狭隘的直角空间卡停")}', 16, Colors.white,maxLines: 3 ,
                     height: 1.1),
               ),
 
               SizedBox(height: 12,),
               Container(
                 width: Constants.screenWidth(context) - 52*2,
-                child: Constants.mediumWhiteTextWidget('Solution:\n Switch to manual mode and guide the SeekerBot out of the area.', 16,
+                child: Constants.mediumWhiteTextWidget('${Provider.of<LanguageModel>(context,listen: false).getText("卡停解决办法")}', 16,
                     Color.fromRGBO(248, 98, 21, 1),maxLines: 3 ,
                     height: 1.1),
               ),
@@ -151,14 +153,14 @@ class _FaultInfoControllerState extends State<FaultInfoController> {
 
               Container(
                 width: Constants.screenWidth(context) - 52*2,
-                child: Constants.mediumWhiteTextWidget('03.Wheel Obstructed', 16, Colors.white,maxLines: 3 ,
+                child: Constants.mediumWhiteTextWidget('${Provider.of<LanguageModel>(context,listen: false).getText("03.车轮卡停")}', 16, Colors.white,maxLines: 3 ,
                     height: 1.1),
               ),
 
               SizedBox(height: 12,),
               Container(
                 width: Constants.screenWidth(context) - 52*2,
-                child: Constants.mediumWhiteTextWidget('Solution: \nInspect the wheels for foreign objects or any object sticking out and remove the obstructions.', 16,
+                child: Constants.mediumWhiteTextWidget('${Provider.of<LanguageModel>(context,listen: false).getText("车轮卡停解决办法")}', 16,
                     Color.fromRGBO(248, 98, 21, 1),maxLines: 4 ,
                     height: 1.1),
               ),

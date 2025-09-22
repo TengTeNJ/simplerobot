@@ -2,8 +2,10 @@ import 'dart:math';
 //import 'dart:nativewrappers/_internal/vm/lib/core_patch.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/customAppBar.dart';
+import 'package:tennis_robot/models/language_model.dart';
 import 'package:tennis_robot/models/pickupBall_time.dart';
 import 'package:tennis_robot/models/pickup_ball_model.dart';
 import 'package:tennis_robot/robotstats/my_stats_line_area_view.dart';
@@ -205,7 +207,7 @@ class _RobotStatsControllerState extends State<RobotStatsController> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(' Time on Trainings',
+                  Text('${Provider.of<LanguageModel>(context,listen: false).getText("我的训练")}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'San Francisco Display',

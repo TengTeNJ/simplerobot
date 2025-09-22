@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shopify_flutter/shopify_flutter.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/robotstats/game_model.dart';
 import 'package:tennis_robot/utils/dialog.dart';
+import '../models/language_model.dart';
 import '../models/my_status_model.dart';
 import '../utils/color.dart';
 import '../startPage/my_stats_tip_view.dart';
@@ -123,7 +125,7 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Constants.mediumBaseTextWidget('Highest ${widget.maxCount}', 16),
+                Constants.mediumBaseTextWidget('${Provider.of<LanguageModel>(context,listen: false).getText("我的记录")}${widget.maxCount}', 16),
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () async {

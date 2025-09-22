@@ -75,7 +75,7 @@ class CustomAlertViewController: UIViewController {
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         canvas.addSubview(messageLabel)
         
-        confirmButton.setTitle("Yes", for: .normal)
+        confirmButton.setTitle(Strings.yes, for: .normal)
         confirmButton.addTarget(self, action: #selector(confirmAction), for: .touchUpInside)
         confirmButton.backgroundColor = UIColor(red: 233/255.0, green: 100/255.0, blue: 21/255.0, alpha: 1.0)
         confirmButton.translatesAutoresizingMaskIntoConstraints = false

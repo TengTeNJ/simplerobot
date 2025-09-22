@@ -1,15 +1,30 @@
+import 'dart:convert';
+
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 import 'package:tennis_robot/connect/connect_robot_controller.dart';
 import 'package:tennis_robot/pickmode/pick_mode_controller.dart';
 import 'package:tennis_robot/route/routes.dart';
+import 'package:tennis_robot/select_court_type_controller.dart';
 import 'package:tennis_robot/utils/global.dart';
 import 'package:tennis_robot/startPage/action_controller.dart';
 import 'package:tennis_robot/utils/navigator_util.dart';
 import 'package:shopify_flutter/shopify_flutter.dart';
 
-void main() {
+import 'models/language_model.dart';
+import 'models/theme_provider.dart';
+
+void main()  async{
+
+  // WidgetsFlutterBinding.ensureInitialized();      // 必须
+  // await EasyLocalization.ensureInitialized();     // 必须
+  GetIt.I.registerSingleton<GameUtil>(GameUtil()); // 注册GameUtil实例
+
+
   ShopifyConfig.setConfig(
     storefrontAccessToken: 'e49948d9b677f9bf54e9e73bc7922aac',
     storeUrl:'http://www.baidu.com',
@@ -18,10 +33,13 @@ void main() {
     cachePolicy: CachePolicy.noCache,
     language: 'en',
   );
-  GetIt.I.registerSingleton<GameUtil>(GameUtil()); // 注册GameUtil实例
 
-  runApp(const MyApp());
-  runApp(const MyApp());
+  runApp(
+     ChangeNotifierProvider(
+        create: (_) => LanguageModel(), // 添加语言管理
+        child: const MyApp(),
+      ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -32,6 +50,7 @@ class MyApp extends StatelessWidget {
     bool isLoggedIn = true; // 根据实际情况设置
     if (isLoggedIn) {
       return ConnectRobotController();
+      // return SelectCourtTypeController();
     } else {
       return ActionController();
     }
@@ -40,7 +59,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NavigatorUtil.init(context);
+    // 获取系统语言
+    // Locale locale = Localizations.localeOf(context);
+    // String languageCode = locale.languageCode;
 
+    // loadTranslations(languageCode);
     return MaterialApp(
       title: 'Flutter Demo',
       onGenerateRoute: Routes.onGenerateRoute,

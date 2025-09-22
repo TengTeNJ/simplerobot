@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:tennis_robot/models/robot_data_model.dart';
 import 'package:tennis_robot/pickmode/robot_speed_adjust_view.dart';
 import 'package:tennis_robot/trainmode/mode_switch_view.dart';
@@ -12,9 +13,11 @@ import 'package:tennis_robot/utils/ble_send_util.dart';
 import 'package:tennis_robot/utils/event_bus.dart';
 import 'package:tennis_robot/views/remote_control_view.dart';
 import 'package:vibration/vibration.dart';
+// import 'package:wakelock/wakelock.dart';
 
 import '../constant/constants.dart';
 import '../customAppBar.dart';
+import '../models/language_model.dart';
 import '../models/pickup_ball_model.dart';
 import '../route/routes.dart';
 import '../startPage/action_data_list_view.dart';
@@ -119,7 +122,8 @@ class _PickModeControllerState extends State<PickModeController> {
   // }
 
   void initState() {
-   // enableKeepScreenOn();
+   //  Wakelock.enable();   // 进入页面即常亮
+
     // 断链退到连接界面
   BluetoothManager().disConnect = () {
     NativeCommunication().sendDataToNative('bluetoothDisconnectSingle',0);
@@ -137,8 +141,6 @@ class _PickModeControllerState extends State<PickModeController> {
         for (var model in list) {
           if (model.device.name == kBLEDevice_NewName) {
              BluetoothManager().writerDataToDevice(model, heartBeatData());
-
-
           }
         }
       });
@@ -610,9 +612,9 @@ class _PickModeControllerState extends State<PickModeController> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image(image: AssetImage('images/guide/auto_mode.png'),width: 26,height: 28,),
+                          Image(image: AssetImage('images/home/auto_mode.png'),width: 26,height: 28,),
                           SizedBox(width: 7,),
-                          Constants.regularWhiteTextWidget("Auto", 12, Constants.selectedModelOrangeBgColor),
+                          Constants.regularWhiteTextWidget("${Provider.of<LanguageModel>(context, listen: false).getText('自动捡球')}", 12, Constants.selectedModelOrangeBgColor),
                         ],
                       ),
 
@@ -643,7 +645,8 @@ class _PickModeControllerState extends State<PickModeController> {
                         children: [
                           Image(image: AssetImage('images/guide/auto.png'),width: 26,height: 28,),
                           SizedBox(width: 7,),
-                          Constants.regularWhiteTextWidget("AI Mode", 14, Constants.selectedModelOrangeBgColor),
+                          Constants.regularWhiteTextWidget("${Provider.of<LanguageModel>(context,
+                              listen: false).getText('AI模式')}", 14, Constants.selectedModelOrangeBgColor),
                         ],
                       ),
 
@@ -714,7 +717,8 @@ class _PickModeControllerState extends State<PickModeController> {
                 borderRadius: BorderRadius.circular(33),
               ),
               child: Center(
-                  child: Constants.regularWhiteTextWidget('Back', 20, Constants.selectedModelBgColor)
+                  child: Constants.regularWhiteTextWidget('${Provider.of<LanguageModel>(context,
+    listen: false).getText('返回')}', 20, Constants.selectedModelBgColor)
               ),
             ),
           ),),

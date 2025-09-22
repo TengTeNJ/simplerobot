@@ -42,7 +42,7 @@ class ParameterAdjustVC: UIViewController {
     lazy var balltypelabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
-        label.text = "Ball Type"
+        label.text = Strings.ballType
         label.font = UIFont.systemFont(ofSize: 18, weight: .regular)
         return label
       }()
@@ -80,7 +80,7 @@ class ParameterAdjustVC: UIViewController {
         }
         
         let adjustViewRollerSpeed = ParameterAdjustView()
-        adjustViewRollerSpeed.typeLabel.text = "Roller Speed"
+        adjustViewRollerSpeed.typeLabel.text = Strings.rollerSpeed
         adjustViewRollerSpeed.numLabel.text = "0.42m/s"
         view.addSubview(adjustViewRollerSpeed)
         adjustViewRollerSpeed.sliderDefalutValue = 2.0

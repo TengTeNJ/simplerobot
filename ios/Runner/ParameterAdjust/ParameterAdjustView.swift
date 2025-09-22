@@ -25,7 +25,7 @@ class ParameterAdjustView: UIView {
     lazy var typeLabel: UILabel = {
         let typeLabel = UILabel()
         typeLabel.textColor = .white
-        typeLabel.text = "Roller Speed"
+        typeLabel.text = Strings.rollerSpeed
         typeLabel.font = UIFont.systemFont(ofSize: 18, weight: .bold)
         return typeLabel
       }()

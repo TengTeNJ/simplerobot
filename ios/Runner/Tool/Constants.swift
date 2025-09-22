@@ -7,6 +7,37 @@
 
 import UIKit
 
+/// 只关心「zh」还是其它
+var isChinese: Bool {
+    // ① 取系统最优先语言
+    let lang = Locale.preferredLanguages.first ?? "en"
+    // ② 只要前缀是 zh 就认为是中文
+    return lang.hasPrefix("zh")
+}
+
+struct Strings {
+    static var calibrationText: String { isChinese ? "请将球场的关键点置于校准圈内，以完成视野校准。" :"Please position the key points of the court within the calibration circle to achieve field of view calibration."}
+    static var setting: String { isChinese ? "设置" : "Settings" }
+    
+    static var zoneA: String { isChinese ? "区域 A" : "ZoneA"}
+    static var zoneB: String { isChinese ? "区域 B" : "ZoneB"}
+    static var zoneC: String { isChinese ? "区域 C" : "ZoneC"}
+    
+    static var calibration: String { isChinese ? "镜头校准" : "Calibrate"}
+    static var battery: String { isChinese ? "电量" : "Battery"}
+    
+    static var rollerSpeed: String { isChinese ? "车轮速度" : "Roller Speed"}
+
+    static var ballType: String { isChinese ? "收球类型" : "Ball Type"}
+
+    static var sureExit: String { isChinese ? "确认退出" : "Confirm Exit"}
+    
+    static var sureExitDes: String { isChinese ? "你确定要退出吗" : "Are you sure You want to exit"}
+    
+    static var yes: String { isChinese ? "是" : "Yes"}
+
+}
+
 /// 常量的定义
 class Constants {
     

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import '../constant/constants.dart';
+import '../models/language_model.dart';
 import '../route/routes.dart';
 import '../utils/NativeCommunication.dart';
 import '../utils/navigator_util.dart';
@@ -84,7 +86,7 @@ class _GuidePageControllerState extends State<GuidePageController> {
 
               Container(
                 margin: EdgeInsets.only(top: 36),
-                child:  Constants.mediumWhiteTextWidget('Intelligent Mode', 36, Colors.white),
+                child:  Constants.mediumWhiteTextWidget('${Provider.of<LanguageModel>(context, listen: false).getText('智能捡球模式')}', 36, Colors.white),
               ),
 
               GestureDetector(onTap: (){
@@ -123,10 +125,7 @@ class _GuidePageControllerState extends State<GuidePageController> {
 
           Container(
             margin: EdgeInsets.only(left: 88,right: 88),
-            child:  Constants.regularWhiteTextWidget('In the intelligent mode, '
-                'your robot will remain within the boundaries of the court,'
-                ' and you can select the position to which the robot returns '
-                'after the balls are full by clicking the HOME icon.', 16, Colors.white,height: 1.5),
+            child:  Constants.regularWhiteTextWidget('${Provider.of<LanguageModel>(context, listen: false).getText('智能捡球模式描述')}', 16, Colors.white,height: 1.5),
           ),
 
           Align(
@@ -148,7 +147,7 @@ class _GuidePageControllerState extends State<GuidePageController> {
                   // color: Constants.dialogBgColor, // 不能设置颜色，否则颜色不显示
                   child: Center(
                     child: Text(
-                      'Skip',
+                      '${Provider.of<LanguageModel>(context,listen: false).getText('跳过')}',
                       style: TextStyle(color: Constants.grayTextColor),
                     ),
                   ),

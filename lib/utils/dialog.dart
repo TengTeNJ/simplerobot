@@ -864,6 +864,7 @@ class RobotLowBatteryDialog extends StatelessWidget {
               height: 40,
               onTap: () {
                 this.exchange();
+                NavigatorUtil.init(context);
               }),),
           SizedBox(
             height: 32,

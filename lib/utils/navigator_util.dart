@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 class NavigatorUtil {
   static late BuildContext utilContext;
@@ -11,6 +12,11 @@ class NavigatorUtil {
   // 跳转到新页面（push）
   static push(String routeName,{Object arguments = const Object()}) {
     return Navigator.pushNamed(NavigatorUtil.utilContext, routeName,arguments: arguments);
+  }
+
+  // 跳转到新页面（context）
+  static pushWithContext(String routeName,BuildContext context,{Object arguments = const Object()}) {
+    return Navigator.pushNamed(context, routeName,arguments: arguments);
   }
 
   static pushAndThen(String routeName,{Object arguments = const Object()}) {

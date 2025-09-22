@@ -1,8 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tennis_robot/models/pickup_ball_model.dart';
 import 'package:tennis_robot/startPage/action_list_view.dart';
 import 'package:tennis_robot/utils/color.dart';
+import '../models/language_model.dart';
 import '../models/my_status_model.dart';
 import 'package:tennis_robot/utils/data_base.dart';
 import 'package:tennis_robot/constant/constants.dart';
@@ -73,13 +75,13 @@ class _ActionDataListViewState extends State<ActionDataListView> {
           children: [
             ActionListView(
                 assetPath: 'images/connect/today_number_icon.png',
-                title: 'Today',
+                title: '${Provider.of<LanguageModel>(context, listen: false).getText('今天')}',
                 desc: "${widget.todayCount}",
                 showIcon: widget.showIcon,
             ),
             ActionListView(
               assetPath: 'images/connect/today_use_time.png',
-              title: 'Today Use',
+              title: '${Provider.of<LanguageModel>(context, listen: false).getText('今日使用')}',
               desc: '${widget.useMinutes}',
               unit: 'mins',
               showIcon: widget.showIcon,
@@ -87,7 +89,7 @@ class _ActionDataListViewState extends State<ActionDataListView> {
             // SizedBox(width: 20),
             ActionListView(
                 assetPath: 'images/connect/today_cal.png',
-                title: 'Calorie',
+                title: '${Provider.of<LanguageModel>(context, listen: false).getText('消耗卡路里')}',
                 desc: '${widget.todayCal}',
                 showIcon: widget.showIcon,
             ),

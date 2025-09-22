@@ -71,7 +71,7 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
             zoneSignLabel.frame.origin.y = 60 + 280 + 4
             zoneSignLabel.frame.origin.x = 82 + 250
             zoneSignLabel.frame.size = CGSize(width: areaChoose.areaBigABtn.frame.size.width, height: 16)
-            zoneSignLabel.text = "Zone A"
+            zoneSignLabel.text = Strings.zoneA
 
 
         } else if (data == 100){ // 休息模式不显示两个捡球区域选择View
@@ -86,7 +86,7 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
             zoneSignLabel.frame.origin.y = 60 + 280 + 4
             zoneSignLabel.frame.origin.x = areaChoose.areaABtn.frame.origin.x + 334
             zoneSignLabel.frame.size = CGSize(width: areaChoose.areaABtn.frame.size.width, height: 16)
-            zoneSignLabel.text = "Zone B"
+            zoneSignLabel.text = Strings.zoneB
         } else {
             print("外场")
             areaChoose.areaCBtn.isHidden = false
@@ -98,7 +98,7 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
             zoneSignLabel.frame.origin.y = 60 + 280 + 4
             zoneSignLabel.frame.origin.x = areaChoose.areaCBtn.frame.origin.x + 334
             zoneSignLabel.frame.size = CGSize(width: areaChoose.areaCBtn.frame.size.width, height: 16)
-            zoneSignLabel.text = "Zone C"
+            zoneSignLabel.text = Strings.zoneC
         }
         
     }
@@ -159,7 +159,7 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
     ///ABC 的label标识
     lazy var zoneSignLabel: UILabel = {
         let zoneSignLabel = UILabel(frame: CGRect(x: 82 + 250, y: 60 + 280 + 4, width: areaChoose.areaBigABtn.frame.size.width, height: 16))
-        zoneSignLabel.text = "Zone A"
+        zoneSignLabel.text = Strings.zoneA
         zoneSignLabel.font = UIFont.systemFont(ofSize: 12, weight: .regular)
         zoneSignLabel.textColor = UIColor(red: 25/255.0, green: 243/255.0, blue: 134/255.0, alpha: 1.0)
         zoneSignLabel.textAlignment = .center
@@ -290,7 +290,7 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
         settingBtn.setTitle("cali", for: .normal)
         settingBtn.addTarget(self, action: #selector(settingClick(_:)), for: .touchUpInside)
         self.addSubview(settingBtn)
-        self.addSubview(createLab(targetVIew: settingBtn, text: "Settings"))
+        self.addSubview(createLab(targetVIew: settingBtn, text: Strings.setting))
         
 
         
@@ -300,12 +300,12 @@ class CameraPickCanvas: UIView, ModeSwitchViewDelegate, AreaChooseViewDelegate {
         caliBtn.setTitle("cali", for: .normal)
         caliBtn.addTarget(self, action: #selector(back(_:)), for: .touchUpInside)
         self.addSubview(caliBtn)
-        self.addSubview(createLab(targetVIew: caliBtn, text: "Calibrate"))
+        self.addSubview(createLab(targetVIew: caliBtn, text: Strings.calibration))
         
         // 电量视图
         let batteryView = BatteryView(frame: CGRectMake(caliBtn.frame.origin.x + 36 + 21, 304, 75, 36))
         self.addSubview(batteryView)
-        self.addSubview(createLab(targetVIew: batteryView, text: "Battery"))
+        self.addSubview(createLab(targetVIew: batteryView, text: Strings.battery))
         
         
         addSubview(zoneSignLabel)

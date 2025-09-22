@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tennis_robot/constant/constants.dart';
+import 'package:tennis_robot/models/language_model.dart';
 import 'package:tennis_robot/profile/setting_list_view.dart';
 import '../models/setting_model.dart';
 import '../utils/blue_tooth_manager.dart';
@@ -15,13 +17,14 @@ class ProfileController extends StatefulWidget {
 }
 
 class _ProfileControllerState extends State<ProfileController> {
-  List<SettingModel> data = [
-    SettingModel('images/profile/setting_ball_type.png','Ball Type'),
-    SettingModel('images/profile/setting_roller_speed.png','Roller Speed'),
-    // SettingModel('images/profile/setting_reset_gap.png','Reset Gap'),
-    SettingModel('images/profile/setting_profile.png','Profile'),
-    SettingModel('images/profile/setting_fault.png','Fault'),
-  ];
+  // List<SettingModel> data = [
+  //   // ${Provider.of<LanguageModel>(context,listen: false).getText('跳过')}
+  //   SettingModel('images/profile/setting_ball_type.png','${Provider.of<LanguageModel>(context,listen: false).getText('收球类型')}'),
+  //   SettingModel('images/profile/setting_roller_speed.png','${Provider.of<LanguageModel>(context,listen: false).getText('车轮速度')}'),
+  //   // SettingModel('images/profile/setting_reset_gap.png','Reset Gap'),
+  //   SettingModel('images/profile/setting_profile.png','${Provider.of<LanguageModel>(context,listen: false).getText('个人资料')}'),
+  //   SettingModel('images/profile/setting_fault.png','${Provider.of<LanguageModel>(context,listen: false).getText('故障引导')}'),
+  // ];
 
   @override
   void initState() {
@@ -39,6 +42,17 @@ class _ProfileControllerState extends State<ProfileController> {
 
   @override
   Widget build(BuildContext context) {
+    final languageModel = Provider.of<LanguageModel>(context);
+    List<SettingModel> data = [
+      SettingModel('images/profile/setting_ball_type.png','${Provider.of<LanguageModel>(context,listen: false).getText('收球类型')}'),
+      SettingModel('images/profile/setting_roller_speed.png','${Provider.of<LanguageModel>(context,listen: false).getText('车轮速度')}'),
+      // SettingModel('images/profile/setting_reset_gap.png','Reset Gap'),
+      SettingModel('images/profile/setting_profile.png','${Provider.of<LanguageModel>(context,listen: false).getText('个人资料')}'),
+      SettingModel('images/profile/setting_fault.png','${Provider.of<LanguageModel>(context,listen: false).getText('故障引导')}'),
+    ];
+
+
+
     return Scaffold(
       body: Container(
         color: Constants.darkControllerColor,

@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:network_info_plus/network_info_plus.dart';
+import 'package:provider/provider.dart';
 import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/route/routes.dart';
 import 'package:tennis_robot/utils/blue_tooth_manager.dart';
@@ -12,6 +15,7 @@ import 'package:tennis_robot/utils/navigator_util.dart';
 import 'package:tennis_robot/utils/robot_manager.dart';
 import 'package:tennis_robot/utils/robot_send_data.dart';
 
+import '../models/language_model.dart';
 import '../utils/ble_send_util.dart';
 import '../utils/ble_util.dart';
 import '../utils/dialog.dart';
@@ -45,6 +49,9 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    // var s =  loadTranslations("title");
+    // print("翻译语言${s}");
 
     // 设置应用的首选方向为竖屏
     SystemChrome.setPreferredOrientations([
@@ -107,10 +114,23 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
     print('page 销毁');
   }
 
+
   @override
   Widget build(BuildContext context) {
+    final languageModel = Provider.of<LanguageModel>(context);
     NavigatorUtil.init(context);
+    // 获取系统语言
+    Locale systemLocale = WidgetsBinding.instance.window.locale;
 
+    // 根据系统语言显示不同的内容
+    String greeting;
+    if (systemLocale.languageCode == 'zh') {
+      greeting = '你好，世界！';
+      languageModel.currentLocale = Locale('zh');
+    } else {
+      greeting = 'Hello, World!';
+      languageModel.currentLocale = Locale('en');
+    }
     return Scaffold(
         backgroundColor: Constants.darkControllerColor,
         body: SingleChildScrollView(
@@ -144,7 +164,8 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
                         RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
-                                text: Constants.connectRobotText,
+                                // text: Constants.connectRobotText,
+                                text:languageModel.getText(Constants.keyToString('扫描', context)),
                                 style: TextStyle(
                                   color: Constants.connectTextColor,
                                   fontSize: 18,
@@ -166,7 +187,7 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
                                 ])),
                         SizedBox(height: 50),
                         Text(
-                          "Current Bluetooth",
+                          "${languageModel.getText(Constants.keyToString('当前的蓝牙设备', context))}",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Constants.connectTextColor,
@@ -202,7 +223,7 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
                           NavigatorUtil.pop();
                         });
                         // 扫描蓝牙设备
-                       // BluetoothManager().startNewScan();
+                       BluetoothManager().startNewScan();
                       } else {
                         var list = BluetoothManager().deviceList;
                         for (var model in list) {
@@ -211,17 +232,18 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
                             BluetoothManager().conectToDevice(model);
                           }
                         }
-
-                        NavigatorUtil.push(Routes.connectSuccess);
+                        BluetoothManager().connectSuccess = () {
+                          print("robot连接成功");
+                          NavigatorUtil.push(Routes.connectSuccess);
+                        };
                       }
-                    // NavigatorUtil.push(Routes.connectSuccess);
-
+                      // NavigatorUtil.push(Routes.connectSuccess);
 
                     },
                     child: Container(
                       child: Center(
                         child: Constants.mediumWhiteTextWidget(
-                            'Connect', 20,isConnected ? Colors.white : Constants.grayTextColor),
+                            languageModel.getText(Constants.keyToString('连接', context)), 20,isConnected ? Colors.white : Constants.grayTextColor),
                       ),
                       height: 72,
                       margin: EdgeInsets.only(left: 44, right: 44, top: 60),
@@ -231,7 +253,8 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 30),
+                  SizedBox(height: 20),
+
                 ],
               ),
             ),

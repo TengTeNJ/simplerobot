@@ -24,7 +24,7 @@ class ModeSwitchView: UIView {
     lazy var Abtn: UIButton = {
         let trainbtn = UIButton(type: .custom)
         trainbtn.frame = CGRect(x: 3, y: 3, width: widgetWidth, height: widgetHeight)
-        trainbtn.setTitle("ZoneA", for: .normal)
+        trainbtn.setTitle(Strings.zoneA, for: .normal)
         //trainbtn.setTitleColor(.white, for: .selected)
         trainbtn.setTitleColor(.white, for: .normal)
         trainbtn.backgroundColor = Constants.areaBtnSelectedColor
@@ -47,7 +47,7 @@ class ModeSwitchView: UIView {
         let restbtn = UIButton(type: .custom)
         restbtn.frame = CGRect(x: self.bounds.width - 2*widgetWidth - margin*3, y: 3, width: widgetWidth, height: widgetHeight)
         restbtn.backgroundColor = Constants.areaBtnColor
-        restbtn.setTitle("ZoneB", for: .normal)
+        restbtn.setTitle(Strings.zoneB, for: .normal)
         restbtn.titleLabel?.font = UIFont.systemFont(ofSize: 10)
         restbtn.tag = 100;
 
@@ -63,7 +63,7 @@ class ModeSwitchView: UIView {
         let restbtn = UIButton(type: .custom)
         restbtn.frame = CGRect(x: self.bounds.width - widgetWidth - 4*2, y: 3, width: widgetWidth, height: widgetHeight)
         restbtn.backgroundColor = Constants.areaBtnColor
-        restbtn.setTitle("ZoneC", for: .normal)
+        restbtn.setTitle(Strings.zoneC, for: .normal)
         restbtn.titleLabel?.font = UIFont.systemFont(ofSize: 10)
         restbtn.tag = 101;
 

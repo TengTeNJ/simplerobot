@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tennis_robot/models/language_model.dart';
 import 'package:tennis_robot/robotstats/stats_list_view.dart';
 
 import '../startPage/action_list_view.dart';
@@ -25,14 +27,14 @@ class _StatsDataListViewState extends State<StatsDataListView> {
           children: [
             StatsListView(
               assetPath: 'images/connect/today_use_time.png',
-              title: 'Total In-Use',
+              title: '${Provider.of<LanguageModel>(context,listen: false).getText("总计使用")}',
               desc: '${widget.totalPickupBallTime}',
               unit: 'hour',
             ),
             SizedBox(height: 20,),
             StatsListView(
                 assetPath: 'images/connect/today_number_icon.png',
-                title: 'Total Collections',
+                title: '${Provider.of<LanguageModel>(context,listen: false).getText("总捡球数")}',
                 desc: "${widget.totalPickUpBallsCount}"),
 
 

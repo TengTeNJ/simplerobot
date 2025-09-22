@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import '../models/language_model.dart';
 import '../utils/color.dart';
 
 class Constants {
@@ -21,6 +23,10 @@ class Constants {
   //  屏幕高度
   static double screenHeight(BuildContext context) {
     return MediaQuery.of(context).size.height;
+  }
+
+  static String keyToString(String key,BuildContext context){
+    return Provider.of<LanguageModel>(context, listen: true).getText(key);
   }
 
   static Text regularWhiteTextWidget(String text, double fontSize,Color color,
@@ -213,7 +219,7 @@ const kDataFrameFoot = 0xAA; // 数据帧尾
 const kTCPDataListen = 'tcp_data_listen'; //  TCP数据监听
 
 // 蓝牙设置名字
-const kBLEDevice_NewName = 'seekbot2.0';
+String kBLEDevice_NewName = 'seekbot2.0';
 // 新版本的digital shoots和270的蓝牙模块保持一致
 const kBLE_270_SERVICE_UUID = "181A";
 const kBLE_270_CHARACTERISTIC_NOTIFY_UUID = "2A6E";

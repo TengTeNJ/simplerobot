@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:tennis_robot/models/language_model.dart';
 import 'package:tennis_robot/route/routes.dart';
 import 'package:tennis_robot/utils/navigator_util.dart';
 
@@ -47,7 +49,7 @@ class _GuideCameraPlacementControllerState extends State<GuideCameraPlacementCon
 
               Container(
                 margin: EdgeInsets.only(top: 36),
-                child: Constants.mediumWhiteTextWidget('Camera Placement', 36, Colors.white),
+                child: Constants.mediumWhiteTextWidget('${Provider.of<LanguageModel>(context).getText("镜头位置")}', 36, Colors.white),
               ),
 
 
@@ -82,9 +84,7 @@ class _GuideCameraPlacementControllerState extends State<GuideCameraPlacementCon
 
           Container(
             margin: EdgeInsets.only(left: 78,right: 78),
-            child:  Constants.regularWhiteTextWidget('Place the phone mount at either end of the tennis court net,'
-                ' and position the camera towards the direction of the court you wish to capture, '
-                'ensuring that the mount is set higher than the net.', 16, Colors.white,height: 1.5),
+            child:  Constants.regularWhiteTextWidget('${Provider.of<LanguageModel>(context).getText("镜头位置描述")}', 16, Colors.white,height: 1.5),
 
           ),
 
