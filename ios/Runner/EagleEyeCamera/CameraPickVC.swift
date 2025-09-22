@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import DeviceKit
+//import DeviceKit
 
 
 /// 相机捡球VC
@@ -74,10 +74,7 @@ extension CameraCalibrationController {
         
        
         let desLabel = UILabel(frame: CGRect(x: 100, y: Constants.ScreenHeight - 120, width: Constants.ScreenWidth - 100*2, height: 46))
-        desLabel.text = """
-        Please position the key points of the court within the calibration
-        circle to achieve field of view calibration.
-        """
+        desLabel.text = Strings.calibrationText;
         desLabel.numberOfLines = 2
         desLabel.textColor = .white
         desLabel.textAlignment = .center
@@ -85,6 +82,9 @@ extension CameraCalibrationController {
         self.desLab = desLabel
         
         createKeyPoint()
+        
+        let lang = Locale.preferredLanguages.first ?? "en"
+        print("语言环境\(lang)");
         
         
     }

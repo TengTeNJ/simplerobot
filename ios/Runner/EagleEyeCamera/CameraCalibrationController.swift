@@ -7,6 +7,7 @@
 
 import UIKit
 import opencv2
+
 import Accelerate
 
 import CoreML
@@ -322,7 +323,7 @@ var channel: FlutterMethodChannel
 
             
         } else {
-            let alertVC = CustomAlertViewController(title: "Confirm Exit", message: "Are you sure You want to exit")
+            let alertVC = CustomAlertViewController(title: Strings.sureExit, message: Strings.sureExitDes)
             alertVC.delegate  = self
             alertVC.modalPresentationStyle = .overFullScreen
             present(alertVC, animated: false, completion: nil)
