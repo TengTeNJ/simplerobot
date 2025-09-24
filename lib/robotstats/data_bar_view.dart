@@ -27,12 +27,7 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
   bool _disposed = false;
   double _width = 0.3; // 柱状图宽度
 
-  List<String> _titles = [
-    'Last 7 days',
-    'Last 30 days',
-    'Last 90 days',
-    'Custom'
-  ];
+
   int _timeIndex = 0;
   String _startTime = '';
   String _endTime = '';
@@ -116,6 +111,12 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
 
   @override
   Widget build(BuildContext context) {
+    List<String> _titles = [
+      '${Provider.of<LanguageModel>(context,listen: false).getText("过去七天")}',
+      '${Provider.of<LanguageModel>(context,listen: false).getText("过去三十天")}',
+      '${Provider.of<LanguageModel>(context,listen: false).getText("过去九十天")}',
+      'Custom'
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -125,7 +126,7 @@ class _MyStatsBarChatViewState extends State<MyStatsBarChatView> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Constants.mediumBaseTextWidget('${Provider.of<LanguageModel>(context,listen: false).getText("我的记录")}${widget.maxCount}', 16),
+                Constants.mediumBaseTextWidget('${Provider.of<LanguageModel>(context,listen: false).getText("最高记录")}${widget.maxCount}', 16),
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () async {

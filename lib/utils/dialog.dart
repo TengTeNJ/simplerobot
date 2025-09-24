@@ -1,4 +1,6 @@
 // import 'package:code/views/dialog/dialog.dart';
+import 'package:provider/provider.dart';
+import 'package:tennis_robot/models/language_model.dart';
 import 'package:tennis_robot/utils/cancel_button.dart';
 import 'package:tennis_robot/utils/color.dart';
 import 'package:tennis_robot/constant/constants.dart';
@@ -87,7 +89,7 @@ class TTDialog {
                 color: Constants.dialogBgColor,
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              child:RobotLowBatteryDialog(exchange: exchange, title: 'Low Battery',descTitle: '${currentBattery}% battery remaining Please recharge your Bot',imgName: 'images/base/low_battery.png',),
+              child:RobotLowBatteryDialog(exchange: exchange, title: '${Provider.of<LanguageModel>(context,listen: false).getText("电量低")}',descTitle: '${Provider.of<LanguageModel>(context,listen: false).getText("电量低的描述")}',imgName: 'images/base/low_battery.png',),
             ),
           );
         }
@@ -108,7 +110,7 @@ class TTDialog {
                 color: Constants.dialogBgColor,
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              child:RobotLowBatteryDialog(exchange: exchange, title: 'Bluetooth Disconnected',descTitle: 'Bluetooth disconnected Please check your Bot',imgName: 'images/base/ble_disconnect.png',),
+              child:RobotLowBatteryDialog(exchange: exchange, title: '${Provider.of<LanguageModel>(context,listen: false).getText("蓝牙断连")}',descTitle: '${Provider.of<LanguageModel>(context,listen: false).getText("蓝牙断连的描述")}',imgName: 'images/base/ble_disconnect.png',),
             ),
           );
         }
@@ -150,7 +152,7 @@ class TTDialog {
                 color: Constants.dialogBgColor,
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              child:RobotConnectFailedDialog(exchange: exchange, title: 'Connection Failed',descTitle: 'Failed to connect to device \n"${kBLEDevice_NewName}".\n Check for issues and try again.',imgName: 'images/base/connect_fail.png',),
+              child:RobotConnectFailedDialog(exchange: exchange, title: '${Provider.of<LanguageModel>(context,listen: false).getText("连接失败")}',descTitle: '${Provider.of<LanguageModel>(context,listen: false).getText("连接失败的描述")}',imgName: 'images/base/connect_fail.png',),
             ),
           );
         }
@@ -194,7 +196,7 @@ class TTDialog {
                 color: Constants.powerOffDialogBgColor,
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              child:RobotLowBatteryDialog(exchange: exchange, title: 'Power OFF',descTitle: 'The Bot will power off.',imgName: 'images/base/robot_poweroff.png',),
+              child:RobotLowBatteryDialog(exchange: exchange, title: '${Provider.of<LanguageModel>(context,listen: false).getText("关机")}',descTitle: '${Provider.of<LanguageModel>(context,listen: false).getText("关机的描述")}',imgName: 'images/base/robot_poweroff.png',),
             ),
           );
         }
@@ -401,9 +403,9 @@ class _TimeSelectDialogState extends State<TimeSelectDialog> {
                         child: Center(
                           child: _selectIndex == 0
                               ? Constants.regularWhiteTextWidget(
-                              'Last 7 days', 14,Colors.white)
+                              '${Provider.of<LanguageModel>(context,listen: false).getText("过去七天")}', 14,Colors.white)
                               : Constants.regularGreyTextWidget(
-                              'Last 7 days', 14),
+                              '${Provider.of<LanguageModel>(context,listen: false).getText("过去七天")}', 14),
                         )),
                   ),
                   flex: 1,
@@ -450,9 +452,9 @@ class _TimeSelectDialogState extends State<TimeSelectDialog> {
                         child: Center(
                           child: _selectIndex == 1
                               ? Constants.regularWhiteTextWidget(
-                              'Last 30 days', 14,Colors.white)
+                              '${Provider.of<LanguageModel>(context,listen: false).getText("过去三十天")}', 14,Colors.white)
                               : Constants.regularGreyTextWidget(
-                              'Last 30 days', 14),
+                              '${Provider.of<LanguageModel>(context,listen: false).getText("过去三十天")}', 14),
                         )),
                   ),
                   flex: 1,
@@ -499,9 +501,9 @@ class _TimeSelectDialogState extends State<TimeSelectDialog> {
                         child: Center(
                           child: _selectIndex == 2
                               ? Constants.regularWhiteTextWidget(
-                              'Last 90 days', 14,Colors.white)
+                              '${Provider.of<LanguageModel>(context,listen: false).getText("过去九十天")}', 14,Colors.white)
                               : Constants.regularGreyTextWidget(
-                              'Last 90 days', 14),
+                              '${Provider.of<LanguageModel>(context,listen: false).getText("过去九十天")}', 14),
                         )),
                   ),
                   flex: 1,
@@ -846,7 +848,7 @@ class RobotLowBatteryDialog extends StatelessWidget {
             height: 11,
           ),
 
-          this.title == 'Power OFF' ? Constants.mediumWhiteTextWidget('${this.title}', 19,Color.fromRGBO(194, 35, 38, 1.0))
+          this.title == '${Provider.of<LanguageModel>(context,listen: false).getText("关机")}' ? Constants.mediumWhiteTextWidget('${this.title}', 19,Color.fromRGBO(194, 35, 38, 1.0))
               : Constants.boldWhiteTextWidget('${this.title}', 19),
 
           SizedBox(
@@ -860,7 +862,7 @@ class RobotLowBatteryDialog extends StatelessWidget {
           ),
           Padding(padding: EdgeInsets.only(left: 24,right: 24),child: BaseButton(
               borderRadius: BorderRadius.circular(20),
-              title: this.title == 'Power OFF' ? 'Close': 'Got It',
+              title: this.title == '${Provider.of<LanguageModel>(context,listen: false).getText("关机")}' ? '${Provider.of<LanguageModel>(context,listen: false).getText("关闭")}': 'Got It',
               height: 40,
               onTap: () {
                 this.exchange();
