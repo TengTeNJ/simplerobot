@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:tennis_robot/models/language_model.dart';
 import 'package:tennis_robot/utils/data_base.dart';
 import 'package:tennis_robot/utils/string_util.dart';
 
@@ -49,7 +51,7 @@ class _UserInfoInputControllerState extends State<UserInfoInputController> {
                             // color: Colors.red,
                             width: Constants.screenWidth(context),
                             margin: EdgeInsets.only(left: 70, right: 44, top: 50),
-                            child: Constants.regularWhiteTextWidget('NickName', 18, Colors.white,textAlign: TextAlign.left),
+                            child: Constants.regularWhiteTextWidget('${Provider.of<LanguageModel>(context,listen: false).getText("昵称")}', 18, Colors.white,textAlign: TextAlign.left),
                           ),
 
                           Container(
@@ -71,7 +73,7 @@ class _UserInfoInputControllerState extends State<UserInfoInputController> {
                               controller: _nickController,
                               style: TextStyle(color: Constants.baseStyleColor), // 设置字体颜色
                               decoration: InputDecoration(
-                                hintText: 'Enter Nickname', // 占位符文本
+                                hintText: '${Provider.of<LanguageModel>(context,listen: false).getText("输入昵称")}', // 占位符文本
                                 focusedBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Color.fromRGBO(248, 98, 21, 1)), // 设置焦点时的边框颜色
                                 ),
@@ -88,7 +90,7 @@ class _UserInfoInputControllerState extends State<UserInfoInputController> {
                             // color: Colors.red,
                             width: Constants.screenWidth(context),
                             margin: EdgeInsets.only(left: 70, right: 44, top: 40),
-                            child: Constants.regularWhiteTextWidget('Email', 18, Colors.white,textAlign: TextAlign.left),
+                            child: Constants.regularWhiteTextWidget('${Provider.of<LanguageModel>(context,listen: false).getText("邮箱")}', 18, Colors.white,textAlign: TextAlign.left),
                           ),
 
                           Container(
@@ -110,7 +112,7 @@ class _UserInfoInputControllerState extends State<UserInfoInputController> {
                               cursorColor: Color.fromRGBO(248, 98, 21, 1),
                               style: TextStyle(color: Constants.baseStyleColor), // 设置字体颜色
                               decoration: InputDecoration(
-                                hintText: 'Enter Email', // 占位符文本
+                                hintText: '${Provider.of<LanguageModel>(context,listen: false).getText("输入邮箱")}', // 占位符文本
                                 focusColor: Colors.red,
                                 // enabledBorder: UnderlineInputBorder(
                                 //   borderSide: BorderSide(color: Colors.white), // 设置焦点之外的边框颜色

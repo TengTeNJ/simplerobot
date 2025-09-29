@@ -67,7 +67,10 @@ class LanguageModel extends ChangeNotifier {
       '过去三十天': "过去30天",
       '过去九十天': "过去90天",
 
-
+      '昵称':"昵称",
+      '邮箱':"邮箱",
+      '输入昵称':"输入昵称",
+      '输入邮箱':"输入邮箱",
 
 
 
@@ -137,6 +140,14 @@ class LanguageModel extends ChangeNotifier {
       '过去七天': "Last 7 days",
       '过去三十天': "Last 30 days",
       '过去九十天': "Last 90 days",
+
+      '昵称':"NickName",
+      '输入昵称':"Enter Nickname",
+
+      '邮箱':"Email",
+      '输入邮箱':"Enter Email",
+
+
 
 
 
