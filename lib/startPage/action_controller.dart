@@ -219,6 +219,8 @@ class _ActionControllerState extends State<ActionController> {
     var todayTime = StringUtil.currentTimeString();
     _list.forEach((element){
       if (element.time == todayTime) {
+
+        if (!mounted) return;
         setState(() {
           todayRobotWorkTime = (int.parse(element.pickupBallTime)) ~/ 60;
         });

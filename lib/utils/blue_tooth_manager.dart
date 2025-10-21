@@ -58,7 +58,9 @@ class BluetoothManager {
 
   Function()? openBlueTooth; // 蓝牙打开
 
+  bool robotIsPowerOff = true; // 捡球机是否关机了
 
+  bool isCanAutoConnect = false; // 捡球机是否可以自动重连（在连接界面不可以重连，其他均可以）
 
 
   final ValueNotifier<int> deviceListLength = ValueNotifier(-1);
@@ -96,6 +98,9 @@ class BluetoothManager {
         if (conectedDeviceCount.value == 0 && model.device.name == kBLEDevice_NewName) {
           // 已经连接的设备少于两个 则自动连接
           // conectToDevice(this.deviceList.last);
+          if (isCanAutoConnect) {
+            conectToDevice(model);
+          }
           BluetoothManager().blueNameChange?.call(model.device.name);
         }
       }
@@ -156,7 +161,7 @@ class BluetoothManager {
             repeatTimer = Timer.periodic(Duration(seconds: 5), (timer) {
               print('这将每隔5秒执行一次');
 
-              writerDataToDevice(model, heartBeatData());
+              // writerDataToDevice(model, heartBeatData());
               //EasyLoading.showToast('心跳');
               updateRobotTodayUseTime();
               // 定时器执行完后的任务
@@ -167,6 +172,8 @@ class BluetoothManager {
         // 连接成功弹窗
        // EasyLoading.showSuccess('Bluetooth connection successful');
         BluetoothManager().connectSuccess?.call();
+        robotIsPowerOff = false;
+
         // 监听数据
        Future.delayed(Duration(milliseconds: 2000),(){
          _ble.subscribeToCharacteristic(notifyCharacteristic).listen((data) {
@@ -182,7 +189,14 @@ class BluetoothManager {
             if (repeatTimer != null) {
               repeatTimer?.cancel();
             }
-            BluetoothManager().disConnect?.call();
+
+            robotIsPowerOff = true;
+            Future.delayed(Duration(milliseconds:10000), (){
+              /// 5s 内重连不上弹出蓝牙断链弹窗
+              if (robotIsPowerOff) {
+                BluetoothManager().disConnect?.call();
+              }
+            });
 
         if(conectedDeviceCount.value > 0){
           conectedDeviceCount.value--;

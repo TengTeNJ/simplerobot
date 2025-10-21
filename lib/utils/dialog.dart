@@ -832,7 +832,7 @@ class RobotLowBatteryDialog extends StatelessWidget {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
-            children: title == 'Bluetooth Disconnected' ? [Container()] : [CancelButton()],
+            children: title == '${Provider.of<LanguageModel>(context,listen: false).getText("蓝牙断连")}' ? [Container()] : [CancelButton()],
           ),
 
           SizedBox(
@@ -866,7 +866,6 @@ class RobotLowBatteryDialog extends StatelessWidget {
               height: 40,
               onTap: () {
                 this.exchange();
-                NavigatorUtil.init(context);
               }),),
           SizedBox(
             height: 32,

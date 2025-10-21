@@ -31,7 +31,7 @@ class ConnectRobotController extends StatefulWidget {
 class _ConnectRobotControllerState extends State<ConnectRobotController> {
   bool isConnected = true; // 是否连接上WiFi
   var currentWifiName = 'SeekerBot';
-
+  bool isClickConnect = false; // 是否是手动点击的连接
   late StreamSubscription subscription;
 // 查询扫描到的机器人信息
   void queryRobotInfo() {
@@ -71,6 +71,7 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
       if (event == kRobotConnectChange) {
         print('机器人断连，蓝牙名字修改为默认名字');
         currentWifiName = 'SeekerBot';
+        BluetoothManager().isCanAutoConnect = false;
         // 再查询一下机器人信息
         queryRobotInfo();
         setState(() {});
@@ -228,16 +229,22 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
                         var list = BluetoothManager().deviceList;
                         for (var model in list) {
                           if (model.device.name == kBLEDevice_NewName) {
+                            isClickConnect = true;
                             print('开始连接机器人');
+                            EasyLoading.show(status: "connecting...",maskType:EasyLoadingMaskType.clear);
                             BluetoothManager().conectToDevice(model);
                           }
                         }
                         BluetoothManager().connectSuccess = () {
                           print("robot连接成功");
-                          NavigatorUtil.push(Routes.connectSuccess);
+                          BluetoothManager().isCanAutoConnect = true;// 可以自动重连了
+                          EasyLoading.dismiss();
+                          if (isClickConnect) {
+                            NavigatorUtil.push(Routes.connectSuccess);
+                            isClickConnect = false;
+                          }
                         };
                       }
-                      // NavigatorUtil.push(Routes.connectSuccess);
 
                     },
                     child: Container(

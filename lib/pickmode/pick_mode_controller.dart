@@ -158,6 +158,7 @@ class _PickModeControllerState extends State<PickModeController> {
     // 默认设置机器人的速度
   //  getDBSpeedData();
 
+
     getTodayBallNumsByDB();
     getTodayRobotUserTime();
     //机器人工作时间回调
@@ -258,11 +259,16 @@ class _PickModeControllerState extends State<PickModeController> {
   void listenDataChange() {
     //机器人工作时间回调
     BluetoothManager().workTimeChange = (time) {
+      if (!mounted) return;
       print('机器人工作时间回调${time}');
       EventBus().sendEvent(kRobotPickballTimeChange);
-      setState(() {
-        todayRobotWorkTime = (int.parse(time)) ~/ 60;
-      });
+
+      if(mounted) {
+        setState(() {
+          todayRobotWorkTime = (int.parse(time)) ~/ 60;
+        });
+      }
+
     };
 
     void sendBatteryDataToSwift(int battery) async {
@@ -471,6 +477,7 @@ class _PickModeControllerState extends State<PickModeController> {
                 // crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   GestureDetector(onTap: (){
+                    if(!mounted) return;
                     NavigatorUtil.pop();
                     BleSendUtil.setRobotMode(RobotMode.rest);
                     print("界面退出");
@@ -591,7 +598,10 @@ class _PickModeControllerState extends State<PickModeController> {
                   listenDataChange();
                   Vibration.vibrate(duration: 500);
                   selectedMode = SelectedMode.autoMode;
-                  BleSendUtil.setRobotMode(RobotMode.onepick);
+                  Future.delayed(Duration(milliseconds: 100), () {
+                    BleSendUtil.setRobotMode(RobotMode.onepick);
+                  });
+
                   Future.delayed(Duration(milliseconds: 500), () { // 自动开始捡球
                     BleSendUtil.setRobotStartPick(1); // 开启捡球
                   });
@@ -663,7 +673,9 @@ class _PickModeControllerState extends State<PickModeController> {
                  print('遥控模式');
                  setState(() {
                    selectedMode = SelectedMode.controlMode;
-                   BleSendUtil.setRobotMode(RobotMode.remote);
+                   Future.delayed(Duration(milliseconds: 100), () {
+                     BleSendUtil.setRobotMode(RobotMode.remote);
+                   });
                    Vibration.vibrate(duration: 500);
 
                    // 500毫秒-> 设置控制角度为零，防止Fly那边报错
