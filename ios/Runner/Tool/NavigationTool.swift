@@ -158,8 +158,6 @@ class NavigationTool: NSObject {
     
     
     // MARK: -如上  自动导航
-    
-    
     /// 休息模式自动导航的中场矩形框
     public
     static
@@ -189,7 +187,7 @@ class NavigationTool: NSObject {
     public
     static
     func getEletronicFenceInfieldCenterSmallRectangle() -> CGRect {
-        return CGRect(x: getEletronicFenceInfieldCenterPoint().x - 40, y: getEletronicFenceInfieldCenterPoint().y - 40, width: 40, height: 40)
+        return CGRect(x: getEletronicFenceInfieldCenterPoint().x - 40, y: getEletronicFenceInfieldCenterPoint().y - 40, width: 40 + 40, height: 40 + 40)
     }
     
     /// 电子围栏外场的矩形框
@@ -212,7 +210,7 @@ class NavigationTool: NSObject {
     public
     static
     func getEletronicFenceOutfieldCenterSmallRectangle() -> CGRect {
-        return CGRect(x: getEletronicFenceOutfieldCenterPoint().x - 40, y: getEletronicFenceOutfieldCenterPoint().y - 40, width: 40, height: 40)
+          return CGRect(x: getEletronicFenceOutfieldRectangle().midX - getEletronicFenceOutfieldRectangle().width / 4 , y: getEletronicFenceOutfieldRectangle().midY - getEletronicFenceOutfieldRectangle().height / 4, width: getEletronicFenceOutfieldRectangle().width / 2, height: getEletronicFenceOutfieldRectangle().height / 2,)
     }
     /// 休息模式电子围栏的矩形框
     public
@@ -233,8 +231,7 @@ class NavigationTool: NSObject {
     public
     static
     func getRestModelEletronicFenceCenterRectangle() -> CGRect {
-//        let RestModelCenterRectangle = CGRectMake(getRestModelEletronicFenceCenterPoint().x - 100, getRestModelEletronicFenceCenterPoint().y - 100, 100, 100)
-          return CGRect(x: 310, y: 111, width: 185 + 20, height: 180)
+        return CGRect(x: getRestModelEletronicFenceRectangle().midX - getRestModelEletronicFenceRectangle().width / 4 , y: getRestModelEletronicFenceRectangle().midY - getRestModelEletronicFenceRectangle().height / 4, width: getRestModelEletronicFenceRectangle().width / 2, height: getRestModelEletronicFenceRectangle().height / 2,)
     }
   
 }
