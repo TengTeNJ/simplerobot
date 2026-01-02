@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:get_it/get_it.dart';
 
@@ -24,4 +27,31 @@ lockGame(bool lock) {
 bool getGameLockStatu() {
   GameUtil gameUtil = GetIt.instance<GameUtil>();
   return gameUtil.gameLocking;
+}
+
+
+/// 显示 Loading，并在 [timeout] 后自动关闭（如果还在显示）
+Timer? _loadingTimer;
+
+void showLoadingWithTimeout({
+  String status = 'loading...',
+  EasyLoadingMaskType maskType = EasyLoadingMaskType.clear,
+  Duration timeout = const Duration(seconds: 15),
+}) {
+  EasyLoading.show(status: status, maskType: maskType);
+
+  // 先清掉上一轮定时器，防止重复
+  _loadingTimer?.cancel();
+  _loadingTimer = Timer(timeout, () {
+    if (EasyLoading.isShow) {
+      EasyLoading.dismiss();
+      // 可选：提示用户
+      EasyLoading.showError('连接超时，请检查设备');
+    }
+  });
+}
+/// 手动关闭（请求成功/失败时调用）
+void hideLoading() {
+  _loadingTimer?.cancel();
+  if (EasyLoading.isShow) EasyLoading.dismiss();
 }

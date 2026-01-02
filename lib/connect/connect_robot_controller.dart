@@ -7,6 +7,7 @@ import 'package:network_info_plus/network_info_plus.dart';
 import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/route/routes.dart';
 import 'package:tennis_robot/utils/blue_tooth_manager.dart';
+import 'package:tennis_robot/utils/global.dart';
 import 'package:tennis_robot/utils/navigator_util.dart';
 import 'package:tennis_robot/utils/robot_manager.dart';
 import 'package:tennis_robot/utils/robot_send_data.dart';
@@ -26,6 +27,8 @@ class ConnectRobotController extends StatefulWidget {
 class _ConnectRobotControllerState extends State<ConnectRobotController> {
   bool isConnected = true; // 是否连接上WiFi
   var currentWifiName = 'SeekerBot';
+  bool isClickConnect = false; // 是否是手动点击的连接
+
 
   late StreamSubscription subscription;
 // 查询扫描到的机器人信息
@@ -49,6 +52,7 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
     BluetoothManager();
     // 扫描蓝牙设备
 
+
     Future.delayed(Duration(milliseconds: 1000),(){
       BleUtil.begainScan(context);
     });
@@ -60,6 +64,7 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
         currentWifiName = 'SeekerBot';
         // 再查询一下机器人信息
         queryRobotInfo();
+        BluetoothManager().isCanAutoConnect = false;
         setState(() {});
       }
     });
@@ -197,17 +202,31 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
                           NavigatorUtil.pop();
                         });
                         // 扫描蓝牙设备
-                       // BluetoothManager().startNewScan();
+                       BluetoothManager().startNewScan();
                       } else {
                         var list = BluetoothManager().deviceList;
                         for (var model in list) {
                           if (model.device.name == kBLEDevice_NewName) {
+                            isClickConnect = true;
                             print('开始连接机器人');
+                            showLoadingWithTimeout(
+                              status: "connecting...",
+                              maskType:EasyLoadingMaskType.clear,
+                              timeout: Duration(seconds: 10),
+                            );
                             BluetoothManager().conectToDevice(model);
                           }
                         }
+                        BluetoothManager().connectSuccess = () {
+                          print("robot连接成功");
+                          BluetoothManager().isCanAutoConnect = true;// 可以自动重连了
+                          hideLoading();
+                          if (isClickConnect) {
+                            NavigatorUtil.push(Routes.connectSuccess);
+                            isClickConnect = false;
+                          }
 
-                        NavigatorUtil.push(Routes.connectSuccess);
+                        };
                       }
 
                     },

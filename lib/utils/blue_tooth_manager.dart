@@ -49,6 +49,8 @@ class BluetoothManager {
   Function(String time)? workTimeChange; // 机器人工作时间改变
   Function(String blueName)? blueNameChange; // 机器人名字
   Function()? disConnect; // 机器人断链
+  Function()? connectSuccess; // 机器人连接成功
+
 
   Function(int index)? clickIndex ; // 机器人手动关机或者捡球操作
 
@@ -66,6 +68,12 @@ class BluetoothManager {
 
   StreamSubscription? _bleStatuListen;
   StreamSubscription? _bleListen;
+
+  bool appConnectedRobot = false; // app 是否连接过机器人
+
+  bool robotIsPowerOff = true; // 捡球机是否关机了
+
+  bool isCanAutoConnect = false; // 捡球机是否可以自动重连（在连接界面不可以重连，其他均可以）
 
   /*开始扫描*/
   Future<void> startNewScan() async {
@@ -91,7 +99,9 @@ class BluetoothManager {
         var model = this.deviceList.last;
         if (conectedDeviceCount.value == 0 && model.device.name == kBLEDevice_NewName) {
           // 已经连接的设备少于两个 则自动连接
-          // conectToDevice(this.deviceList.last);
+          if (isCanAutoConnect) {
+            conectToDevice(model);
+          }
           BluetoothManager().blueNameChange?.call(model.device.name);
         }
       }
@@ -100,7 +110,6 @@ class BluetoothManager {
 
   /*连接设备*/
   conectToDevice(BLEModel model) {
-
     if (model.hasConected == true) {
       // 已连接状态直接返回
       return;
@@ -145,13 +154,10 @@ class BluetoothManager {
         }
         //  给digital shoots设备发送上线通知，不能给测速器发送
         if(model.device.name == kBLEDevice_NewName){
-
           // 每五秒发送一次心跳指令
-
           // if(repeatTimer == null){
             repeatTimer = Timer.periodic(Duration(seconds: 5), (timer) {
               print('这将每隔5秒执行一次');
-
               writerDataToDevice(model, heartBeatData());
               //EasyLoading.showToast('心跳');
               updateRobotTodayUseTime();
@@ -160,16 +166,18 @@ class BluetoothManager {
             });
           // }
         }
+        robotIsPowerOff = false;
         // 连接成功弹窗
-      //  EasyLoading.showSuccess('Bluetooth connection successful');
+        EasyLoading.showSuccess('Bluetooth connection successful');
+        BluetoothManager().connectSuccess?.call();
+
         // 监听数据
-       Future.delayed(Duration(milliseconds: 2000),(){
+       // Future.delayed(Duration(milliseconds: 2000),(){
          _ble.subscribeToCharacteristic(notifyCharacteristic).listen((data) {
            print("deviceId =${model.device.id}---上报来的数据data = $data");
-           // EasyLoading.showSuccess('蓝牙传输的数据');
            BluetoothDataParse.parseData(data,model);
          });
-       });
+       // });
       } else if (connectionStateUpdate.connectionState ==
           DeviceConnectionState.disconnected) {
             // EasyLoading.showError('disconected');
@@ -177,7 +185,15 @@ class BluetoothManager {
             if (repeatTimer != null) {
               repeatTimer?.cancel();
             }
-            BluetoothManager().disConnect?.call();
+
+            robotIsPowerOff = true;
+            Future.delayed(Duration(milliseconds:5000), (){
+              /// 5s 内重连不上弹出蓝牙断链弹窗
+              if (robotIsPowerOff) {
+                BluetoothManager().disConnect?.call();
+              }
+            });
+
 
         if(conectedDeviceCount.value > 0){
           conectedDeviceCount.value--;
@@ -194,8 +210,8 @@ class BluetoothManager {
     if (_bleStatuListen == null) {
       _bleStatuListen = FlutterReactiveBle().statusStream.listen((status) {
         print('蓝牙状态status===${status}');
-        GameUtil gameUtil = GetIt.instance<GameUtil>();
-        gameUtil.bleStatus = status;
+       // GameUtil gameUtil = GetIt.instance<GameUtil>();
+       // gameUtil.bleStatus = status;
         if (status == BleStatus.poweredOff) {
           // 蓝牙开关关闭
           _instance._bleListen?.cancel();
