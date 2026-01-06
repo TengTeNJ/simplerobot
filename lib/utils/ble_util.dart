@@ -1,9 +1,7 @@
 import 'dart:io';
-//import 'package:open_settings/open_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:get_it/get_it.dart';
-import 'package:open_settings/open_settings.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../constant/constants.dart';
 import 'blue_tooth_manager.dart';
@@ -45,7 +43,7 @@ class BleUtil {
                   onPressed: () {
                     // 跳转到系统设置页面，让用户开启位置权限
                     // 这里需要你根据平台实现跳转逻辑
-                    OpenSettings.openBluetoothSetting();
+                    // OpenSettings.openBluetoothSetting();
                     Navigator.of(context).pop();
                   },
                 ),
@@ -78,7 +76,7 @@ class BleUtil {
                   child: Constants.mediumBaseTextWidget('Go to authorize', 16,
                       textAlign: TextAlign.left),
                   onPressed: () {
-                   OpenSettings.openAppSetting();
+                   // OpenSettings.openAppSetting();
                     Navigator.of(context).pop();
                   },
                 ),
@@ -116,7 +114,7 @@ class BleUtil {
                   onPressed: () {
                     // 跳转到系统设置页面，让用户开启位置权限
                     // 这里需要你根据平台实现跳转逻辑
-                    OpenSettings.openManageApplicationSetting();
+                    // OpenSettings.openManageApplicationSetting();
                     Navigator.of(context).pop();
                   },
                 ),
