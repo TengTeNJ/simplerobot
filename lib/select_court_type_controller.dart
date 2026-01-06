@@ -16,11 +16,18 @@ class SelectCourtTypeController extends StatefulWidget {
       _SelectCourtTypeControllerState();
 }
 
+/// 选择机器人类型（1.0 or 2.0）
 class _SelectCourtTypeControllerState extends State<SelectCourtTypeController> {
-  bool isChoosed = true; // 是否选择了场地
+  bool isChoosedOneRobot = false; // 是否选择了机器人1.0
+  bool isChoosedTwoRobot = false; // 是否选择了机器人2.0
+
   Color oneBGColor = Colors.grey;
   Color twoBGColor = Colors.grey;
   late StreamSubscription subscription;
+
+  static Color unSelectedBgColor = Color.fromRGBO(46, 47, 49, 1.0);
+  static Color selectedBgColor = Color.fromRGBO(86, 45, 28, 1.0);
+
 
   @override
   void initState() {
@@ -29,131 +36,111 @@ class _SelectCourtTypeControllerState extends State<SelectCourtTypeController> {
 
     subscription = EventBus().stream.listen((event){
       if (event == kRobotConnectChange) {
-         isChoosed = true;
-         oneBGColor = Colors.grey;
-         twoBGColor = Colors.grey;
-         setState(() {});
+        isChoosedOneRobot = true;
+        oneBGColor = Colors.grey;
+        twoBGColor = Colors.grey;
+        setState(() {});
       }
     });
   }
 
-  @override
   Widget build(BuildContext context) {
     NavigatorUtil.init(context);
     return Scaffold(
-        backgroundColor: Constants.darkControllerColor,
-        body: SingleChildScrollView(
-          child: ClipRect(
-            child: Container(
-              color: Constants.darkControllerColor,
-              child: Column(
-                children: [
-                  Container(
-                    width: Constants.screenWidth(context),
-                    margin: EdgeInsets.only(left: 44, right: 44, top: 50),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Constants.boldBaseTextWidget('', 16),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        SizedBox(height: 150),
-                        Text(
-                          "Choose court type",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Constants.connectTextColor,
-                            fontSize: 30,
-                            height: 1.5,
-                            fontFamily: 'SanFranciscoDisplay',
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        SizedBox(height: 50),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                oneBGColor =
-                                    Constants.selectedModelOrangeBgColor;
-                                twoBGColor = Colors.grey;
-                                setState(() {});
-                              },
-                              child: Container(
-                                child: Center(
-                                  child: Constants.mediumWhiteTextWidget(
-                                      '1号场', 20, Colors.white),
-                                ),
-                                height: 72,
-                                color: oneBGColor,
-                                margin: EdgeInsets.only(
-                                    left: 20, right: 20, top: 60),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 40,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                twoBGColor =
-                                    Constants.selectedModelOrangeBgColor;
-                                oneBGColor = Colors.grey;
-                                setState(() {});
-                              },
-                              child: Container(
-                                child: Center(
-                                  child: Constants.mediumWhiteTextWidget(
-                                      '2号场', 20, Colors.white),
-                                ),
-                                height: 72,
-                                color: twoBGColor,
-                                margin: EdgeInsets.only(
-                                    left: 20, right: 20, top: 60),
-                              ),
-                            ),
-                          ],
-                        )
-                      ],
+      backgroundColor: Constants.darkControllerColor,
+      body: WillPopScope(child: SingleChildScrollView(
+        child: ClipRect(
+          child: Container(
+            color: Constants.darkControllerColor,
+            child: Column(
+              children: [
+                Container(
+                  height: 171,
+                  width: 257,
+                  margin: EdgeInsets.only(top: 105),
+                  child: Image(
+                    image: AssetImage('images/connect/connect_success_robot.png'),
+                    fit: BoxFit.fill,
+                  ),
+                ),
+                SizedBox(height: 44,),
+
+                Constants.regularWhiteTextWidget("Please select the Seekerbot mode", 18, Constants.connectTextColor),
+                SizedBox(height: 49,),
+                GestureDetector(
+                  onTap: () {
+                    isChoosedOneRobot = true;
+                    isChoosedTwoRobot = false;
+                    setState(() {});
+                  },
+                  child: Container(
+                    child: Center(
+                      child: Constants.mediumWhiteTextWidget(
+                          'SEEKERBOT 1.0', 18,isChoosedOneRobot ?
+                      Color.fromRGBO(248, 98, 21, 1.0) : Constants.grayTextColor),
+                    ),
+                    height: 90,
+                    width: Constants.screenWidth(context) - 66,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: isChoosedOneRobot ? selectedBgColor : unSelectedBgColor ,
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      if (oneBGColor == Colors.grey &&
-                          twoBGColor == Colors.grey) {
-                        EasyLoading.showToast('please choose court');
-                      } else {
-                        if (oneBGColor == Constants.selectedModelOrangeBgColor) {
-                          kBLEDevice_NewName = "seekbot2.0_1";
-                        } else {
-                          kBLEDevice_NewName = "seekbot2.0";
-                        }
-                        NavigatorUtil.pushWithContext(Routes.connect, context);
-                        if (!mounted) return; // 防止在 dispose 后导航
-                      }
-                    },
-                    child: Container(
-                      child: Center(
-                        child: Constants.mediumWhiteTextWidget('Next', 20,
-                            isChoosed ? Colors.white : Constants.grayTextColor),
-                      ),
-                      height: 72,
-                      margin: EdgeInsets.only(left: 44, right: 44, top: 60),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(36),
-                        color: isChoosed
-                            ? Constants.selectedModelOrangeBgColor
-                            : Constants.selectModelBgColor,
-                      ),
+                ),
+                SizedBox(height: 16),
+
+                GestureDetector(
+                  onTap: () {
+                    isChoosedTwoRobot = true;
+                    isChoosedOneRobot = false;
+                    setState(() {});
+                  },
+                  child: Container(
+                    child: Center(
+                      child: Constants.mediumWhiteTextWidget(
+                          'SEEKERBOT 2.0', 18,isChoosedTwoRobot ?
+                      Color.fromRGBO(248, 98, 21, 1.0) : Constants.grayTextColor),
+                    ),
+                    width: Constants.screenWidth(context) - 66,
+                    height: 90,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: isChoosedTwoRobot ? selectedBgColor : unSelectedBgColor ,
                     ),
                   ),
-                  SizedBox(height: 30),
-                ],
-              ),
+                ),
+
+
+                GestureDetector(
+                  onTap: () {
+                    if (isChoosedOneRobot || isChoosedTwoRobot) {
+                      NavigatorUtil.pushReplacementNamed(Routes.connect);
+                    }
+                  },
+                  child: Container(
+                    child: Center(
+                      child: Constants.mediumWhiteTextWidget(
+                          'Continue', 20,(isChoosedOneRobot || isChoosedTwoRobot) ? Colors.white : Constants.grayTextColor),
+                    ),
+                    height: 72,
+                    margin: EdgeInsets.only(left: 44, right: 44, top: 60),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(36),
+                      color: (isChoosedOneRobot || isChoosedTwoRobot) ? Constants.selectedModelOrangeBgColor : Constants.selectModelBgColor ,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
+              ],
             ),
           ),
-        ));
+        ),
+      ),onWillPop: (){
+        return Future.value(false);
+      },
+      ),
+    );
+
   }
+
 }

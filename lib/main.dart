@@ -13,7 +13,6 @@ import 'package:tennis_robot/select_court_type_controller.dart';
 import 'package:tennis_robot/utils/global.dart';
 import 'package:tennis_robot/startPage/action_controller.dart';
 import 'package:tennis_robot/utils/navigator_util.dart';
-import 'package:shopify_flutter/shopify_flutter.dart';
 
 import 'models/language_model.dart';
 import 'models/theme_provider.dart';
@@ -25,14 +24,6 @@ void main()  async{
   GetIt.I.registerSingleton<GameUtil>(GameUtil()); // 注册GameUtil实例
 
 
-  ShopifyConfig.setConfig(
-    storefrontAccessToken: 'e49948d9b677f9bf54e9e73bc7922aac',
-    storeUrl:'http://www.baidu.com',
-    adminAccessToken: 'a1d13b7d828641d00a18fbf94c0c95b0',
-    storefrontApiVersion:'2023-07',
-    cachePolicy: CachePolicy.noCache,
-    language: 'en',
-  );
 
   runApp(
      ChangeNotifierProvider(
@@ -49,8 +40,7 @@ class MyApp extends StatelessWidget {
   Widget getHomeWidget() {
     bool isLoggedIn = true; // 根据实际情况设置
     if (isLoggedIn) {
-      return ConnectRobotController();
-      // return SelectCourtTypeController();
+      return SelectCourtTypeController();
     } else {
       return ActionController();
     }
