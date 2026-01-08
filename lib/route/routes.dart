@@ -8,6 +8,7 @@ import 'package:tennis_robot/guide/camera_pick_controller.dart';
 import 'package:tennis_robot/guide/guide_avoidsun_controller.dart';
 import 'package:tennis_robot/guide/guide_camera_placement_controller.dart';
 import 'package:tennis_robot/guide/guide_page_controller.dart';
+import 'package:tennis_robot/pickmode/one_pick_mode_controller.dart';
 import 'package:tennis_robot/pickmode/pick_mode_controller.dart';
 import 'package:tennis_robot/profile/profile_controller.dart';
 import 'package:tennis_robot/robotstats/robot_stats_controller.dart';
@@ -23,6 +24,8 @@ class Routes {
   /// 简化版的app
   static const String action = 'action'; // 启动页
   static const String pickMode = 'pickMode'; // 捡球模式
+  static const String onePickMode = 'onePickMode'; // 原有1.0app 的捡球界面
+
   static const String stats = 'stats';// 统计数据
   static const String setting = 'setting';// 设置界面
   static const String connectSuccess = 'connectSuccess'; // 连接成功界面
@@ -44,7 +47,9 @@ class Routes {
         return MaterialPageRoute(builder: (_) => ActionController());
       case pickMode:
         return MaterialPageRoute(builder: (_) => PickModeController());
-      case stats:
+      case onePickMode:
+        return MaterialPageRoute(builder: (_) => OnePickModeController());
+        case stats:
         return MaterialPageRoute(builder: (_) => RobotStatsController());
       case setting:
       return MaterialPageRoute(builder: (_) => ProfileController());

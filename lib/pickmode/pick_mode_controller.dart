@@ -503,7 +503,25 @@ class _PickModeControllerState extends State<PickModeController> {
                       fontSize: 22,
                     ),
                   ),
-                  Text('123456')
+
+                  /// 调节面板控制按钮
+                  GestureDetector(onTap: (){
+                    TTDialog.robotParameterSetting(context);
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(right: 24),
+                      width: 55,
+                      height: 55,
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(55 / 1),
+                      ),
+                      child:Center(
+                        child: Image(image: AssetImage('images/control/setting_icon.png'),width: 23,),
+                      ),
+                    ),
+                  )
+                  // Text('123456')
                 ],
               ),
             ),

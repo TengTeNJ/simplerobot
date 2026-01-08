@@ -77,13 +77,21 @@ class _ActionControllerState extends State<ActionController> {
           BleSendUtil.setRobotPoweroff();
         });
       } else {
-        NavigatorUtil.push(Routes.pickMode).then((value){
-          listenBattery(); // pop回来监听电量上报
-          getTodayBallNumsByDB();// 刷新捡球数，防止两个界面捡球数有差异
-          // 断链退到连接界面
-          showDisconnectAlert();
-        });
-
+        print("mengheng");
+        if (kBLEDevice_NewName == "seekbot2.0") {
+          NavigatorUtil.push(Routes.pickMode).then((value){
+            listenBattery(); // pop回来监听电量上报
+            getTodayBallNumsByDB();// 刷新捡球数，防止两个界面捡球数有差异
+            // 断链退到连接界面
+            showDisconnectAlert();
+          });
+        } else {
+          NavigatorUtil.push(Routes.onePickMode).then((value){
+            listenBattery();
+            getTodayBallNumsByDB();
+            showDisconnectAlert();
+          });
+        }
       }
     };
   }

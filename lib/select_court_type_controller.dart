@@ -71,6 +71,7 @@ class _SelectCourtTypeControllerState extends State<SelectCourtTypeController> {
                   onTap: () {
                     isChoosedOneRobot = true;
                     isChoosedTwoRobot = false;
+                    kBLEDevice_NewName = "seekbot1.0";
                     setState(() {});
                   },
                   child: Container(
@@ -93,6 +94,7 @@ class _SelectCourtTypeControllerState extends State<SelectCourtTypeController> {
                   onTap: () {
                     isChoosedTwoRobot = true;
                     isChoosedOneRobot = false;
+                    kBLEDevice_NewName = "seekbot2.0";
                     setState(() {});
                   },
                   child: Container(
