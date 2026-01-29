@@ -24,6 +24,15 @@ class NavigatorUtil {
     return Navigator.of(NavigatorUtil.utilContext).popAndPushNamed(routeName,arguments: arguments);
   }
 
+  // 跳转到新界面（新页进来后，旧页销毁）
+  static pushReplacementNamed(String routeName,{Object arguments = const Object()}) {
+    return Navigator.pushReplacementNamed(
+      NavigatorUtil.utilContext,
+      routeName,
+      arguments: arguments,
+    );
+  }
+
   static pushNamedAndRemoveUntil(String routeName,{Object arguments = const Object()}) {
    // return Navigator.of(NavigatorUtil.utilContext).pushNamedAndRemoveUntil(routeName, '/');
     return Navigator.pushNamedAndRemoveUntil(NavigatorUtil.utilContext, routeName, (route) => false);

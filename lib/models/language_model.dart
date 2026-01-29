@@ -9,10 +9,11 @@ class LanguageModel extends ChangeNotifier {
   // 支持的语言列表
   final Map<String, Map<String, String>> _localizedValues = {
     'zh': {
+      '请选择Seekerbot模式':'请选择Seekerbot模式',
       '扫描':'将你的手机连接到机器人的蓝牙\n蓝牙名称为',
       '当前的蓝牙设备': '当前蓝牙',
       '连接失败':"连接失败",
-      '连接失败的描述':"无法连接到设备 Seekerbot2.0 请检查问题并重试 ",
+      '连接失败的描述':"无法连接到设备 Seekerbot 请检查问题并重试 ",
       '关机':"电源关闭",
       '关机的描述':"捡球机将关闭电源",
       '关闭': "关机",
@@ -82,11 +83,12 @@ class LanguageModel extends ChangeNotifier {
       // 添加所有需要翻译的文本
     },
     'en': {
+      '请选择Seekerbot模式':'Please select the Seekerbot mode',
       '扫描':'Connect your phone to your bots Bluetooth.The Bluetooth name is',
       '当前的蓝牙设备': 'Current Bluetooth',
       '连接':"Connect",
       '连接失败':"Connection Failed",
-      '连接失败的描述':"Failed to connect to device \n Seekerbot2.0 \n Check for issues and try again.",
+      '连接失败的描述':"Failed to connect to device \n Seekerbot \n Check for issues and try again.",
       '关机':"Power OFF",
       '关机的描述':"The Bot will power off.",
       '关闭': "Close",

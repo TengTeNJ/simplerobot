@@ -58,13 +58,10 @@ class _ParameterSettingViewState extends State<ParameterSettingView> {
     print('111${currentRobotSpeed}');
     if (currentRobotSpeed == 1) {
       rollerSpeedDefaultValue = 1.0;
-      rollerSpeed = '0.4m/s';
-    } else if (currentRobotSpeed == 2) {
-      rollerSpeedDefaultValue = 2.0;
       rollerSpeed = '0.42m/s';
 
     } else {
-      rollerSpeedDefaultValue = 3.0;
+      rollerSpeedDefaultValue = 2.0;
       rollerSpeed = '0.45m/s';
     }
 
@@ -112,19 +109,14 @@ class _ParameterSettingViewState extends State<ParameterSettingView> {
           child: FutureBuilder<int>(
               future: speedCount,
               builder: (BuildContext context,AsyncSnapshot<int> snapshot){
-                return PickPageSliderView(defaultValue: rollerSpeedDefaultValue,chooseValue: (value){
-                  if (value == 1.0) {
-                    BleSendUtil.setSpeed(RobotSpeed.slow); //低速
-                    DataBaseHelper().saveRobotSpeedData(1);
-                    rollerSpeed = '0.4m/s';
-                  } else if(value == 2.0) {
+                return PickPageSliderView(defaultValue: rollerSpeedDefaultValue,gears: 2,chooseValue: (value){
+                   if(value == 1.0) {
                     BleSendUtil.setSpeed(RobotSpeed.fast); //高速
-                    DataBaseHelper().saveRobotSpeedData(2);
+                    DataBaseHelper().saveRobotSpeedData(1);
                     rollerSpeed = '0.42m/s';
-
-                  } else {
+                   } else {
                     BleSendUtil.setSpeed(RobotSpeed.faster); //超高速
-                    DataBaseHelper().saveRobotSpeedData(3);
+                    DataBaseHelper().saveRobotSpeedData(2);
                     rollerSpeed = '0.45m/s';
                   }
                   setState(() {});
@@ -138,7 +130,6 @@ class _ParameterSettingViewState extends State<ParameterSettingView> {
             children: [
               Constants.regularWhiteTextWidget('1', 18, Constants.connectTextColor),
               Constants.regularWhiteTextWidget('2', 18, Constants.connectTextColor),
-              Constants.regularWhiteTextWidget('3', 18, Constants.connectTextColor),
             ],
           ),
         ),

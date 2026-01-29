@@ -2,11 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:provider/provider.dart';
 import 'package:tennis_robot/route/routes.dart';
 import 'package:tennis_robot/utils/event_bus.dart';
 import 'package:tennis_robot/utils/navigator_util.dart';
 
 import 'constant/constants.dart';
+import 'models/language_model.dart';
 
 class SelectCourtTypeController extends StatefulWidget {
   const SelectCourtTypeController({super.key});
@@ -65,7 +67,7 @@ class _SelectCourtTypeControllerState extends State<SelectCourtTypeController> {
                 ),
                 SizedBox(height: 44,),
 
-                Constants.regularWhiteTextWidget("Please select the Seekerbot mode", 18, Constants.connectTextColor),
+                Constants.regularWhiteTextWidget("${Provider.of<LanguageModel>(context, listen: false).getText('请选择Seekerbot模式')}", 18, Constants.connectTextColor),
                 SizedBox(height: 49,),
                 GestureDetector(
                   onTap: () {

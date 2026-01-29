@@ -1,22 +1,14 @@
 import 'dart:async';
-import 'dart:convert';
-
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
-import 'package:network_info_plus/network_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:tennis_robot/constant/constants.dart';
 import 'package:tennis_robot/route/routes.dart';
 import 'package:tennis_robot/utils/blue_tooth_manager.dart';
 import 'package:tennis_robot/utils/navigator_util.dart';
-import 'package:tennis_robot/utils/robot_manager.dart';
-import 'package:tennis_robot/utils/robot_send_data.dart';
-
 import '../models/language_model.dart';
-import '../utils/ble_send_util.dart';
 import '../utils/ble_util.dart';
 import '../utils/dialog.dart';
 import '../utils/event_bus.dart';
@@ -214,10 +206,12 @@ class _ConnectRobotControllerState extends State<ConnectRobotController> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      // if (checkBluIsOpen() == false) {
-                      //   EasyLoading.showToast('please open bluetooth');
-                      //   return;
-                      // }
+                      // NavigatorUtil.push(Routes.connectSuccess);
+                      // return;
+                      if (checkBluIsOpen() == false) {
+                        EasyLoading.showToast('please open bluetooth');
+                        return;
+                      }
                       if (currentWifiName != kBLEDevice_NewName) {
                         // 扫描连接失败弹窗
                         TTDialog.robotRobotConnectFailDialog(context,() async {

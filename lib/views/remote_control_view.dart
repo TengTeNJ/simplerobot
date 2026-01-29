@@ -279,7 +279,7 @@ class _RemoteControlViewState extends State<RemoteControlView> {
                         BleSendUtil.setRobotAngle(degrees.toInt());
                       }
                     } else {
-                      if (_updateTime(position, 0) > 10) { // 发送角度间隔需大于20毫秒
+                      if (_updateTime(position, 0) > 200) { // 发送角度间隔需大于20毫秒
                         print('${getCurrentTime()}发送角度${degrees.toInt()}');
                         BleSendUtil.setRobotAngle(degrees.toInt());
                       }

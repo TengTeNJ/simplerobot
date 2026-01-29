@@ -10,8 +10,9 @@ import '../setting/image_slider_thumb.dart';
 class PickPageSliderView extends StatefulWidget {
   double defaultValue;
   Function? chooseValue;
+  double gears;/// 几个档位
 
-  PickPageSliderView({this.chooseValue,required this.defaultValue});
+  PickPageSliderView({this.chooseValue,required this.defaultValue,this.gears = 3});
 
   @override
   State<PickPageSliderView> createState() => _SliderViewState();
@@ -28,8 +29,6 @@ class _SliderViewState extends State<PickPageSliderView> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
-
     _sliderValue = widget.defaultValue;
     //_sliderValue = defaultValue;
     print('默认值${_sliderValue}');
@@ -43,9 +42,9 @@ class _SliderViewState extends State<PickPageSliderView> {
       //Slider的当前的值
       value: _sliderValue,
       min: 1,
-      max: 3,
+      max: widget.gears,
       //平均分成的等分
-      divisions: 2,
+      divisions: (widget.gears - 1).toInt(),
       //滚动时会回调
       onChanged: (double value) {
         Vibration.vibrate(duration: 500); // 触发震动
